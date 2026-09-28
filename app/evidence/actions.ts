@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { deleteAttachmentsForRecord } from "@/app/evidence/attachments/actions";
 import { parseEvidenceInput, type EvidenceFormState } from "@/lib/evidence-records";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
@@ -111,6 +112,10 @@ export async function deleteEvidenceRecord(
 ) {
   if (!isSupabaseConfigured) return;
   const { supabase, userId } = await requireOwnProperty(propertyId);
+
+  // Remove attachment files from Storage first, so the row cascade below
+  // never leaves orphaned files behind in the bucket.
+  await deleteAttachmentsForRecord(recordId);
 
   await supabase
     .from("evidence_records")

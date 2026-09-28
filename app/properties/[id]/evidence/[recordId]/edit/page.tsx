@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { archiveEvidenceRecord, deleteEvidenceRecord, updateEvidenceRecord } from "@/app/evidence/actions";
+import { uploadAttachments } from "@/app/evidence/attachments/actions";
+import AttachmentList from "@/components/AttachmentList";
+import AttachmentUploadForm from "@/components/AttachmentUploadForm";
 import EvidenceRecordForm from "@/components/EvidenceRecordForm";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import type { EvidenceAttachment } from "@/lib/evidence-attachments";
+import { MAX_ATTACHMENTS_PER_RECORD } from "@/lib/evidence-attachments";
 import type { EvidenceRecord } from "@/lib/evidence-records";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
@@ -39,9 +44,18 @@ export default async function EditEvidenceRecordPage({
     .maybeSingle<EvidenceRecord>();
   if (!record) notFound();
 
+  const { data: attachments } = await supabase
+    .from("evidence_attachments")
+    .select("id, storage_path, original_file_name, content_type, size_bytes, created_at")
+    .eq("evidence_record_id", record.id)
+    .order("created_at", { ascending: false })
+    .returns<EvidenceAttachment[]>();
+
   const updateAction = updateEvidenceRecord.bind(null, property.id, record.id);
   const archiveAction = archiveEvidenceRecord.bind(null, property.id, record.id);
   const deleteAction = deleteEvidenceRecord.bind(null, property.id, record.id);
+  const uploadAction = uploadAttachments.bind(null, property.id, record.id);
+  const attachmentCount = attachments?.length ?? 0;
 
   return (
     <>
@@ -60,6 +74,32 @@ export default async function EditEvidenceRecordPage({
               showStatus
             />
           </div>
+          <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+            <h2 className="text-xl font-semibold text-navy">Attachments</h2>
+            <p className="mt-1 text-sm text-slate-600">
+              Private to your account. HostSafe does not check, certify, or
+              analyse anything you upload.
+            </p>
+            <div className="mt-4">
+              <AttachmentList
+                propertyId={property.id}
+                recordId={record.id}
+                attachments={attachments ?? []}
+              />
+            </div>
+            <div className="mt-6 border-t border-slate-100 pt-6">
+              {attachmentCount >= MAX_ATTACHMENTS_PER_RECORD ? (
+                <p className="text-sm text-slate-600">
+                  This record has reached the limit of{" "}
+                  {MAX_ATTACHMENTS_PER_RECORD} attachments. Delete one to add
+                  another.
+                </p>
+              ) : (
+                <AttachmentUploadForm action={uploadAction} disabled={false} />
+              )}
+            </div>
+          </section>
+
           <div className="mt-6 flex flex-wrap gap-3">
             <form action={archiveAction}>
               <button

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import NeedsAttentionList, { type AttentionRow } from "@/components/NeedsAttentionList";
 import SavePendingResult from "@/components/SavePendingResult";
 import {
   evidenceCategoryLabel,
@@ -10,6 +11,7 @@ import {
   type EvidenceRecord,
 } from "@/lib/evidence-records";
 import { suitableMessage, unsuitableMessage, type EligibilityResultRow } from "@/lib/eligibility";
+import { getAttentionReason, type PropertyItem } from "@/lib/property-items";
 import type { Property } from "@/lib/properties";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
@@ -68,6 +70,40 @@ export default async function DashboardPage() {
     evidenceByProperty.set(record.property_id, list);
   }
 
+  const { data: propertyItems } = propertyIds.length
+    ? await supabase
+        .from("property_items")
+        .select("*")
+        .in("property_id", propertyIds)
+        .returns<PropertyItem[]>()
+    : { data: [] as PropertyItem[] };
+
+  const propertyNameById = new Map((properties ?? []).map((p) => [p.id, p.name]));
+  const attentionByProperty = new Map<string, number>();
+  const crossPropertyAttention: AttentionRow[] = [];
+  for (const item of propertyItems ?? []) {
+    const reason = getAttentionReason(item);
+    if (!reason) continue;
+    attentionByProperty.set(
+      item.property_id,
+      (attentionByProperty.get(item.property_id) ?? 0) + 1,
+    );
+    crossPropertyAttention.push({
+      itemId: item.id,
+      propertyId: item.property_id,
+      propertyName: propertyNameById.get(item.property_id),
+      title: item.title,
+      message: reason.message,
+      date: reason.date,
+      level: reason.level,
+    });
+  }
+  // Most urgent first, then soonest date.
+  const levelOrder = { urgent: 0, review: 1, due_soon: 2 } as const;
+  crossPropertyAttention.sort(
+    (a, b) => levelOrder[a.level] - levelOrder[b.level] || a.date.localeCompare(b.date),
+  );
+
   return (
     <>
       <Header />
@@ -79,6 +115,21 @@ export default async function DashboardPage() {
             Signed in as{" "}
             <span className="font-medium">{userData.user.email}</span>
           </p>
+
+          {properties && properties.length > 0 && (
+            <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+              <h2 className="text-xl font-semibold text-navy">
+                Needs attention across your properties
+              </h2>
+              <p className="mt-1 text-sm text-slate-600">
+                Based only on the dates and statuses you&apos;ve recorded.
+                This isn&apos;t a legal or compliance judgement.
+              </p>
+              <div className="mt-4">
+                <NeedsAttentionList rows={crossPropertyAttention} />
+              </div>
+            </section>
+          )}
 
           <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
             <div className="flex items-center justify-between gap-4">
@@ -166,6 +217,27 @@ export default async function DashboardPage() {
                             This property hasn&apos;t been checked yet.
                           </p>
                         )}
+                      </div>
+
+                      <div className="mt-3 rounded-xl bg-slate-50 p-4">
+                        <div className="flex items-center justify-between gap-3">
+                          <p className="text-sm font-medium text-navy">
+                            Actions &amp; reminders
+                            {(attentionByProperty.get(p.id) ?? 0) > 0 && (
+                              <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-900">
+                                {attentionByProperty.get(p.id)} need
+                                {attentionByProperty.get(p.id) === 1 ? "s" : ""}{" "}
+                                attention
+                              </span>
+                            )}
+                          </p>
+                          <Link
+                            href={`/properties/${p.id}/items`}
+                            className="text-sm font-medium text-navy underline underline-offset-4"
+                          >
+                            View actions &amp; reminders
+                          </Link>
+                        </div>
                       </div>
 
                       <div className="mt-3 rounded-xl bg-slate-50 p-4">

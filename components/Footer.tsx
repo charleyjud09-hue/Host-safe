@@ -5,8 +5,9 @@ export default function Footer() {
         <p className="font-medium text-navy">HostSafe</p>
         <p className="mt-2 max-w-2xl">
           HostSafe is an early-stage organisational and educational tool. It
-          does not provide legal advice or fire-risk assessments, and it does
-          not certify any property.
+          does not provide legal advice, fire-risk assessments, or compliance
+          certification, and it does not confirm that a property is safe or
+          legally compliant.
         </p>
       </div>
     </footer>

@@ -122,8 +122,9 @@ export default async function DashboardPage() {
                 Needs attention across your properties
               </h2>
               <p className="mt-1 text-sm text-slate-600">
-                Based only on the dates and statuses you&apos;ve recorded.
-                This isn&apos;t a legal or compliance judgement.
+                Reminders are based on the dates and statuses recorded in
+                HostSafe. They are organisational prompts only and may not
+                identify every requirement or deadline that applies to you.
               </p>
               <div className="mt-4">
                 <NeedsAttentionList rows={crossPropertyAttention} />
@@ -354,6 +355,14 @@ export default async function DashboardPage() {
               straightforward accommodation in England. Larger, more complex,
               shared, converted, or unusual properties may need different
               guidance or advice from a competent fire-risk assessor.
+            </p>
+            <p>
+              HostSafe helps you organise property information, evidence,
+              documents, actions, and reminders. It is not an official
+              records repository. You remain responsible for keeping original
+              documents and appropriate backups, checking applicable
+              requirements and deadlines, and submitting information directly
+              to the relevant organisation where required.
             </p>
           </div>
         </div>

@@ -81,6 +81,11 @@ export default async function PropertyItemsPage({
             <h2 className="text-xl font-semibold text-navy">
               Needs attention
             </h2>
+            <p className="mt-1 text-sm text-slate-600">
+              Reminders are based on the dates and statuses recorded in
+              HostSafe. They are organisational prompts only and may not
+              identify every requirement or deadline that applies to you.
+            </p>
             <div className="mt-4">
               <NeedsAttentionList rows={attentionRows} />
             </div>

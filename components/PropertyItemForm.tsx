@@ -228,6 +228,11 @@ export default function PropertyItemForm({
             Submitted items must be a Submit / send item, with a destination
             and submitted date.
           </p>
+          <p className="text-sm text-slate-600">
+            Marking an item as submitted records what you entered in
+            HostSafe. It does not confirm that the document was received,
+            accepted, valid, complete, or submitted by any deadline.
+          </p>
           <div>
             <label htmlFor="destination" className="font-medium text-navy">
               Destination

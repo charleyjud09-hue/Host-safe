@@ -9,19 +9,13 @@ import {
   evidenceStatusLabel,
   type EvidenceRecord,
 } from "@/lib/evidence-records";
-import { questions, suitableMessage, unsuitableMessage } from "@/lib/eligibility";
+import { suitableMessage, unsuitableMessage, type EligibilityResultRow } from "@/lib/eligibility";
 import type { Property } from "@/lib/properties";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "Your dashboard | HostSafe",
-};
-
-const labels: Record<string, string> = {
-  yes: "Yes",
-  no: "No",
-  unsure: "Not sure",
 };
 
 export default async function DashboardPage() {
@@ -31,12 +25,24 @@ export default async function DashboardPage() {
   const { data: userData } = await supabase.auth.getUser();
   if (!userData.user) redirect("/sign-in");
 
-  const { data: result } = await supabase
+  // All of this user's results, newest first. RLS already scopes this to
+  // their own rows; grouping below picks the latest per property.
+  const { data: allResults } = await supabase
     .from("eligibility_results")
-    .select("answers, may_need_tailored_advice, created_at")
+    .select("id, property_id, answers, may_need_tailored_advice, created_at")
     .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    .returns<EligibilityResultRow[]>();
+
+  const latestResultByProperty = new Map<string, EligibilityResultRow>();
+  const legacyResults: EligibilityResultRow[] = [];
+  for (const row of allResults ?? []) {
+    if (row.property_id === null) {
+      legacyResults.push(row);
+    } else if (!latestResultByProperty.has(row.property_id)) {
+      latestResultByProperty.set(row.property_id, row);
+    }
+  }
+  const latestLegacyResult = legacyResults[0];
 
   const { data: properties } = await supabase
     .from("properties")
@@ -61,8 +67,6 @@ export default async function DashboardPage() {
     list.push(record);
     evidenceByProperty.set(record.property_id, list);
   }
-
-  const answers = (result?.answers ?? {}) as Record<string, string>;
 
   return (
     <>
@@ -94,6 +98,7 @@ export default async function DashboardPage() {
               <ul className="mt-4 divide-y divide-slate-100">
                 {properties.map((p) => {
                   const records = evidenceByProperty.get(p.id) ?? [];
+                  const propertyResult = latestResultByProperty.get(p.id);
                   return (
                     <li key={p.id} className="py-4">
                       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -120,6 +125,47 @@ export default async function DashboardPage() {
                         >
                           Edit
                         </Link>
+                      </div>
+
+                      <div className="mt-3 rounded-xl bg-slate-50 p-4">
+                        <div className="flex items-center justify-between gap-3">
+                          <p className="text-sm font-medium text-navy">
+                            Property check
+                          </p>
+                          <Link
+                            href={`/properties/${p.id}/check`}
+                            className="text-sm font-medium text-navy underline underline-offset-4"
+                          >
+                            {propertyResult
+                              ? "Update property check"
+                              : "Take property check"}
+                          </Link>
+                        </div>
+                        {propertyResult ? (
+                          <div className="mt-3 text-sm">
+                            <p className="text-slate-600">
+                              Saved on{" "}
+                              {new Date(
+                                propertyResult.created_at,
+                              ).toLocaleDateString("en-GB")}
+                            </p>
+                            <p
+                              className={`mt-2 rounded-lg p-3 leading-relaxed ${
+                                propertyResult.may_need_tailored_advice
+                                  ? "bg-amber-50 text-amber-950 ring-1 ring-amber-200"
+                                  : "bg-teal-50 text-slate-800 ring-1 ring-teal-200"
+                              }`}
+                            >
+                              {propertyResult.may_need_tailored_advice
+                                ? unsuitableMessage
+                                : suitableMessage}
+                            </p>
+                          </div>
+                        ) : (
+                          <p className="mt-2 text-sm text-slate-600">
+                            This property hasn&apos;t been checked yet.
+                          </p>
+                        )}
                       </div>
 
                       <div className="mt-3 rounded-xl bg-slate-50 p-4">
@@ -191,54 +237,36 @@ export default async function DashboardPage() {
             )}
           </section>
 
-          <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-            <h2 className="text-xl font-semibold text-navy">
-              Your saved suitability check
-            </h2>
-            {result ? (
-              <>
-                <p className="mt-1 text-sm text-slate-600">
-                  Saved on{" "}
-                  {new Date(result.created_at).toLocaleDateString("en-GB", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </p>
-                <p
-                  className={`mt-4 rounded-xl p-4 leading-relaxed ${
-                    result.may_need_tailored_advice
-                      ? "bg-amber-50 text-amber-950 ring-1 ring-amber-200"
-                      : "bg-teal-50 text-slate-800 ring-1 ring-teal-200"
-                  }`}
-                >
-                  {result.may_need_tailored_advice
-                    ? unsuitableMessage
-                    : suitableMessage}
-                </p>
-                <dl className="mt-6 divide-y divide-slate-100 text-sm">
-                  {questions.map((q) => (
-                    <div key={q.id} className="flex justify-between gap-4 py-2">
-                      <dt className="text-slate-700">{q.text}</dt>
-                      <dd className="shrink-0 font-medium text-navy">
-                        {labels[answers[q.id]] ?? "-"}
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
-              </>
-            ) : (
-              <p className="mt-3 text-slate-700">
-                You have not saved a suitability check yet.
+          {latestLegacyResult && (
+            <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+              <h2 className="text-xl font-semibold text-navy">
+                Earlier saved result
+              </h2>
+              <p className="mt-1 text-sm text-slate-600">
+                Saved on{" "}
+                {new Date(latestLegacyResult.created_at).toLocaleDateString(
+                  "en-GB",
+                  { day: "numeric", month: "long", year: "numeric" },
+                )}
+                , before results were linked to a specific property.
               </p>
-            )}
-            <Link
-              href="/check"
-              className="mt-6 inline-block rounded-lg border border-slate-300 px-5 py-2.5 font-medium text-navy hover:bg-slate-50"
-            >
-              {result ? "Take the check again" : "Check if your property is suitable"}
-            </Link>
-          </section>
+              <p
+                className={`mt-4 rounded-xl p-4 leading-relaxed ${
+                  latestLegacyResult.may_need_tailored_advice
+                    ? "bg-amber-50 text-amber-950 ring-1 ring-amber-200"
+                    : "bg-teal-50 text-slate-800 ring-1 ring-teal-200"
+                }`}
+              >
+                {latestLegacyResult.may_need_tailored_advice
+                  ? unsuitableMessage
+                  : suitableMessage}
+              </p>
+              <p className="mt-3 text-sm text-slate-600">
+                To attach a check to one of your properties, use that
+                property&apos;s &quot;Take property check&quot; link above.
+              </p>
+            </section>
+          )}
 
           <div className="mt-6 space-y-2 text-sm text-slate-600">
             <p>

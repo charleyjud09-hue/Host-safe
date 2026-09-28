@@ -59,3 +59,11 @@ export const unsuitableMessage =
 
 export const suitableMessage =
   "Based on your answers, your property appears to fit the small, simple type of property HostSafe is designed for. HostSafe is an organisational and educational tool. It is not a fire-risk assessment, and it cannot tell you whether your property meets any legal requirement.";
+
+export type EligibilityResultRow = {
+  id: string;
+  property_id: string | null;
+  answers: Answers;
+  may_need_tailored_advice: boolean;
+  created_at: string;
+};

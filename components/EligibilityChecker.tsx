@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
+import { saveEligibilityResult } from "@/app/eligibility/actions";
 import { stashPendingResult } from "@/lib/pending-result";
 import {
   type Answer,
@@ -21,15 +22,25 @@ const options: { value: Answer; label: string }[] = [
 export default function EligibilityChecker({
   accountsEnabled = false,
   signedIn = false,
+  propertyId,
+  propertyName,
+  hasExistingResult = false,
 }: {
   accountsEnabled?: boolean;
   signedIn?: boolean;
+  /** When set, this is a property-scoped check: saving goes straight to this property, unambiguously. */
+  propertyId?: string;
+  propertyName?: string;
+  hasExistingResult?: boolean;
 }) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});
   const done = step >= questions.length;
   const headingRef = useRef<HTMLLegendElement>(null);
   const hasInteracted = useRef(false);
+  const [isSaving, startSaving] = useTransition();
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
 
   // Move focus to the new question so keyboard and screen-reader users
   // know it has changed. Skipped on first load.
@@ -48,6 +59,18 @@ export default function EligibilityChecker({
   function restart() {
     setAnswers({});
     setStep(0);
+    setSaveError(null);
+    setSaved(false);
+  }
+
+  function saveToProperty() {
+    if (!propertyId) return;
+    setSaveError(null);
+    startSaving(async () => {
+      const result = await saveEligibilityResult(propertyId, answers);
+      // A successful save redirects server-side and never returns here.
+      if (result?.error) setSaveError(result.error);
+    });
   }
 
   if (done) {
@@ -74,16 +97,50 @@ export default function EligibilityChecker({
           are not saved or sent anywhere unless you choose to create an
           account.
         </p>
+
+        {saveError && (
+          <p
+            role="alert"
+            className="mt-4 rounded-lg bg-amber-50 p-3 text-amber-950 ring-1 ring-amber-200"
+          >
+            {saveError}
+          </p>
+        )}
+
         <div className="mt-6 flex flex-wrap gap-3">
-          {!flagged && accountsEnabled && (
+          {propertyId && accountsEnabled && (
+            <button
+              type="button"
+              onClick={saveToProperty}
+              disabled={isSaving}
+              className="rounded-lg bg-navy px-5 py-2.5 font-medium text-white hover:bg-navy-light disabled:opacity-60"
+            >
+              {isSaving
+                ? "Saving..."
+                : hasExistingResult
+                  ? `Update check for ${propertyName ?? "this property"}`
+                  : `Save check for ${propertyName ?? "this property"}`}
+            </button>
+          )}
+          {!propertyId && accountsEnabled && signedIn && (
             <Link
-              href={signedIn ? "/dashboard" : "/sign-up"}
+              href="/dashboard"
+              onClick={() => {
+                stashPendingResult(answers);
+                setSaved(true);
+              }}
+              className="rounded-lg bg-navy px-5 py-2.5 font-medium text-white hover:bg-navy-light"
+            >
+              Save this result
+            </Link>
+          )}
+          {!propertyId && accountsEnabled && !signedIn && (
+            <Link
+              href="/sign-up"
               onClick={() => stashPendingResult(answers)}
               className="rounded-lg bg-navy px-5 py-2.5 font-medium text-white hover:bg-navy-light"
             >
-              {signedIn
-                ? "Save this result to your dashboard"
-                : "Create free account to save your progress"}
+              Create free account to save your progress
             </Link>
           )}
           <button
@@ -94,12 +151,17 @@ export default function EligibilityChecker({
             Start again
           </button>
           <Link
-            href="/"
+            href={propertyId ? `/properties/${propertyId}/edit` : "/"}
             className="rounded-lg px-5 py-2.5 font-medium text-navy underline underline-offset-4"
           >
-            Back to home
+            {propertyId ? "Back to property" : "Back to home"}
           </Link>
         </div>
+        {saved && (
+          <p className="mt-3 text-sm text-slate-600">
+            Saved for your next dashboard visit.
+          </p>
+        )}
       </div>
     );
   }

@@ -24,6 +24,9 @@
 .DS_Store
 *.pem
 
+# stray OneDrive artifact from an old folder rename, not part of the project
+/host safe nwd
+
 # debug
 npm-debug.log*
 yarn-debug.log*

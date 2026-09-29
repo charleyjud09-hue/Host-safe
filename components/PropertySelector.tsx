@@ -46,6 +46,10 @@ function Summary({ counts }: { counts: Record<AttentionLevel, number> }) {
       text: `${counts.upcoming} upcoming`,
       className: "bg-slate-100 text-navy ring-1 ring-slate-200",
     },
+    counts.open > 0 && {
+      text: `${counts.open} open issue${counts.open === 1 ? "" : "s"}`,
+      className: "bg-white text-slate-800 ring-1 ring-slate-300",
+    },
   ].filter((p): p is { text: string; className: string } => Boolean(p));
 
   if (parts.length === 0) {

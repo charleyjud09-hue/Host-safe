@@ -21,6 +21,10 @@ const accent: Record<AttentionLevel, { row: string; badge: string }> = {
     row: "border-l-4 border-teal-600 bg-white",
     badge: "bg-slate-100 text-navy ring-1 ring-slate-200",
   },
+  open: {
+    row: "border-l-4 border-slate-400 bg-white",
+    badge: "bg-white text-slate-800 ring-1 ring-slate-300",
+  },
 };
 
 export default function PropertyAttentionList({
@@ -56,7 +60,9 @@ export default function PropertyAttentionList({
                 <p className="mt-1 text-sm text-slate-700">{e.reason}</p>
               )}
               <p className="mt-1 text-sm text-slate-600">
-                {e.dateLabel} {formatDisplayDate(e.date)}
+                {e.date && e.dateLabel
+                  ? `${e.dateLabel} ${formatDisplayDate(e.date)}`
+                  : "No due date set"}
               </p>
             </div>
             <Link

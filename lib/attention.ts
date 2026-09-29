@@ -3,12 +3,17 @@
  * statuses the user has recorded. Never claims anything is overdue in a
  * legal sense, non-compliant, unsafe, or "all clear".
  *
- * Used by the property selector and property overview. The older
- * getAttentionReason() in lib/property-items.ts still drives /dashboard and
- * the items pages, unchanged.
+ * Used by the property selector, the property overview, and the maintenance
+ * section of the Actions & reminders page. The older getAttentionReason() in
+ * lib/property-items.ts still drives /dashboard and the action reminders on
+ * the items page, unchanged.
  */
 
-export type AttentionLevel = "urgent" | "due_soon" | "upcoming";
+/**
+ * "open" is only used for open maintenance issues with no due date: listed
+ * neutrally after the date-based levels, with no date and no urgency.
+ */
+export type AttentionLevel = "urgent" | "due_soon" | "upcoming" | "open";
 
 export type AttentionEntry = {
   key: string;
@@ -18,8 +23,9 @@ export type AttentionEntry = {
   title: string;
   /** Extra neutral explanation, only where a date has already passed. */
   reason: string | null;
-  dateLabel: "Due" | "Review";
-  date: string;
+  /** Null only for undated open issues. */
+  dateLabel: "Due" | "Review" | null;
+  date: string | null;
   href: string;
 };
 
@@ -58,6 +64,7 @@ const levelOrder: Record<AttentionLevel, number> = {
   urgent: 0,
   due_soon: 1,
   upcoming: 2,
+  open: 3,
 };
 
 /** Today's calendar date in the UK (Europe/London), as YYYY-MM-DD. */
@@ -172,10 +179,24 @@ export function buildAttention(
     });
   }
 
-  // Maintenance issues: only open ones with a user-entered due date.
-  // Undated, resolved and archived issues never appear here.
+  // Maintenance issues: open ones only (never resolved or archived).
+  // Dated issues use the same windows as everything else; issues with no
+  // due date are listed neutrally as "Open issue", after the dated ones.
   for (const issue of maintenance) {
-    if (!openMaintenanceStatuses.has(issue.status) || !issue.due_date) continue;
+    if (!openMaintenanceStatuses.has(issue.status)) continue;
+    if (!issue.due_date) {
+      entries.push({
+        key: `maintenance-${issue.id}`,
+        level: "open",
+        serviceLabel: "Maintenance & repairs",
+        title: issue.title,
+        reason: null,
+        dateLabel: null,
+        date: null,
+        href: `/properties/${issue.property_id}/maintenance/${issue.id}`,
+      });
+      continue;
+    }
     const level = levelFor(issue.due_date, today);
     if (!level) continue;
     entries.push({
@@ -195,7 +216,9 @@ export function buildAttention(
 
   entries.sort(
     (a, b) =>
-      levelOrder[a.level] - levelOrder[b.level] || a.date.localeCompare(b.date),
+      levelOrder[a.level] - levelOrder[b.level] ||
+      (a.date ?? "").localeCompare(b.date ?? "") ||
+      a.title.localeCompare(b.title),
   );
   return entries;
 }
@@ -205,6 +228,7 @@ export function countByLevel(entries: AttentionEntry[]) {
     urgent: 0,
     due_soon: 0,
     upcoming: 0,
+    open: 0,
   };
   for (const e of entries) counts[e.level] += 1;
   return counts;
@@ -214,6 +238,7 @@ export const attentionLevelLabel: Record<AttentionLevel, string> = {
   urgent: "Urgent",
   due_soon: "Due soon",
   upcoming: "Upcoming",
+  open: "Open issue",
 };
 
 export const NOTHING_NEEDS_ATTENTION =

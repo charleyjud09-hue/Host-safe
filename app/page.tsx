@@ -135,8 +135,7 @@ export default async function Home() {
         supabase
           .from("maintenance_issues")
           .select("id, property_id, title, status, due_date")
-          .in("status", ["open", "in_progress", "waiting"])
-          .not("due_date", "is", null),
+          .in("status", ["open", "in_progress", "waiting"]),
       ]);
       const items = (itemsRes.data ?? []) as AttentionItemInput[];
       const evidence = (evidenceRes.data ?? []) as AttentionEvidenceInput[];

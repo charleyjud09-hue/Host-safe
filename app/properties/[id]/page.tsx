@@ -72,8 +72,7 @@ export default async function PropertyOverviewPage({
       .from("maintenance_issues")
       .select("id, property_id, title, status, due_date")
       .eq("property_id", id)
-      .in("status", ["open", "in_progress", "waiting"])
-      .not("due_date", "is", null),
+      .in("status", ["open", "in_progress", "waiting"]),
   ]);
 
   const attention = buildAttention(

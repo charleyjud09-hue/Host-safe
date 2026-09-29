@@ -2,7 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import NeedsAttentionList, { type AttentionRow } from "@/components/NeedsAttentionList";
+import PropertyAttentionList from "@/components/PropertyAttentionList";
 import PropertyItemList from "@/components/PropertyItemList";
+import {
+  buildAttention,
+  ukToday,
+  type AttentionMaintenanceInput,
+} from "@/lib/attention";
 import AppShell from "@/components/AppShell";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
@@ -33,12 +39,28 @@ export default async function PropertyItemsPage({
     .maybeSingle();
   if (!property) notFound();
 
-  const { data: items } = await supabase
-    .from("property_items")
-    .select("*")
-    .eq("property_id", id)
-    .order("created_at", { ascending: false })
-    .returns<PropertyItem[]>();
+  const [{ data: items }, { data: maintenance }] = await Promise.all([
+    supabase
+      .from("property_items")
+      .select("*")
+      .eq("property_id", id)
+      .order("created_at", { ascending: false })
+      .returns<PropertyItem[]>(),
+    // Open maintenance issues for this property (RLS-scoped). Shown in
+    // their own section below, using the property attention rules.
+    supabase
+      .from("maintenance_issues")
+      .select("id, property_id, title, status, due_date")
+      .eq("property_id", id)
+      .in("status", ["open", "in_progress", "waiting"]),
+  ]);
+
+  const maintenanceEntries = buildAttention(
+    [],
+    [],
+    ukToday(),
+    (maintenance ?? []) as AttentionMaintenanceInput[],
+  );
 
   const attentionRows: AttentionRow[] = (items ?? []).flatMap((item) => {
     const reason = getAttentionReason(item);
@@ -87,9 +109,38 @@ export default async function PropertyItemsPage({
               HostSafe. They are organisational prompts only and may not
               identify every requirement or deadline that applies to you.
             </p>
-            <div className="mt-4">
-              <NeedsAttentionList rows={attentionRows} />
-            </div>
+            {maintenanceEntries.length === 0 ? (
+              <div className="mt-4">
+                <NeedsAttentionList rows={attentionRows} />
+              </div>
+            ) : (
+              <>
+                {attentionRows.length > 0 && (
+                  <div className="mt-5">
+                    <h3 className="font-semibold text-navy">Actions</h3>
+                    <div className="mt-3">
+                      <NeedsAttentionList rows={attentionRows} />
+                    </div>
+                  </div>
+                )}
+                <div className="mt-5">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <h3 className="font-semibold text-navy">
+                      Maintenance &amp; repairs
+                    </h3>
+                    <Link
+                      href={`/properties/${id}/maintenance`}
+                      className="text-sm font-medium text-navy underline underline-offset-4"
+                    >
+                      Open maintenance
+                    </Link>
+                  </div>
+                  <div className="mt-3">
+                    <PropertyAttentionList entries={maintenanceEntries} />
+                  </div>
+                </div>
+              </>
+            )}
           </section>
 
           <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">

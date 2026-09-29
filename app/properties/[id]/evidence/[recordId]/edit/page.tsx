@@ -5,6 +5,7 @@ import { uploadAttachments } from "@/app/evidence/attachments/actions";
 import AttachmentList from "@/components/AttachmentList";
 import AttachmentUploadForm from "@/components/AttachmentUploadForm";
 import EvidenceRecordForm from "@/components/EvidenceRecordForm";
+import AppShell from "@/components/AppShell";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import type { EvidenceAttachment } from "@/lib/evidence-attachments";
@@ -60,7 +61,7 @@ export default async function EditEvidenceRecordPage({
   return (
     <>
       <Header />
-      <main className="flex-1">
+      <AppShell>
         <div className="mx-auto max-w-2xl px-5 py-12">
           <h1 className="text-3xl font-semibold text-navy">
             Edit evidence record
@@ -121,7 +122,7 @@ export default async function EditEvidenceRecordPage({
             </form>
           </div>
         </div>
-      </main>
+      </AppShell>
       <Footer />
     </>
   );

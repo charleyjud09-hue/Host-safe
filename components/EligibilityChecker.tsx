@@ -106,7 +106,7 @@ export default function EligibilityChecker({
           <button
             type="button"
             onClick={() => onComplete(answers)}
-            className="rounded-lg bg-navy px-5 py-2.5 font-medium text-white hover:bg-navy-light"
+            className="rounded-lg bg-action px-5 py-2.5 font-medium text-white hover:bg-action-hover"
           >
             Continue to property details
           </button>

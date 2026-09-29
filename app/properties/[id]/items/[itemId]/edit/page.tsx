@@ -7,6 +7,7 @@ import {
   updatePropertyItem,
 } from "@/app/property-items/actions";
 import PropertyItemForm from "@/components/PropertyItemForm";
+import AppShell from "@/components/AppShell";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import type { PropertyItem } from "@/lib/property-items";
@@ -53,7 +54,7 @@ export default async function EditPropertyItemPage({
   return (
     <>
       <Header />
-      <main className="flex-1">
+      <AppShell>
         <div className="mx-auto max-w-2xl px-5 py-12">
           <p className="text-sm text-slate-600">{property.name}</p>
           <h1 className="text-3xl font-semibold text-navy">Edit item</h1>
@@ -95,7 +96,7 @@ export default async function EditPropertyItemPage({
             </form>
           </div>
         </div>
-      </main>
+      </AppShell>
       <Footer />
     </>
   );

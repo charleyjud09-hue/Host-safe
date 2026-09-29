@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { createEvidenceRecord } from "@/app/evidence/actions";
 import EvidenceRecordForm from "@/components/EvidenceRecordForm";
+import AppShell from "@/components/AppShell";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
@@ -36,7 +37,7 @@ export default async function NewEvidenceRecordPage({
   return (
     <>
       <Header />
-      <main className="flex-1">
+      <AppShell>
         <div className="mx-auto max-w-2xl px-5 py-12">
           <h1 className="text-3xl font-semibold text-navy">
             Add an evidence record
@@ -55,7 +56,7 @@ export default async function NewEvidenceRecordPage({
             <EvidenceRecordForm action={action} submitLabel="Save record" />
           </div>
         </div>
-      </main>
+      </AppShell>
       <Footer />
     </>
   );

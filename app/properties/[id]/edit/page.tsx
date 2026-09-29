@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
+import AppShell from "@/components/AppShell";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import PropertyForm from "@/components/PropertyForm";
@@ -45,7 +46,7 @@ export default async function EditPropertyPage({
   return (
     <>
       <Header />
-      <main className="flex-1">
+      <AppShell>
         <div className="mx-auto max-w-2xl px-5 py-12">
           <h1 className="text-3xl font-semibold text-navy">Edit property</h1>
           <p className="mt-3 mb-8 text-slate-700">
@@ -82,7 +83,7 @@ export default async function EditPropertyPage({
             />
           </section>
         </div>
-      </main>
+      </AppShell>
       <Footer />
     </>
   );

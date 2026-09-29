@@ -92,7 +92,7 @@ export default function PropertyImageForm({
         <button
           type="submit"
           disabled={pending}
-          className="w-full rounded-lg bg-navy px-6 py-3 font-semibold text-white hover:bg-navy-light disabled:opacity-60 sm:w-auto"
+          className="w-full rounded-lg bg-action px-6 py-3 font-semibold text-white hover:bg-action-hover disabled:opacity-60 sm:w-auto"
         >
           {pending ? "Uploading..." : imageUrl ? "Replace image" : "Upload image"}
         </button>

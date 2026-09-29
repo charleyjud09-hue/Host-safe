@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { createPropertyItem } from "@/app/property-items/actions";
 import PropertyItemForm from "@/components/PropertyItemForm";
+import AppShell from "@/components/AppShell";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
@@ -35,7 +36,7 @@ export default async function NewPropertyItemPage({
   return (
     <>
       <Header />
-      <main className="flex-1">
+      <AppShell>
         <div className="mx-auto max-w-2xl px-5 py-12">
           <p className="text-sm text-slate-600">{property.name}</p>
           <h1 className="text-3xl font-semibold text-navy">Add an item</h1>
@@ -47,7 +48,7 @@ export default async function NewPropertyItemPage({
             <PropertyItemForm action={action} submitLabel="Save item" />
           </div>
         </div>
-      </main>
+      </AppShell>
       <Footer />
     </>
   );

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import NeedsAttentionList, { type AttentionRow } from "@/components/NeedsAttentionList";
 import PropertyItemList from "@/components/PropertyItemList";
+import AppShell from "@/components/AppShell";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { getAttentionReason, type PropertyItem } from "@/lib/property-items";
@@ -57,7 +58,7 @@ export default async function PropertyItemsPage({
   return (
     <>
       <Header />
-      <main className="flex-1">
+      <AppShell>
         <div className="mx-auto max-w-2xl px-5 py-12">
           <p className="text-sm text-slate-600">{property.name}</p>
           <div className="flex items-center justify-between gap-4">
@@ -66,7 +67,7 @@ export default async function PropertyItemsPage({
             </h1>
             <Link
               href={`/properties/${id}/items/new`}
-              className="rounded-lg bg-navy px-4 py-2 text-sm font-medium text-white hover:bg-navy-light"
+              className="rounded-lg bg-action px-4 py-2 text-sm font-medium text-white hover:bg-action-hover"
             >
               Add item
             </Link>
@@ -98,7 +99,7 @@ export default async function PropertyItemsPage({
             </div>
           </section>
         </div>
-      </main>
+      </AppShell>
       <Footer />
     </>
   );

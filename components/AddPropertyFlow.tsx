@@ -111,7 +111,7 @@ export default function AddPropertyFlow() {
             <button
               type="button"
               onClick={() => acceptAnswers(pending)}
-              className="rounded-lg bg-navy px-5 py-2.5 font-medium text-white hover:bg-navy-light"
+              className="rounded-lg bg-action px-5 py-2.5 font-medium text-white hover:bg-action-hover"
             >
               Use these answers
             </button>

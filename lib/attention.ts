@@ -41,6 +41,16 @@ export type AttentionEvidenceInput = {
   review_date: string | null;
 };
 
+export type AttentionMaintenanceInput = {
+  id: string;
+  property_id: string;
+  title: string;
+  status: string;
+  due_date: string | null;
+};
+
+const openMaintenanceStatuses = new Set(["open", "in_progress", "waiting"]);
+
 const DUE_SOON_DAYS = 7;
 const UPCOMING_DAYS = 30;
 const openItemStatuses = new Set(["not_started", "in_progress", "needs_review"]);
@@ -103,6 +113,7 @@ export function buildAttention(
   items: AttentionItemInput[],
   evidence: AttentionEvidenceInput[],
   today: string = ukToday(),
+  maintenance: AttentionMaintenanceInput[] = [],
 ): AttentionEntry[] {
   const entries: AttentionEntry[] = [];
 
@@ -158,6 +169,27 @@ export function buildAttention(
       dateLabel: "Review",
       date: record.review_date,
       href: `/properties/${record.property_id}/evidence/${record.id}/edit`,
+    });
+  }
+
+  // Maintenance issues: only open ones with a user-entered due date.
+  // Undated, resolved and archived issues never appear here.
+  for (const issue of maintenance) {
+    if (!openMaintenanceStatuses.has(issue.status) || !issue.due_date) continue;
+    const level = levelFor(issue.due_date, today);
+    if (!level) continue;
+    entries.push({
+      key: `maintenance-${issue.id}`,
+      level,
+      serviceLabel: "Maintenance & repairs",
+      title: issue.title,
+      reason:
+        level === "urgent"
+          ? "Due date has passed — this issue may need attention."
+          : null,
+      dateLabel: "Due",
+      date: issue.due_date,
+      href: `/properties/${issue.property_id}/maintenance/${issue.id}`,
     });
   }
 

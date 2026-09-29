@@ -12,6 +12,7 @@ import {
   ukToday,
   type AttentionEvidenceInput,
   type AttentionItemInput,
+  type AttentionMaintenanceInput,
 } from "@/lib/attention";
 import { propertyImageUrl } from "@/lib/property-images";
 import type { Property } from "@/lib/properties";
@@ -113,7 +114,7 @@ export default async function Home() {
     if (userData.user) {
       signedIn = true;
       // Read-only; RLS scopes every query to the signed-in user's own rows.
-      const [propertiesRes, itemsRes, evidenceRes] = await Promise.all([
+      const [propertiesRes, itemsRes, evidenceRes, maintenanceRes] = await Promise.all([
         // "*" (not named image columns) so this keeps working whether or
         // not the optional image columns have been added yet.
         supabase
@@ -129,9 +130,17 @@ export default async function Home() {
           .select("id, property_id, title, status, review_date")
           .neq("status", "archived")
           .not("review_date", "is", null),
+        // Before the maintenance_issues table exists this simply returns
+        // no rows, so the selector keeps working.
+        supabase
+          .from("maintenance_issues")
+          .select("id, property_id, title, status, due_date")
+          .in("status", ["open", "in_progress", "waiting"])
+          .not("due_date", "is", null),
       ]);
       const items = (itemsRes.data ?? []) as AttentionItemInput[];
       const evidence = (evidenceRes.data ?? []) as AttentionEvidenceInput[];
+      const maintenance = (maintenanceRes.data ?? []) as AttentionMaintenanceInput[];
       const today = ukToday();
 
       selectorProperties = (propertiesRes.data ?? []).map((p) => ({
@@ -146,6 +155,7 @@ export default async function Home() {
             items.filter((i) => i.property_id === p.id),
             evidence.filter((e) => e.property_id === p.id),
             today,
+            maintenance.filter((m) => m.property_id === p.id),
           ),
         ),
       }));

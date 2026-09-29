@@ -11,8 +11,10 @@ import ServiceCard from "@/components/ServiceCard";
 import {
   buildAttention,
   REMINDER_NOTICE,
+  ukToday,
   type AttentionEvidenceInput,
   type AttentionItemInput,
+  type AttentionMaintenanceInput,
 } from "@/lib/attention";
 import { propertyImageUrl } from "@/lib/property-images";
 import type { Property } from "@/lib/properties";
@@ -54,7 +56,7 @@ export default async function PropertyOverviewPage({
     .maybeSingle<Property>();
   if (!property) notFound();
 
-  const [itemsRes, evidenceRes] = await Promise.all([
+  const [itemsRes, evidenceRes, maintenanceRes] = await Promise.all([
     supabase
       .from("property_items")
       .select("id, property_id, title, item_type, status, due_date, review_date")
@@ -65,11 +67,20 @@ export default async function PropertyOverviewPage({
       .eq("property_id", id)
       .neq("status", "archived")
       .not("review_date", "is", null),
+    // Returns no rows (not an error page) before the table exists.
+    supabase
+      .from("maintenance_issues")
+      .select("id, property_id, title, status, due_date")
+      .eq("property_id", id)
+      .in("status", ["open", "in_progress", "waiting"])
+      .not("due_date", "is", null),
   ]);
 
   const attention = buildAttention(
     (itemsRes.data ?? []) as AttentionItemInput[],
     (evidenceRes.data ?? []) as AttentionEvidenceInput[],
+    ukToday(),
+    (maintenanceRes.data ?? []) as AttentionMaintenanceInput[],
   );
 
   return (
@@ -164,6 +175,19 @@ export default async function PropertyOverviewPage({
                     <path d="M14 3v5h5" />
                     <path d="M9 13h6" />
                     <path d="M9 17h4" />
+                  </svg>
+                }
+              />
+              <ServiceCard
+                title="Maintenance & repairs"
+                description="Keep faults, damage and repair tasks organised for this property."
+                href={`/properties/${property.id}/maintenance`}
+                actionLabel="Open maintenance"
+                tone="white"
+                className="sm:col-span-2"
+                icon={
+                  <svg {...iconProps}>
+                    <path d="M14.7 6.3a4 4 0 0 0-5.4 5.2L3.5 17.3a1.8 1.8 0 0 0 2.5 2.5l5.8-5.8a4 4 0 0 0 5.2-5.4l-2.4 2.4-2.1-.4-.4-2.1z" />
                   </svg>
                 }
               />

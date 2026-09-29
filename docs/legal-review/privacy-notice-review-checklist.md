@@ -15,6 +15,7 @@ this document, or any Privacy Notice based on it, without that review.
 | Evidence-record details | Category, title, notes, dates, status | `public.evidence_records` |
 | Uploaded attachments | Files (JPG/PNG/WebP/PDF), original filename, content type, size, upload date | Supabase Storage, private bucket `evidence-attachments`; metadata in `public.evidence_attachments` |
 | Property items/actions/reminders | Title, description, type, priority, status, due/review/completed/submitted dates, destination, notes | `public.property_items` |
+| Maintenance issues (added in Phase 7a, pending review) | Per property: title, optional location within the property, optional description, priority, status, reported/due/resolved dates, optional free-text notes. No photos, attachments, contractor or guest fields. Free-text description/notes could still contain third-party personal data (e.g. a contractor's or guest's name) if a user types it | `public.maintenance_issues` |
 | Technical/session data | Authentication session cookies necessary to keep a user signed in | Managed by Supabase Auth / `@supabase/ssr` |
 
 ## Checklist — information still required before a public Privacy Notice can be finalised

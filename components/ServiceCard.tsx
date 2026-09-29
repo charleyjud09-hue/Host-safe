@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 const tones = {
   teal: "bg-teal-50 ring-teal-200/80",
   paper: "bg-paper-deep ring-paper-line",
+  white: "bg-white ring-slate-200",
 } as const;
 
 /** One HostSafe property service. Only rendered for services with a working route. */
@@ -14,6 +15,7 @@ export default function ServiceCard({
   actionLabel,
   icon,
   tone = "teal",
+  className = "",
 }: {
   title: string;
   description: string;
@@ -21,9 +23,11 @@ export default function ServiceCard({
   actionLabel: string;
   icon: ReactNode;
   tone?: keyof typeof tones;
+  /** Extra layout classes, e.g. to span the full grid width. */
+  className?: string;
 }) {
   return (
-    <div className={`flex flex-col rounded-2xl p-6 ring-1 sm:p-7 ${tones[tone]}`}>
+    <div className={`flex flex-col rounded-2xl p-6 ring-1 sm:p-7 ${tones[tone]} ${className}`}>
       <div
         aria-hidden
         className="grid h-12 w-12 place-items-center rounded-xl bg-white text-action shadow-sm ring-1 ring-slate-200/70"

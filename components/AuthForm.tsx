@@ -71,7 +71,7 @@ export default function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-lg bg-navy px-6 py-3 font-semibold text-white hover:bg-navy-light disabled:opacity-60"
+        className="w-full rounded-lg bg-action px-6 py-3 font-semibold text-white hover:bg-action-hover disabled:opacity-60"
       >
         {pending
           ? "Please wait..."

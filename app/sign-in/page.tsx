@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import AuthForm from "@/components/AuthForm";
+import AppShell from "@/components/AppShell";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 
@@ -17,7 +18,7 @@ export default async function SignInPage({
   return (
     <>
       <Header />
-      <main className="flex-1">
+      <AppShell>
         <div className="mx-auto max-w-md px-5 py-12">
           <h1 className="text-3xl font-semibold text-navy">Sign in</h1>
           {notice === "confirm-failed" && (
@@ -34,7 +35,7 @@ export default async function SignInPage({
             <AuthForm mode="sign-in" />
           </div>
         </div>
-      </main>
+      </AppShell>
       <Footer />
     </>
   );

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import AuthForm from "@/components/AuthForm";
+import AppShell from "@/components/AppShell";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 
@@ -11,7 +12,7 @@ export default function SignUpPage() {
   return (
     <>
       <Header />
-      <main className="flex-1">
+      <AppShell>
         <div className="mx-auto max-w-md px-5 py-12">
           <h1 className="text-3xl font-semibold text-navy">
             Create a free account
@@ -24,7 +25,7 @@ export default function SignUpPage() {
             <AuthForm mode="sign-up" />
           </div>
         </div>
-      </main>
+      </AppShell>
       <Footer />
     </>
   );

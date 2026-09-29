@@ -3,7 +3,10 @@ import { notFound, redirect } from "next/navigation";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import PropertyForm from "@/components/PropertyForm";
+import PropertyImageForm from "@/components/PropertyImageForm";
 import { updateProperty } from "@/app/properties/actions";
+import { removePropertyImage, uploadPropertyImage } from "@/app/properties/images/actions";
+import { propertyImageUrl } from "@/lib/property-images";
 import { safePropertyReturnTo, type Property } from "@/lib/properties";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
@@ -57,6 +60,27 @@ export default async function EditPropertyPage({
               cancelHref={safeReturnTo ?? "/dashboard"}
             />
           </div>
+
+          <section
+            aria-labelledby="image-heading"
+            className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8"
+          >
+            <h2 id="image-heading" className="text-xl font-semibold text-navy">
+              Property image
+            </h2>
+            <p className="mt-1 mb-5 text-sm text-slate-600">
+              Optional. Shown on your property card and overview.
+            </p>
+            <PropertyImageForm
+              imageUrl={
+                property.image_path
+                  ? propertyImageUrl(property.id, property.image_updated_at ?? null)
+                  : null
+              }
+              uploadAction={uploadPropertyImage.bind(null, property.id, safeReturnTo)}
+              removeAction={removePropertyImage.bind(null, property.id, safeReturnTo)}
+            />
+          </section>
         </div>
       </main>
       <Footer />

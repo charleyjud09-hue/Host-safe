@@ -8,6 +8,12 @@ export type Property = {
   notes: string | null;
   created_at: string;
   updated_at: string;
+  // Optional private property image. Optional in the type so pages keep
+  // working before the image columns exist in the database.
+  image_path?: string | null;
+  image_content_type?: string | null;
+  image_size_bytes?: number | null;
+  image_updated_at?: string | null;
 };
 
 export type PropertyInput = {

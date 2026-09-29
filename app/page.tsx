@@ -4,6 +4,14 @@ import type { ReactNode } from "react";
 import Disclaimer from "@/components/Disclaimer";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import PropertySelector, { type SelectorProperty } from "@/components/PropertySelector";
+import {
+  buildAttention,
+  countByLevel,
+  ukToday,
+  type AttentionEvidenceInput,
+  type AttentionItemInput,
+} from "@/lib/attention";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -94,116 +102,52 @@ const eyebrow =
 
 export default async function Home() {
   let signedIn = false;
-  let userEmail: string | null = null;
-  let properties: { id: string; name: string }[] = [];
+  let selectorProperties: SelectorProperty[] = [];
 
   if (isSupabaseConfigured) {
     const supabase = await createClient();
     const { data: userData } = await supabase.auth.getUser();
     if (userData.user) {
       signedIn = true;
-      userEmail = userData.user.email ?? null;
-      const { data } = await supabase
-        .from("properties")
-        .select("id, name")
-        .order("created_at", { ascending: true });
-      properties = data ?? [];
+      // Read-only; RLS scopes every query to the signed-in user's own rows.
+      const [propertiesRes, itemsRes, evidenceRes] = await Promise.all([
+        supabase
+          .from("properties")
+          .select("id, name")
+          .order("created_at", { ascending: true }),
+        supabase
+          .from("property_items")
+          .select("id, property_id, title, item_type, status, due_date, review_date"),
+        supabase
+          .from("evidence_records")
+          .select("id, property_id, title, status, review_date")
+          .neq("status", "archived")
+          .not("review_date", "is", null),
+      ]);
+      const items = (itemsRes.data ?? []) as AttentionItemInput[];
+      const evidence = (evidenceRes.data ?? []) as AttentionEvidenceInput[];
+      const today = ukToday();
+
+      selectorProperties = (propertiesRes.data ?? []).map((p) => ({
+        id: p.id,
+        name: p.name,
+        counts: countByLevel(
+          buildAttention(
+            items.filter((i) => i.property_id === p.id),
+            evidence.filter((e) => e.property_id === p.id),
+            today,
+          ),
+        ),
+      }));
     }
   }
 
   if (signedIn) {
-    const propertyCount = properties.length;
-    const singleProperty = propertyCount === 1 ? properties[0] : null;
-
     return (
       <>
         <Header />
         <main className="flex-1">
-          <section className="bg-navy text-white">
-            <div className="mx-auto max-w-5xl px-5 py-16 sm:py-20">
-              <p className="inline-block rounded-full bg-white/10 px-3 py-1 text-sm text-teal-200">
-                Welcome back
-              </p>
-              <h1 className="mt-6 max-w-2xl text-3xl font-semibold leading-tight sm:text-4xl">
-                Welcome back to HostSafe{userEmail ? `, ${userEmail}` : ""}
-              </h1>
-              <p className="mt-4 max-w-2xl text-lg text-slate-200">
-                Your property fire-safety information is organised here. Go
-                to your dashboard to continue.
-              </p>
-              <div className="mt-8">
-                <Link
-                  href="/dashboard"
-                  className="inline-block rounded-lg bg-teal-400 px-6 py-3 font-semibold text-navy hover:bg-teal-300"
-                >
-                  Go to my dashboard
-                </Link>
-              </div>
-            </div>
-          </section>
-
-          <section className="mx-auto max-w-5xl px-5 py-12">
-            <div className="grid gap-4 sm:grid-cols-3">
-              <Link
-                href="/properties/new"
-                className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:border-navy"
-              >
-                <h2 className="font-semibold text-navy">Add a property</h2>
-                <p className="mt-1 text-sm text-slate-600">
-                  {propertyCount === 0
-                    ? "Get started by adding your first property."
-                    : "Add another property to your account."}
-                </p>
-              </Link>
-
-              {singleProperty && (
-                <Link
-                  href={`/properties/${singleProperty.id}/check`}
-                  className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:border-navy"
-                >
-                  <h2 className="font-semibold text-navy">
-                    Take a property check
-                  </h2>
-                  <p className="mt-1 text-sm text-slate-600">
-                    Six quick questions for {singleProperty.name}.
-                  </p>
-                </Link>
-              )}
-              {propertyCount > 1 && (
-                <Link
-                  href="/dashboard"
-                  className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:border-navy"
-                >
-                  <h2 className="font-semibold text-navy">
-                    Take a property check
-                  </h2>
-                  <p className="mt-1 text-sm text-slate-600">
-                    Choose a property on your dashboard to check.
-                  </p>
-                </Link>
-              )}
-
-              {propertyCount > 0 && (
-                <Link
-                  href="/dashboard"
-                  className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:border-navy"
-                >
-                  <h2 className="font-semibold text-navy">View evidence</h2>
-                  <p className="mt-1 text-sm text-slate-600">
-                    See evidence records for your properties on your
-                    dashboard.
-                  </p>
-                </Link>
-              )}
-            </div>
-
-            <p className="mt-8 text-sm text-slate-600">
-              HostSafe is an organisational and educational tool. It does not
-              provide legal advice, fire-risk assessments, or compliance
-              certification, and it does not confirm that a property is safe
-              or legally compliant.
-            </p>
-          </section>
+          <PropertySelector properties={selectorProperties} />
         </main>
         <Footer />
       </>

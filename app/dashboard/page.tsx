@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import AppShell from "@/components/AppShell";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import NeedsAttentionList, { type AttentionRow } from "@/components/NeedsAttentionList";
@@ -108,7 +109,7 @@ export default async function DashboardPage() {
     <>
       <Header />
       <SavePendingResult />
-      <main className="flex-1">
+      <AppShell>
         <div className="mx-auto max-w-2xl px-5 py-12">
           <h1 className="text-3xl font-semibold text-navy">Your dashboard</h1>
           <p className="mt-2 text-slate-700">
@@ -302,7 +303,7 @@ export default async function DashboardPage() {
                 </p>
                 <Link
                   href="/properties/new"
-                  className="mt-4 inline-block rounded-lg bg-navy px-5 py-2.5 font-medium text-white hover:bg-navy-light"
+                  className="mt-4 inline-block rounded-lg bg-action px-5 py-2.5 font-medium text-white hover:bg-action-hover"
                 >
                   Add your property
                 </Link>
@@ -366,7 +367,7 @@ export default async function DashboardPage() {
             </p>
           </div>
         </div>
-      </main>
+      </AppShell>
       <Footer />
     </>
   );

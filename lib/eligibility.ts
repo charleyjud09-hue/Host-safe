@@ -49,6 +49,25 @@ export const questions: Question[] = [
 
 export type Answers = Partial<Record<string, Answer>>;
 
+const validAnswers = new Set<string>(["yes", "no", "unsure"]);
+
+/**
+ * Returns a clean, complete set of answers (every question answered with a
+ * known value, nothing extra), or null. Used for answers held in the
+ * browser and for answers submitted to the server — never trust either.
+ */
+export function parseAnswers(value: unknown): Answers | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const input = value as Record<string, unknown>;
+  const clean: Answers = {};
+  for (const q of questions) {
+    const v = input[q.id];
+    if (typeof v !== "string" || !validAnswers.has(v)) return null;
+    clean[q.id] = v as Answer;
+  }
+  return clean;
+}
+
 /** True if any answer differs from what a small, simple property would give. */
 export function mayNeedTailoredAdvice(answers: Answers): boolean {
   return questions.some((q) => answers[q.id] !== q.expected);

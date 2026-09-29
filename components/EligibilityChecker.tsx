@@ -25,6 +25,7 @@ export default function EligibilityChecker({
   propertyId,
   propertyName,
   hasExistingResult = false,
+  onComplete,
 }: {
   accountsEnabled?: boolean;
   signedIn?: boolean;
@@ -32,6 +33,11 @@ export default function EligibilityChecker({
   propertyId?: string;
   propertyName?: string;
   hasExistingResult?: boolean;
+  /**
+   * Onboarding mode (adding a new property): instead of saving, hand the
+   * finished answers back so they're saved together with the new property.
+   */
+  onComplete?: (answers: Answers) => void;
 }) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});
@@ -71,6 +77,49 @@ export default function EligibilityChecker({
       // A successful save redirects server-side and never returns here.
       if (result?.error) setSaveError(result.error);
     });
+  }
+
+  if (done && onComplete) {
+    const flagged = mayNeedTailoredAdvice(answers);
+    return (
+      <div
+        className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8"
+        role="status"
+      >
+        <h2 className="text-2xl font-semibold text-navy">
+          {flagged ? "You may need more tailored advice" : "Your result"}
+        </h2>
+        <p
+          className={`mt-4 rounded-xl p-4 leading-relaxed ${
+            flagged
+              ? "bg-amber-50 text-amber-950 ring-1 ring-amber-200"
+              : "bg-teal-50 text-slate-800 ring-1 ring-teal-200"
+          }`}
+        >
+          {flagged ? unsuitableMessage : suitableMessage}
+        </p>
+        <p className="mt-4 text-sm text-slate-600">
+          This is a simple guide based only on what you told us. Your answers
+          will be saved with this property when you add it.
+        </p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <button
+            type="button"
+            onClick={() => onComplete(answers)}
+            className="rounded-lg bg-navy px-5 py-2.5 font-medium text-white hover:bg-navy-light"
+          >
+            Continue to property details
+          </button>
+          <button
+            type="button"
+            onClick={restart}
+            className="rounded-lg border border-slate-300 px-5 py-2.5 font-medium text-navy hover:bg-slate-50"
+          >
+            Start again
+          </button>
+        </div>
+      </div>
+    );
   }
 
   if (done) {

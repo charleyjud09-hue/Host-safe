@@ -19,6 +19,7 @@ export default function PropertyForm({
   submitLabel,
   returnTo,
   cancelHref,
+  hiddenFields,
 }: {
   action: (
     prev: PropertyFormState,
@@ -30,6 +31,8 @@ export default function PropertyForm({
   returnTo?: string;
   /** When set, shows a Cancel link to this (already-validated) location. */
   cancelHref?: string;
+  /** Extra values submitted with the form (the server validates them). */
+  hiddenFields?: Record<string, string>;
 }) {
   const [state, formAction, pending] = useActionState<PropertyFormState, FormData>(
     action,
@@ -55,6 +58,10 @@ export default function PropertyForm({
   return (
     <form action={formAction} className="space-y-5" noValidate>
       {returnTo && <input type="hidden" name="returnTo" value={returnTo} />}
+      {hiddenFields &&
+        Object.entries(hiddenFields).map(([name, value]) => (
+          <input key={name} type="hidden" name={name} value={value} />
+        ))}
       <div>
         <label htmlFor="name" className="font-medium text-navy">
           Property name

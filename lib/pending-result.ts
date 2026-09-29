@@ -1,7 +1,6 @@
-import { type Answers, questions } from "./eligibility";
+import { type Answers, parseAnswers } from "./eligibility";
 
 const KEY = "hostsafe:pending-result";
-const valid = new Set(["yes", "no", "unsure"]);
 
 /** Keeps answers in this browser only, until the user is signed in. */
 export function stashPendingResult(answers: Answers) {
@@ -12,22 +11,28 @@ export function stashPendingResult(answers: Answers) {
   }
 }
 
-/** Returns clean, complete answers, or null if nothing valid is stashed. */
-export function readPendingResult(): Answers | null {
+/** The raw stored string (stable between reads), or null. */
+export function readPendingRaw(): string | null {
   try {
-    const raw = localStorage.getItem(KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as Record<string, unknown>;
-    const clean: Answers = {};
-    for (const q of questions) {
-      const v = parsed[q.id];
-      if (typeof v !== "string" || !valid.has(v)) return null;
-      clean[q.id] = v as Answers[string];
-    }
-    return clean;
+    return localStorage.getItem(KEY);
   } catch {
     return null;
   }
+}
+
+/** Parses a raw stored value into clean, complete answers, or null. */
+export function parsePendingRaw(raw: string | null): Answers | null {
+  if (!raw) return null;
+  try {
+    return parseAnswers(JSON.parse(raw));
+  } catch {
+    return null;
+  }
+}
+
+/** Returns clean, complete answers, or null if nothing valid is stashed. */
+export function readPendingResult(): Answers | null {
+  return parsePendingRaw(readPendingRaw());
 }
 
 export function clearPendingResult() {

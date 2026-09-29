@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { mayNeedTailoredAdvice, parseAnswers, type Answers } from "@/lib/eligibility";
 import {
   parsePropertyInput,
   safePropertyReturnTo,
@@ -35,21 +36,61 @@ export async function createProperty(
     return { error: parsed.error, values: currentValues(formData) };
   }
 
+  // The one-time property questions, answered just before this form.
+  // Re-validated here against the fixed question list; never trusted.
+  let answers: Answers | null = null;
+  try {
+    answers = parseAnswers(JSON.parse(String(formData.get("eligibility_answers") ?? "")));
+  } catch {
+    answers = null;
+  }
+  if (!answers) {
+    return {
+      error: "Please answer the property questions before adding this property.",
+      values: currentValues(formData),
+    };
+  }
+
   const supabase = await createClient();
   const { data: userData } = await supabase.auth.getUser();
   if (!userData.user) redirect("/sign-in");
 
-  const { error } = await supabase.from("properties").insert(parsed.data);
+  const { data: created, error } = await supabase
+    .from("properties")
+    .insert(parsed.data)
+    .select("id")
+    .single();
 
-  if (error) {
-    console.error("Create property failed:", error.code, error.message);
+  if (error || !created) {
+    console.error("Create property failed:", error?.code, error?.message);
     return {
       error: "We could not save this property. Please try again.",
       values: currentValues(formData),
     };
   }
 
-  redirect("/dashboard");
+  const { error: checkError } = await supabase.from("eligibility_results").insert({
+    property_id: created.id,
+    answers,
+    may_need_tailored_advice: mayNeedTailoredAdvice(answers),
+  });
+
+  if (checkError) {
+    console.error("Save property check failed:", checkError.code, checkError.message);
+    // Roll back the just-created (still empty) property so the two are
+    // saved together or not at all.
+    await supabase
+      .from("properties")
+      .delete()
+      .eq("id", created.id)
+      .eq("user_id", userData.user.id);
+    return {
+      error: "We could not save this property. Please try again.",
+      values: currentValues(formData),
+    };
+  }
+
+  redirect(`/properties/${created.id}`);
 }
 
 export async function updateProperty(

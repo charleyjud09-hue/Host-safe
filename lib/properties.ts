@@ -24,6 +24,21 @@ export type PropertyFormState = {
   values?: PropertyInput;
 };
 
+/**
+ * Allow-list for where the property edit flow may return to. Only the
+ * property selector ("/") or this property's own overview are accepted —
+ * never an arbitrary or external path. Anything else returns null, and
+ * callers fall back to /dashboard (the original behaviour).
+ */
+export function safePropertyReturnTo(
+  value: unknown,
+  propertyId: string,
+): string | null {
+  if (value === "/") return "/";
+  if (value === `/properties/${propertyId}`) return value;
+  return null;
+}
+
 /** Turns raw form fields into a clean row, or returns an error message. */
 export function parsePropertyInput(
   formData: FormData,

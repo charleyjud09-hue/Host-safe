@@ -1,6 +1,7 @@
 import { Fraunces } from "next/font/google";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import AppShell from "@/components/AppShell";
 import Disclaimer from "@/components/Disclaimer";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
@@ -113,7 +114,7 @@ export default async function Home() {
       const [propertiesRes, itemsRes, evidenceRes] = await Promise.all([
         supabase
           .from("properties")
-          .select("id, name")
+          .select("id, name, address")
           .order("created_at", { ascending: true }),
         supabase
           .from("property_items")
@@ -131,6 +132,7 @@ export default async function Home() {
       selectorProperties = (propertiesRes.data ?? []).map((p) => ({
         id: p.id,
         name: p.name,
+        address: p.address,
         counts: countByLevel(
           buildAttention(
             items.filter((i) => i.property_id === p.id),
@@ -146,9 +148,9 @@ export default async function Home() {
     return (
       <>
         <Header />
-        <main className="flex-1">
+        <AppShell>
           <PropertySelector properties={selectorProperties} />
-        </main>
+        </AppShell>
         <Footer />
       </>
     );

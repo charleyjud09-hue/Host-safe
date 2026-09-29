@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 import type { Property, PropertyFormState, PropertyInput } from "@/lib/properties";
 
@@ -16,6 +17,8 @@ export default function PropertyForm({
   action,
   property,
   submitLabel,
+  returnTo,
+  cancelHref,
 }: {
   action: (
     prev: PropertyFormState,
@@ -23,6 +26,10 @@ export default function PropertyForm({
   ) => Promise<PropertyFormState>;
   property?: Property;
   submitLabel: string;
+  /** Where to go after saving. The server re-checks it against an allow-list. */
+  returnTo?: string;
+  /** When set, shows a Cancel link to this (already-validated) location. */
+  cancelHref?: string;
 }) {
   const [state, formAction, pending] = useActionState<PropertyFormState, FormData>(
     action,
@@ -47,6 +54,7 @@ export default function PropertyForm({
 
   return (
     <form action={formAction} className="space-y-5" noValidate>
+      {returnTo && <input type="hidden" name="returnTo" value={returnTo} />}
       <div>
         <label htmlFor="name" className="font-medium text-navy">
           Property name
@@ -146,13 +154,23 @@ export default function PropertyForm({
         </p>
       )}
 
-      <button
-        type="submit"
-        disabled={pending}
-        className="w-full rounded-lg bg-navy px-6 py-3 font-semibold text-white hover:bg-navy-light disabled:opacity-60 sm:w-auto"
-      >
-        {pending ? "Saving..." : submitLabel}
-      </button>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <button
+          type="submit"
+          disabled={pending}
+          className="w-full rounded-lg bg-navy px-6 py-3 font-semibold text-white hover:bg-navy-light disabled:opacity-60 sm:w-auto"
+        >
+          {pending ? "Saving..." : submitLabel}
+        </button>
+        {cancelHref && (
+          <Link
+            href={cancelHref}
+            className="w-full rounded-lg border border-slate-300 bg-white px-6 py-3 text-center font-semibold text-navy hover:bg-slate-50 sm:w-auto"
+          >
+            Cancel
+          </Link>
+        )}
+      </div>
     </form>
   );
 }

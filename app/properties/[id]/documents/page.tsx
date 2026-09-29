@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import AppShell from "@/components/AppShell";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { formatDisplayDate } from "@/lib/attention";
@@ -70,7 +71,7 @@ export default async function DocumentsAndRenewalsPage({
   return (
     <>
       <Header />
-      <main className="flex-1">
+      <AppShell>
         <div className="mx-auto max-w-3xl px-5 py-10 sm:py-12">
           <nav aria-label="Breadcrumb" className="text-sm text-slate-600">
             <Link href="/" className="hover:text-navy">
@@ -88,7 +89,7 @@ export default async function DocumentsAndRenewalsPage({
             </h1>
             <Link
               href={`/properties/${property.id}/evidence/new`}
-              className="rounded-lg bg-navy px-4 py-2 text-sm font-medium text-white hover:bg-navy-light"
+              className="rounded-xl bg-action px-4 py-2.5 text-sm font-semibold text-white hover:bg-action-hover"
             >
               Add record
             </Link>
@@ -100,30 +101,33 @@ export default async function DocumentsAndRenewalsPage({
             effect of anything you upload.
           </p>
 
-          <div className="mt-6 flex gap-2 text-sm" role="tablist" aria-label="Record view">
+          {/* Plain links between two views; aria-current marks the one shown. */}
+          <nav aria-label="Record view" className="mt-6 flex gap-2 text-sm">
             <Link
               href={base}
-              role="tab"
-              aria-selected={!showArchived}
-              className={`rounded-lg px-3 py-1.5 font-medium ${
-                !showArchived ? "bg-navy text-white" : "text-navy hover:bg-slate-100"
+              aria-current={!showArchived ? "page" : undefined}
+              className={`rounded-xl px-3.5 py-2 font-medium ${
+                !showArchived
+                  ? "bg-action text-white"
+                  : "bg-white text-navy ring-1 ring-slate-200 hover:bg-slate-50"
               }`}
             >
               Current records
             </Link>
             <Link
               href={`${base}?show=archived`}
-              role="tab"
-              aria-selected={showArchived}
-              className={`rounded-lg px-3 py-1.5 font-medium ${
-                showArchived ? "bg-navy text-white" : "text-navy hover:bg-slate-100"
+              aria-current={showArchived ? "page" : undefined}
+              className={`rounded-xl px-3.5 py-2 font-medium ${
+                showArchived
+                  ? "bg-action text-white"
+                  : "bg-white text-navy ring-1 ring-slate-200 hover:bg-slate-50"
               }`}
             >
               Archived ({archivedCount})
             </Link>
-          </div>
+          </nav>
 
-          <section className="mt-4 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
+          <section className="mt-4 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-card">
             {records.length === 0 ? (
               <p className="text-slate-700">
                 {showArchived
@@ -165,7 +169,7 @@ export default async function DocumentsAndRenewalsPage({
             )}
           </section>
         </div>
-      </main>
+      </AppShell>
       <Footer />
     </>
   );

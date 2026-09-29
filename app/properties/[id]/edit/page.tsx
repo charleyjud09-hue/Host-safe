@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import PropertyForm from "@/components/PropertyForm";
 import { updateProperty } from "@/app/properties/actions";
-import type { Property } from "@/lib/properties";
+import { safePropertyReturnTo, type Property } from "@/lib/properties";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -14,11 +14,14 @@ export const metadata: Metadata = {
 
 export default async function EditPropertyPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ returnTo?: string }>;
 }) {
   if (!isSupabaseConfigured) redirect("/sign-in");
   const { id } = await params;
+  const { returnTo } = await searchParams;
 
   const supabase = await createClient();
   const { data: userData } = await supabase.auth.getUser();
@@ -33,6 +36,8 @@ export default async function EditPropertyPage({
   if (!property) notFound();
 
   const action = updateProperty.bind(null, property.id);
+  // Only "/" or this property's overview; anything else keeps /dashboard.
+  const safeReturnTo = safePropertyReturnTo(returnTo, property.id);
 
   return (
     <>
@@ -48,6 +53,8 @@ export default async function EditPropertyPage({
               action={action}
               property={property}
               submitLabel="Save changes"
+              returnTo={safeReturnTo ?? undefined}
+              cancelHref={safeReturnTo ?? "/dashboard"}
             />
           </div>
         </div>

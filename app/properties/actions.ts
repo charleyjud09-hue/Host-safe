@@ -1,7 +1,11 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { parsePropertyInput, type PropertyFormState } from "@/lib/properties";
+import {
+  parsePropertyInput,
+  safePropertyReturnTo,
+  type PropertyFormState,
+} from "@/lib/properties";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -79,5 +83,7 @@ export async function updateProperty(
     };
   }
 
-  redirect("/dashboard");
+  // Re-validated here, never trusted from the form: only "/" or this
+  // property's overview are allowed; otherwise keep the original /dashboard.
+  redirect(safePropertyReturnTo(formData.get("returnTo"), propertyId) ?? "/dashboard");
 }

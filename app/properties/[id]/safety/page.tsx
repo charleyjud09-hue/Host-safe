@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import AppShell from "@/components/AppShell";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import {
@@ -54,7 +55,7 @@ export default async function SafetyAndChecksPage({
   return (
     <>
       <Header />
-      <main className="flex-1">
+      <AppShell>
         <div className="mx-auto max-w-3xl px-5 py-10 sm:py-12">
           <nav aria-label="Breadcrumb" className="text-sm text-slate-600">
             <Link href="/" className="hover:text-navy">
@@ -76,14 +77,14 @@ export default async function SafetyAndChecksPage({
             legal compliance result.
           </p>
 
-          <section className="mt-8 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm sm:p-8">
+          <section className="mt-8 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-card sm:p-8">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="text-xl font-semibold text-navy">
                 Latest property check
               </h2>
               <Link
                 href={`/properties/${property.id}/check`}
-                className="rounded-lg bg-navy px-4 py-2 text-sm font-medium text-white hover:bg-navy-light"
+                className="rounded-xl bg-action px-4 py-2.5 text-sm font-semibold text-white hover:bg-action-hover"
               >
                 {latest ? "Update property check" : "Take property check"}
               </Link>
@@ -126,7 +127,7 @@ export default async function SafetyAndChecksPage({
             )}
           </section>
         </div>
-      </main>
+      </AppShell>
       <Footer />
     </>
   );

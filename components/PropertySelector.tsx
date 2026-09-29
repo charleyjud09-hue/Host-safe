@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import PropertyImagePlaceholder from "@/components/PropertyImagePlaceholder";
 import { type AttentionLevel } from "@/lib/attention";
@@ -6,6 +7,8 @@ export type SelectorProperty = {
   id: string;
   name: string;
   address: string;
+  /** Owner-checked image route, or null to show the placeholder. */
+  imageUrl: string | null;
   counts: Record<AttentionLevel, number>;
 };
 
@@ -111,7 +114,20 @@ export default function PropertySelector({
             key={p.id}
             className="relative flex flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-card"
           >
-            <PropertyImagePlaceholder className="h-32 sm:h-36" />
+            {p.imageUrl ? (
+              <div className="relative h-32 bg-paper-deep sm:h-36">
+                <Image
+                  src={p.imageUrl}
+                  alt=""
+                  fill
+                  unoptimized
+                  sizes="(min-width: 640px) 480px, 100vw"
+                  className="object-cover"
+                />
+              </div>
+            ) : (
+              <PropertyImagePlaceholder className="h-32 sm:h-36" />
+            )}
             <Link
               href={`/properties/${p.id}/edit?returnTo=/`}
               aria-label={`Edit property: ${p.name}`}

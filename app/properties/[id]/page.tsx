@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import AppShell from "@/components/AppShell";
@@ -13,6 +14,8 @@ import {
   type AttentionEvidenceInput,
   type AttentionItemInput,
 } from "@/lib/attention";
+import { propertyImageUrl } from "@/lib/property-images";
+import type { Property } from "@/lib/properties";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -43,11 +46,12 @@ export default async function PropertyOverviewPage({
   const { data: userData } = await supabase.auth.getUser();
   if (!userData.user) redirect("/sign-in");
 
+  // "*" so this works whether or not the optional image columns exist yet.
   const { data: property } = await supabase
     .from("properties")
-    .select("id, name, address")
+    .select("*")
     .eq("id", id)
-    .maybeSingle();
+    .maybeSingle<Property>();
   if (!property) notFound();
 
   const [itemsRes, evidenceRes] = await Promise.all([
@@ -81,7 +85,20 @@ export default async function PropertyOverviewPage({
             </nav>
 
             <div className="mt-5 flex flex-col gap-5 sm:flex-row sm:items-center">
-              <PropertyImagePlaceholder className="h-40 w-full shrink-0 rounded-2xl ring-1 ring-paper-line sm:h-24 sm:w-36" />
+              {property.image_path ? (
+                <div className="relative h-40 w-full shrink-0 overflow-hidden rounded-2xl bg-paper-deep ring-1 ring-paper-line sm:h-24 sm:w-36">
+                  <Image
+                    src={propertyImageUrl(property.id, property.image_updated_at ?? null)}
+                    alt=""
+                    fill
+                    unoptimized
+                    sizes="(min-width: 640px) 144px, 100vw"
+                    className="object-cover"
+                  />
+                </div>
+              ) : (
+                <PropertyImagePlaceholder className="h-40 w-full shrink-0 rounded-2xl ring-1 ring-paper-line sm:h-24 sm:w-36" />
+              )}
               <div className="min-w-0 flex-1">
                 <h1 className="text-3xl font-semibold tracking-tight text-navy sm:text-4xl">
                   {property.name}

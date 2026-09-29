@@ -13,6 +13,8 @@ import {
   type AttentionEvidenceInput,
   type AttentionItemInput,
 } from "@/lib/attention";
+import { propertyImageUrl } from "@/lib/property-images";
+import type { Property } from "@/lib/properties";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -112,10 +114,13 @@ export default async function Home() {
       signedIn = true;
       // Read-only; RLS scopes every query to the signed-in user's own rows.
       const [propertiesRes, itemsRes, evidenceRes] = await Promise.all([
+        // "*" (not named image columns) so this keeps working whether or
+        // not the optional image columns have been added yet.
         supabase
           .from("properties")
-          .select("id, name, address")
-          .order("created_at", { ascending: true }),
+          .select("*")
+          .order("created_at", { ascending: true })
+          .returns<Property[]>(),
         supabase
           .from("property_items")
           .select("id, property_id, title, item_type, status, due_date, review_date"),
@@ -133,6 +138,9 @@ export default async function Home() {
         id: p.id,
         name: p.name,
         address: p.address,
+        imageUrl: p.image_path
+          ? propertyImageUrl(p.id, p.image_updated_at ?? null)
+          : null,
         counts: countByLevel(
           buildAttention(
             items.filter((i) => i.property_id === p.id),

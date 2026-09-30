@@ -32,6 +32,9 @@ export default async function Header() {
               <Link href="/" className={linkClass}>
                 My properties
               </Link>
+              <Link href="/account" className={linkClass}>
+                Account
+              </Link>
               <form action={signOut}>
                 <button type="submit" className={linkClass}>
                   Sign out

@@ -4,7 +4,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 // Only these in-app pages may be continued to after an email link.
-const allowedNext = new Set(["/reset-password"]);
+const allowedNext = new Set(["/reset-password", "/account"]);
 
 // The links in the confirmation and password-reset emails land here.
 export async function GET(request: NextRequest) {
@@ -15,6 +15,7 @@ export async function GET(request: NextRequest) {
   const nextParam = searchParams.get("next");
   const next = nextParam && allowedNext.has(nextParam) ? nextParam : null;
   const isReset = next === "/reset-password" || type === "recovery";
+  const isEmailChange = next === "/account" || type === "email_change";
 
   if (isSupabaseConfigured) {
     const supabase = await createClient();
@@ -30,13 +31,20 @@ export async function GET(request: NextRequest) {
     }
 
     if (!error) {
-      return NextResponse.redirect(`${origin}${isReset ? "/reset-password" : "/"}`);
+      const to = isReset
+        ? "/reset-password"
+        : isEmailChange
+          ? "/account?notice=email-confirmed"
+          : "/";
+      return NextResponse.redirect(`${origin}${to}`);
     }
   }
 
   return NextResponse.redirect(
     isReset
       ? `${origin}/forgot-password?notice=link-failed`
-      : `${origin}/sign-in?notice=confirm-failed`,
+      : isEmailChange
+        ? `${origin}/account/email?notice=link-failed`
+        : `${origin}/sign-in?notice=confirm-failed`,
   );
 }

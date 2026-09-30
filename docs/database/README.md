@@ -14,6 +14,7 @@ Files are named in the order they were applied.
 | `2026-09-30_02_calendar_stay_times.sql` | 30 Sep 2026 | Optional check-in/check-out times on guest stays, plus the time-based no-overlap rule for same-day turnovers |
 | `2026-09-30_03_storage_policy_fix_and_property_image_policies.sql` | 30 Sep 2026 | Replaces the broken maintenance-photos upload policy; adds the missing property-images Storage policies |
 | `2026-09-30_04_property_images_columns_and_bucket.sql` | 30 Sep 2026 | Property image columns on `properties` and the private `property-images` bucket (these had never been applied) |
+| `2026-09-30_05_delete_my_account.sql` | **Not yet applied** — update this row once run | `delete_my_account()` function used by Account settings → Delete your account |
 
 ## Not yet recorded here
 

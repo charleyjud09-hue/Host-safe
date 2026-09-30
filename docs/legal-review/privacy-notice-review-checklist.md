@@ -33,7 +33,9 @@ this document, or any Privacy Notice based on it, without that review.
       data, and what transfer mechanism applies, if outside the UK/EEA)
 - [ ] Retention periods for each data category (see
       `retention-and-deletion-decisions.md` — not yet decided)
-- [ ] Account-deletion process (not yet built — see same file)
+- [ ] Account-deletion process (self-service immediate deletion built on
+      30 Sep 2026 under Account settings; the Privacy Notice must describe
+      it and any backup-retention caveat — see same file, items 2 and 4)
 - [ ] Backup/deletion handling (whether Supabase's own infrastructure
       backups retain deleted data, and for how long)
 - [ ] Data-subject-rights process (how a user exercises access, correction,

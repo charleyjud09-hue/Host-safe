@@ -16,7 +16,13 @@ after an account is last used? Indefinitely, or after a defined period of
 inactivity?
 
 ## 2. What happens after account deletion
-**Current state:** there is no account-deletion feature in the app yet.
+**Current state (from 30 Sep 2026):** Account settings → Delete your account
+(password and typed "DELETE" required) immediately and permanently removes
+every uploaded file, every database row the user owns and the login itself.
+There is no grace period and no copy kept by the app. Supabase's own
+infrastructure backups are outside the app's control (see item 4). This
+behaviour was built at the founder's request as the simplest option and is
+still subject to the decision below.
 **Decision needed from founder:** when a user deletes their account, should
 everything (properties, evidence, attachments, items) be deleted
 immediately, after a grace period, or retained for some purpose (e.g.

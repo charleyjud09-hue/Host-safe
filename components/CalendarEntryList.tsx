@@ -3,7 +3,11 @@ import type { ReactNode } from "react";
 import { formatDisplayDate } from "@/lib/attention";
 import {
   calendarEntryTypeLabel,
+  formatGap,
+  isZeroGap,
+  shortTime,
   stayNights,
+  ZERO_GAP_WARNING,
   type CalendarEntryType,
   type CalendarListEntry,
   type Turnover,
@@ -69,18 +73,49 @@ const typeStyle: Record<CalendarEntryType, { border: string; icon: ReactNode }> 
   },
 };
 
+function withTime(date: string, time: string | null): string {
+  const t = shortTime(time);
+  return t ? `${formatDisplayDate(date)}, ${t}` : formatDisplayDate(date);
+}
+
 function dateText(entry: CalendarListEntry): string {
+  if (entry.entry_type === "guest_stay") {
+    return `${withTime(entry.start_date, entry.arrival_time)} – ${withTime(
+      entry.end_date,
+      entry.departure_time,
+    )}`;
+  }
   if (entry.start_date === entry.end_date) return formatDisplayDate(entry.start_date);
   return `${formatDisplayDate(entry.start_date)} – ${formatDisplayDate(entry.end_date)}`;
 }
 
-function turnoverText(t: Turnover): string {
-  const base = `Turnover ${formatDisplayDate(t.date)}`;
+export function turnoverText(t: Turnover): string {
+  const base = `Turnover ${withTime(t.date, t.departureTime)}`;
   if (t.gapDays === null || t.nextArrival === null) return base;
-  if (t.gapDays === 0) return `${base} · Same-day turnover`;
-  return `${base} · Next arrival ${formatDisplayDate(t.nextArrival)} (${t.gapDays} ${
-    t.gapDays === 1 ? "day" : "days"
-  } later)`;
+  if (t.gapDays === 0) {
+    if (t.gapMinutes === null) return `${base} · Same-day turnover`;
+    return `${base} · Same-day turnover · ${formatGap(t.gapMinutes)} between check-out and check-in (${t.nextArrivalTime})`;
+  }
+  const gap =
+    t.gapMinutes !== null
+      ? formatGap(t.gapMinutes)
+      : `${t.gapDays} ${t.gapDays === 1 ? "day" : "days"}`;
+  return `${base} · Next arrival ${withTime(t.nextArrival, t.nextArrivalTime)} (${gap} later)`;
+}
+
+export function ZeroGapWarning() {
+  return (
+    <p className="mt-2 flex items-start gap-2 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-950 ring-1 ring-amber-200">
+      <svg {...svgProps} className="mt-0.5 shrink-0">
+        <path d="M12 3 2 20h20z" />
+        <path d="M12 10v4" />
+        <path d="M12 17h.01" />
+      </svg>
+      <span>
+        <span className="font-semibold">Warning:</span> {ZERO_GAP_WARNING}
+      </span>
+    </p>
+  );
 }
 
 /**
@@ -147,6 +182,7 @@ export default function CalendarEntryList({
               {turnover && (
                 <p className="mt-1 text-sm text-slate-600">{turnoverText(turnover)}</p>
               )}
+              {isZeroGap(turnover) && <ZeroGapWarning />}
             </div>
             <Link
               href={`/properties/${propertyId}/calendar/${entry.id}`}

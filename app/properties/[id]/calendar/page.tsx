@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import AppShell from "@/components/AppShell";
-import CalendarEntryList from "@/components/CalendarEntryList";
+import CalendarEntryList, { turnoverText, ZeroGapWarning } from "@/components/CalendarEntryList";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { formatDisplayDate, ukToday } from "@/lib/attention";
@@ -12,6 +12,7 @@ import {
   groupByMonth,
   isCurrentStay,
   isPastEntry,
+  isZeroGap,
   sortEntries,
   stayNights,
   TURNOVER_NOTICE,
@@ -108,10 +109,14 @@ export default async function CalendarPage({
               </p>
               <p className="mt-1 text-sm text-slate-600">
                 Guest stay · {stayNights(current)}{" "}
-                {stayNights(current) === 1 ? "night" : "nights"} · Departure{" "}
-                {formatDisplayDate(current.end_date)}
-                {currentTurnover?.gapDays === 0 && " · Same-day turnover"}
+                {stayNights(current) === 1 ? "night" : "nights"}
               </p>
+              {currentTurnover && (
+                <p className="mt-1 text-sm text-slate-600">
+                  {turnoverText(currentTurnover)}
+                </p>
+              )}
+              {isZeroGap(currentTurnover) && <ZeroGapWarning />}
               <Link
                 href={`${base}/${current.id}`}
                 className="mt-4 inline-block rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-navy hover:bg-slate-50"

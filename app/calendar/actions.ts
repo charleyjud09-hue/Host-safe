@@ -5,8 +5,10 @@ import {
   BLOCK_OVERLAP_ERROR,
   parseEntryInput,
   parseGuestStayInput,
+  sameDayTurnoverProblem,
   STAY_BLOCKED_ERROR,
   STAY_OVERLAP_ERROR,
+  TURNOVER_TIMES_DB_ERROR,
   type CalendarEntryType,
   type EntryFormState,
   type GuestStayFormState,
@@ -25,6 +27,14 @@ const notConfigured = {
 /** Postgres exclusion_violation: the database refused an overlapping entry. */
 const EXCLUSION_VIOLATION = "23P01";
 const BLOCK_CONSTRAINT = "calendar_entries_guest_stay_vs_blocking_block";
+const TIME_CONSTRAINT = "calendar_entries_guest_stays_no_time_overlap";
+
+type StayTimes = {
+  start_date: string;
+  end_date: string;
+  arrival_time: string | null;
+  departure_time: string | null;
+};
 
 /**
  * Confirms the signed-in user owns this property. RLS enforces this too;
@@ -57,10 +67,11 @@ const entryUrl = (propertyId: string, entryId: string) =>
 async function guestStayConflict(
   supabase: Supabase,
   propertyId: string,
-  arrival: string,
-  departure: string,
+  stay: StayTimes,
   excludeEntryId?: string,
 ): Promise<string | null> {
+  const arrival = stay.start_date;
+  const departure = stay.end_date;
   let stays = supabase
     .from("calendar_entries")
     .select("id")
@@ -85,6 +96,25 @@ async function guestStayConflict(
     .gte("end_date", arrival)
     .limit(1);
   if ((blockRows ?? []).length > 0) return STAY_BLOCKED_ERROR;
+
+  // Same-day turnovers: another planned stay leaving on this arrival date,
+  // or arriving on this departure date, needs times on both sides.
+  let neighbours = supabase
+    .from("calendar_entries")
+    .select("start_date, end_date, arrival_time, departure_time")
+    .eq("property_id", propertyId)
+    .eq("entry_type", "guest_stay")
+    .eq("status", "planned")
+    .or(`end_date.eq.${arrival},start_date.eq.${departure}`);
+  if (excludeEntryId) neighbours = neighbours.neq("id", excludeEntryId);
+  const { data: neighbourRows } = await neighbours;
+  for (const other of neighbourRows ?? []) {
+    const problem =
+      other.end_date === arrival
+        ? sameDayTurnoverProblem(other, stay, "arriving")
+        : sameDayTurnoverProblem(stay, other, "leaving");
+    if (problem) return problem;
+  }
 
   return null;
 }
@@ -114,7 +144,9 @@ async function blockConflictsWithStay(
  */
 function guestStayErrorFor(error: NonNullable<DbError>): string | null {
   if (error.code !== EXCLUSION_VIOLATION) return null;
-  return error.message?.includes(BLOCK_CONSTRAINT) ? STAY_BLOCKED_ERROR : STAY_OVERLAP_ERROR;
+  if (error.message?.includes(BLOCK_CONSTRAINT)) return STAY_BLOCKED_ERROR;
+  if (error.message?.includes(TIME_CONSTRAINT)) return TURNOVER_TIMES_DB_ERROR;
+  return STAY_OVERLAP_ERROR;
 }
 
 export async function createGuestStay(
@@ -129,12 +161,7 @@ export async function createGuestStay(
 
   const { supabase } = await requireOwnProperty(propertyId);
 
-  const conflict = await guestStayConflict(
-    supabase,
-    propertyId,
-    parsed.data.start_date as string,
-    parsed.data.end_date as string,
-  );
+  const conflict = await guestStayConflict(supabase, propertyId, parsed.data as StayTimes);
   if (conflict) return { error: conflict, values: parsed.values };
 
   const { error } = await supabase
@@ -172,8 +199,7 @@ export async function updateGuestStay(
   const conflict = await guestStayConflict(
     supabase,
     propertyId,
-    parsed.data.start_date as string,
-    parsed.data.end_date as string,
+    parsed.data as StayTimes,
     entryId,
   );
   if (conflict) return { error: conflict, values: parsed.values };

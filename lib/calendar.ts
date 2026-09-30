@@ -16,6 +16,12 @@ import { addDays } from "@/lib/attention";
  * - Planned work, planned cleanup and non-blocking custom blocks never take
  *   part in overlap checks.
  * - Two occupied ranges overlap when each starts before the other ends.
+ * - Guest stay times (optional): between planned guest stays, a stay also
+ *   occupies [arrival date + check-in time, departure date + check-out time).
+ *   A missing check-in counts as 00:00 and a missing check-out as 24:00, so
+ *   a same-day turnover is only accepted once the leaving stay has a
+ *   check-out time and the arriving stay a check-in time, with check-out at
+ *   or before check-in. A zero gap is allowed but flagged.
  *
  * This file implements the specification for display and friendly server
  * validation. The database implements the same rules independently in its
@@ -63,7 +69,7 @@ export function calendarEntryTypeLabel(v: string): string {
 
 /** Safe for lists: never includes guest name, count, booking reference or description. */
 export const CALENDAR_LIST_COLUMNS =
-  "id, property_id, entry_type, status, start_date, end_date, title, blocks_guest_stays";
+  "id, property_id, entry_type, status, start_date, end_date, arrival_time, departure_time, title, blocks_guest_stays";
 
 /** Only for an entry's own detail page. */
 export const CALENDAR_DETAIL_COLUMNS = `${CALENDAR_LIST_COLUMNS}, description, guest_first_name, guest_count, booking_reference`;
@@ -77,6 +83,10 @@ export type CalendarListEntry = {
   start_date: string;
   /** Guest stay: departure date (not part of the stay). Others: last day, inclusive. */
   end_date: string;
+  /** Guest stay only: optional check-in time (HH:MM:SS from the database). */
+  arrival_time: string | null;
+  /** Guest stay only: optional check-out time. */
+  departure_time: string | null;
   title: string | null;
   blocks_guest_stays: boolean | null;
 };
@@ -90,7 +100,9 @@ export type CalendarEntry = CalendarListEntry & {
 
 export type GuestStayInput = {
   arrival_date: string;
+  arrival_time: string;
   departure_date: string;
+  departure_time: string;
   guest_first_name: string;
   guest_count: string;
   booking_reference: string;
@@ -125,6 +137,31 @@ export const STAY_OVERLAP_ERROR =
 export const STAY_BLOCKED_ERROR =
   "These dates overlap a custom block that blocks guest stays for this property. Choose different dates.";
 
+export const CHECK_IN_TIME_NEEDED =
+  "Another guest stay checks out on this arrival date. Please add a check-in time.";
+
+export const CHECK_OUT_TIME_NEEDED =
+  "Another guest stay checks in on this departure date. Please add a check-out time.";
+
+export const OTHER_STAY_NEEDS_CHECK_OUT =
+  "Another guest stay checks out on this arrival date but has no check-out time. Add a check-out time to that stay first.";
+
+export const OTHER_STAY_NEEDS_CHECK_IN =
+  "Another guest stay checks in on this departure date but has no check-in time. Add a check-in time to that stay first.";
+
+export const TURNOVER_TIME_ERROR =
+  "On a same-day turnover, the check-out time must be no later than the next check-in time.";
+
+/** Database fallback when the time rule refuses a save. */
+export const TURNOVER_TIMES_DB_ERROR =
+  "On a same-day turnover, both stays need times, and the check-out time must be no later than the next check-in time.";
+
+export const ZERO_GAP_WARNING =
+  "Zero gap: check-out and the next check-in are at the same time, so there is no time for a turnover between these stays.";
+
+export const STAY_TIMES_HINT =
+  "Times are optional, but needed when another stay checks out or in on the same day.";
+
 export const BLOCK_OVERLAP_ERROR =
   "These dates overlap a planned guest stay for this property. Change the dates, or choose not to block guest stays.";
 
@@ -152,6 +189,51 @@ export const TURNOVER_NOTICE =
   "Turnover dates are worked out from guest departure dates. They do not mean the property has been cleaned or is ready, safe or suitable for guests.";
 
 const isoDate = /^\d{4}-\d{2}-\d{2}$/;
+const clockTime = /^([01]\d|2[0-3]):[0-5]\d$/;
+
+/** "10:00:00" (database) or "10:00" (form) → "10:00"; null stays null. */
+export function shortTime(t: string | null | undefined): string | null {
+  return t ? t.slice(0, 5) : null;
+}
+
+function minutesOf(t: string): number {
+  return Number(t.slice(0, 2)) * 60 + Number(t.slice(3, 5));
+}
+
+/** "5 hours", "1 hour 30 minutes", "2 days 5 hours" — neutral gap wording. */
+export function formatGap(totalMinutes: number): string {
+  const days = Math.floor(totalMinutes / 1440);
+  const hours = Math.floor((totalMinutes % 1440) / 60);
+  const minutes = totalMinutes % 60;
+  const part = (n: number, unit: string) => `${n} ${unit}${n === 1 ? "" : "s"}`;
+  const parts: string[] = [];
+  if (days) parts.push(part(days, "day"));
+  if (hours) parts.push(part(hours, "hour"));
+  if (minutes) parts.push(part(minutes, "minute"));
+  return parts.length ? parts.join(" ") : "no time";
+}
+
+/**
+ * Same-day turnover times rule, shared by the server pre-check. `leaving`
+ * checks out on the day `arriving` checks in. Returns a fixed message, or
+ * null when the pair is acceptable (a zero gap is acceptable).
+ */
+export function sameDayTurnoverProblem(
+  leaving: { departure_time: string | null },
+  arriving: { arrival_time: string | null },
+  savingSide: "leaving" | "arriving",
+): string | null {
+  const out = shortTime(leaving.departure_time);
+  const inn = shortTime(arriving.arrival_time);
+  if (savingSide === "arriving") {
+    if (!inn) return CHECK_IN_TIME_NEEDED;
+    if (!out) return OTHER_STAY_NEEDS_CHECK_OUT;
+  } else {
+    if (!out) return CHECK_OUT_TIME_NEEDED;
+    if (!inn) return OTHER_STAY_NEEDS_CHECK_IN;
+  }
+  return out > inn ? TURNOVER_TIME_ERROR : null;
+}
 
 function validDate(v: string) {
   return (
@@ -221,11 +303,21 @@ export function sortEntries<T extends CalendarListEntry>(entries: T[], descendin
 export type Turnover = {
   /** The stay's departure date. */
   date: string;
+  /** Check-out time, if recorded (HH:MM). */
+  departureTime: string | null;
   /** Arrival date of the next planned stay, if one is recorded. */
   nextArrival: string | null;
+  /** The next stay's check-in time, if recorded (HH:MM). */
+  nextArrivalTime: string | null;
   /** Days between departure and the next arrival; 0 is a same-day turnover. */
   gapDays: number | null;
+  /** Exact gap in minutes, only when both times are recorded. */
+  gapMinutes: number | null;
 };
+
+export function isZeroGap(t: Turnover | undefined): boolean {
+  return t?.gapMinutes === 0;
+}
 
 /**
  * Derived turnover for each planned guest stay: its departure date, and the
@@ -240,10 +332,19 @@ export function buildTurnovers(entries: CalendarListEntry[]): Record<string, Tur
   const result: Record<string, Turnover> = {};
   for (const stay of stays) {
     const next = stays.find((s) => s.id !== stay.id && s.start_date >= stay.end_date);
+    const departureTime = shortTime(stay.departure_time);
+    const nextArrivalTime = shortTime(next?.arrival_time);
+    const gapDays = next ? daysBetween(stay.end_date, next.start_date) : null;
     result[stay.id] = {
       date: stay.end_date,
+      departureTime,
       nextArrival: next?.start_date ?? null,
-      gapDays: next ? daysBetween(stay.end_date, next.start_date) : null,
+      nextArrivalTime,
+      gapDays,
+      gapMinutes:
+        gapDays !== null && departureTime && nextArrivalTime
+          ? gapDays * 1440 + minutesOf(nextArrivalTime) - minutesOf(departureTime)
+          : null,
     };
   }
   return result;
@@ -278,7 +379,10 @@ function readGuestStayValues(formData: FormData): GuestStayInput {
   const get = (k: string) => String(formData.get(k) ?? "");
   return {
     arrival_date: get("arrival_date"),
+    // Browsers may send "10:00:00" for a saved value; keep HH:MM.
+    arrival_time: get("arrival_time").slice(0, 5),
     departure_date: get("departure_date"),
+    departure_time: get("departure_time").slice(0, 5),
     guest_first_name: get("guest_first_name"),
     guest_count: get("guest_count"),
     booking_reference: get("booking_reference"),
@@ -309,6 +413,12 @@ export function parseGuestStayInput(
   if (values.departure_date <= values.arrival_date) {
     return { error: "The departure date must be after the arrival date.", values };
   }
+  if (values.arrival_time && !clockTime.test(values.arrival_time)) {
+    return { error: "Please enter a valid check-in time, or leave it blank.", values };
+  }
+  if (values.departure_time && !clockTime.test(values.departure_time)) {
+    return { error: "Please enter a valid check-out time, or leave it blank.", values };
+  }
   if (firstName.length > GUEST_FIRST_NAME_MAX) {
     return {
       error: `The guest first name must be ${GUEST_FIRST_NAME_MAX} characters or fewer.`,
@@ -336,6 +446,8 @@ export function parseGuestStayInput(
     data: {
       start_date: values.arrival_date,
       end_date: values.departure_date,
+      arrival_time: values.arrival_time || null,
+      departure_time: values.departure_time || null,
       guest_first_name: firstName || null,
       guest_count: count,
       booking_reference: reference || null,

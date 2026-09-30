@@ -10,6 +10,7 @@ import {
 } from "@/app/calendar/actions";
 import AppShell from "@/components/AppShell";
 import CalendarEntryForm from "@/components/CalendarEntryForm";
+import { ZeroGapWarning } from "@/components/CalendarEntryList";
 import ConfirmCalendarAction from "@/components/ConfirmCalendarAction";
 import Footer from "@/components/Footer";
 import GuestStayForm from "@/components/GuestStayForm";
@@ -20,6 +21,7 @@ import {
   calendarEntryTypeLabel,
   CANCEL_STAY_NOTICE,
   REMOVE_GUEST_NAME_NOTICE,
+  shortTime,
   stayNights,
   type CalendarEntry,
 } from "@/lib/calendar";
@@ -63,11 +65,32 @@ export default async function CalendarEntryPage({
   const listHref = `/properties/${property.id}/calendar`;
   const isStay = entry.entry_type === "guest_stay";
   const isCancelled = entry.status === "cancelled";
+
+  // Zero-gap warning: a planned stay leaving or arriving at exactly the
+  // same time as this one. Only dates and times are read — no guest details.
+  let zeroGap = false;
+  if (isStay && !isCancelled && (entry.arrival_time || entry.departure_time)) {
+    const { data: neighbours } = await supabase
+      .from("calendar_entries")
+      .select("start_date, end_date, arrival_time, departure_time")
+      .eq("property_id", id)
+      .eq("entry_type", "guest_stay")
+      .eq("status", "planned")
+      .neq("id", entry.id)
+      .or(`end_date.eq.${entry.start_date},start_date.eq.${entry.end_date}`);
+    zeroGap = (neighbours ?? []).some((n) =>
+      n.end_date === entry.start_date
+        ? !!entry.arrival_time && shortTime(n.departure_time) === shortTime(entry.arrival_time)
+        : !!entry.departure_time && shortTime(n.arrival_time) === shortTime(entry.departure_time),
+    );
+  }
   const label = calendarEntryTypeLabel(entry.entry_type);
   const card = "rounded-2xl border border-slate-200/80 bg-white p-6 shadow-card sm:p-8";
   const formKey = JSON.stringify([
     entry.start_date,
     entry.end_date,
+    entry.arrival_time,
+    entry.departure_time,
     entry.title,
     entry.description,
     entry.blocks_guest_stays,
@@ -105,6 +128,14 @@ export default async function CalendarEntryPage({
 
           <h1 className="mt-4 text-3xl font-semibold tracking-tight text-navy">{label}</h1>
           <p className="mt-2 text-slate-700">{summary}</p>
+          {isStay && (entry.arrival_time || entry.departure_time) && (
+            <p className="mt-1 text-sm text-slate-600">
+              {entry.arrival_time && `Check-in ${shortTime(entry.arrival_time)}`}
+              {entry.arrival_time && entry.departure_time && " · "}
+              {entry.departure_time && `Check-out ${shortTime(entry.departure_time)}`}
+            </p>
+          )}
+          {zeroGap && <ZeroGapWarning />}
 
           {isStay && isCancelled && (
             <section aria-labelledby="details-heading" className={`mt-8 ${card}`}>

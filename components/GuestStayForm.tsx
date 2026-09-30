@@ -8,6 +8,8 @@ import {
   GUEST_COUNT_MIN,
   GUEST_FIRST_NAME_MAX,
   GUEST_NAME_HINT,
+  shortTime,
+  STAY_TIMES_HINT,
   type CalendarEntry,
   type GuestStayFormState,
   type GuestStayInput,
@@ -29,14 +31,18 @@ export default function GuestStayForm({
   const initial: GuestStayInput = stay
     ? {
         arrival_date: stay.start_date,
+        arrival_time: shortTime(stay.arrival_time) ?? "",
         departure_date: stay.end_date,
+        departure_time: shortTime(stay.departure_time) ?? "",
         guest_first_name: stay.guest_first_name ?? "",
         guest_count: stay.guest_count === null ? "" : String(stay.guest_count),
         booking_reference: stay.booking_reference ?? "",
       }
     : {
         arrival_date: "",
+        arrival_time: "",
         departure_date: "",
+        departure_time: "",
         guest_first_name: "",
         guest_count: "",
         booking_reference: "",
@@ -88,6 +94,35 @@ export default function GuestStayForm({
             className={inputClass}
           />
         </div>
+        <div>
+          <label htmlFor="arrival_time" className="font-medium text-navy">
+            Check-in time {optional}
+          </label>
+          <input
+            id="arrival_time"
+            name="arrival_time"
+            type="time"
+            defaultValue={values.arrival_time}
+            aria-describedby="stay-times-hint"
+            className={inputClass}
+          />
+        </div>
+        <div>
+          <label htmlFor="departure_time" className="font-medium text-navy">
+            Check-out time {optional}
+          </label>
+          <input
+            id="departure_time"
+            name="departure_time"
+            type="time"
+            defaultValue={values.departure_time}
+            aria-describedby="stay-times-hint"
+            className={inputClass}
+          />
+        </div>
+        <p id="stay-times-hint" className="-mt-2 text-sm text-slate-600 sm:col-span-2">
+          {STAY_TIMES_HINT}
+        </p>
       </div>
 
       <div>

@@ -191,7 +191,7 @@ export default async function PropertyOverviewPage({
               />
               <ServiceCard
                 title="Stays & calendar"
-                description="Keep planned guest stays for this property in date order."
+                description="Organise guest stays, planned work, cleanups and blocked dates for this property."
                 href={`/properties/${property.id}/calendar`}
                 actionLabel="Open stays & calendar"
                 tone="teal"

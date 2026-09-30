@@ -9,13 +9,15 @@ import { ukToday } from "@/lib/attention";
 import {
   CALENDAR_LIST_COLUMNS,
   groupByMonth,
+  isPastEntry,
+  sortEntries,
   type CalendarListEntry,
 } from "@/lib/calendar";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Past & cancelled stays | HostSafe",
+  title: "Past & cancelled entries | HostSafe",
 };
 
 export default async function PastCalendarPage({
@@ -37,17 +39,21 @@ export default async function PastCalendarPage({
     .maybeSingle();
   if (!property) notFound();
 
-  // Cancelled stays, plus planned stays whose departure date has been
-  // reached. List columns only — no guest details.
+  const today = ukToday();
+
+  // Cancelled stays, plus entries that have finished. List columns only —
+  // no guest details or descriptions.
   const { data } = await supabase
     .from("calendar_entries")
     .select(CALENDAR_LIST_COLUMNS)
     .eq("property_id", id)
-    .eq("entry_type", "guest_stay")
-    .or(`status.eq.cancelled,end_date.lte.${ukToday()}`)
-    .order("start_date", { ascending: false })
+    .or(`status.eq.cancelled,end_date.lte.${today}`)
     .returns<CalendarListEntry[]>();
-  const months = groupByMonth(data ?? []);
+  const entries = sortEntries(
+    (data ?? []).filter((e) => e.status === "cancelled" || isPastEntry(e, today)),
+    true,
+  );
+  const months = groupByMonth(entries);
   const listHref = `/properties/${property.id}/calendar`;
 
   return (
@@ -66,16 +72,19 @@ export default async function PastCalendarPage({
           </nav>
 
           <h1 className="mt-4 text-3xl font-semibold tracking-tight text-navy">
-            Past &amp; cancelled guest stays
+            Past &amp; cancelled entries
           </h1>
+          <p className="mt-2 text-slate-700">
+            Cancelled guest stays are kept here as read-only records until you delete them.
+          </p>
 
           <section
-            aria-label="Past and cancelled guest stays"
+            aria-label="Past and cancelled entries"
             className="mt-6 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-card"
           >
             {months.length === 0 ? (
               <p className="text-slate-700">
-                No past or cancelled guest stays for this property.
+                No past or cancelled entries for this property.
               </p>
             ) : (
               months.map((month) => (

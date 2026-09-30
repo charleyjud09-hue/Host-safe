@@ -8,7 +8,7 @@ import {
   GUEST_COUNT_MIN,
   GUEST_FIRST_NAME_MAX,
   GUEST_NAME_HINT,
-  type GuestStay,
+  type CalendarEntry,
   type GuestStayFormState,
   type GuestStayInput,
 } from "@/lib/calendar";
@@ -21,7 +21,7 @@ export default function GuestStayForm({
   cancelHref,
 }: {
   action: (prev: GuestStayFormState, formData: FormData) => Promise<GuestStayFormState>;
-  stay?: GuestStay;
+  stay?: CalendarEntry;
   propertyName: string;
   submitLabel: string;
   cancelHref: string;

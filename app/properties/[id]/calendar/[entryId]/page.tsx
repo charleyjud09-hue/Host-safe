@@ -5,30 +5,33 @@ import {
   cancelGuestStay,
   deleteCalendarEntry,
   removeGuestName,
+  updateCalendarEntry,
   updateGuestStay,
 } from "@/app/calendar/actions";
 import AppShell from "@/components/AppShell";
+import CalendarEntryForm from "@/components/CalendarEntryForm";
 import ConfirmCalendarAction from "@/components/ConfirmCalendarAction";
 import Footer from "@/components/Footer";
 import GuestStayForm from "@/components/GuestStayForm";
 import Header from "@/components/Header";
 import { formatDisplayDate } from "@/lib/attention";
 import {
+  CALENDAR_DETAIL_COLUMNS,
+  calendarEntryTypeLabel,
   CANCEL_STAY_NOTICE,
-  GUEST_STAY_DETAIL_COLUMNS,
   REMOVE_GUEST_NAME_NOTICE,
   stayNights,
-  type GuestStay,
+  type CalendarEntry,
 } from "@/lib/calendar";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
-// Static on purpose: never a guest name, dates or booking reference.
+// Static on purpose: never a guest name, title, dates or booking reference.
 export const metadata: Metadata = {
-  title: "Guest stay | HostSafe",
+  title: "Calendar entry | HostSafe",
 };
 
-export default async function GuestStayPage({
+export default async function CalendarEntryPage({
   params,
 }: {
   params: Promise<{ id: string; entryId: string }>;
@@ -49,19 +52,31 @@ export default async function GuestStayPage({
 
   // RLS scopes this to the user's own entries; the property filter makes
   // sure an entry ID can't be viewed under a different property's URL.
-  const { data: stay } = await supabase
+  const { data: entry } = await supabase
     .from("calendar_entries")
-    .select(GUEST_STAY_DETAIL_COLUMNS)
+    .select(CALENDAR_DETAIL_COLUMNS)
     .eq("id", entryId)
     .eq("property_id", id)
-    .eq("entry_type", "guest_stay")
-    .maybeSingle<GuestStay>();
-  if (!stay) notFound();
+    .maybeSingle<CalendarEntry>();
+  if (!entry) notFound();
 
   const listHref = `/properties/${property.id}/calendar`;
-  const isCancelled = stay.status === "cancelled";
-  const nights = stayNights(stay);
+  const isStay = entry.entry_type === "guest_stay";
+  const isCancelled = entry.status === "cancelled";
+  const label = calendarEntryTypeLabel(entry.entry_type);
   const card = "rounded-2xl border border-slate-200/80 bg-white p-6 shadow-card sm:p-8";
+
+  let summary: string;
+  if (isStay) {
+    const nights = stayNights(entry);
+    summary = `${formatDisplayDate(entry.start_date)} – ${formatDisplayDate(entry.end_date)} · ${nights} ${
+      nights === 1 ? "night" : "nights"
+    } · ${isCancelled ? "Cancelled" : "Planned"}`;
+  } else if (entry.start_date === entry.end_date) {
+    summary = formatDisplayDate(entry.start_date);
+  } else {
+    summary = `${formatDisplayDate(entry.start_date)} – ${formatDisplayDate(entry.end_date)}`;
+  }
 
   return (
     <>
@@ -78,51 +93,47 @@ export default async function GuestStayPage({
             </Link>
           </nav>
 
-          <h1 className="mt-4 text-3xl font-semibold tracking-tight text-navy">
-            Guest stay
-          </h1>
-          <p className="mt-2 text-slate-700">
-            {formatDisplayDate(stay.start_date)} – {formatDisplayDate(stay.end_date)} ·{" "}
-            {nights} {nights === 1 ? "night" : "nights"} ·{" "}
-            {isCancelled ? "Cancelled" : "Planned"}
-          </p>
+          <h1 className="mt-4 text-3xl font-semibold tracking-tight text-navy">{label}</h1>
+          <p className="mt-2 text-slate-700">{summary}</p>
 
-          {isCancelled ? (
+          {isStay && isCancelled && (
             <section aria-labelledby="details-heading" className={`mt-8 ${card}`}>
               <h2 id="details-heading" className="text-xl font-semibold text-navy">
                 Stay details
               </h2>
               <p className="mt-2 text-sm text-slate-600">
-                This stay is cancelled and can no longer be edited.
+                This stay is cancelled and is kept as a read-only record.
               </p>
               <dl className="mt-5 grid gap-4 sm:grid-cols-2">
                 <div>
                   <dt className="text-sm text-slate-600">Arrival date</dt>
                   <dd className="font-medium text-navy">
-                    {formatDisplayDate(stay.start_date)}
+                    {formatDisplayDate(entry.start_date)}
                   </dd>
                 </div>
                 <div>
                   <dt className="text-sm text-slate-600">Departure date</dt>
                   <dd className="font-medium text-navy">
-                    {formatDisplayDate(stay.end_date)}
+                    {formatDisplayDate(entry.end_date)}
                   </dd>
                 </div>
                 <div>
                   <dt className="text-sm text-slate-600">Number of guests</dt>
                   <dd className="font-medium text-navy">
-                    {stay.guest_count ?? "Not recorded"}
+                    {entry.guest_count ?? "Not recorded"}
                   </dd>
                 </div>
                 <div>
                   <dt className="text-sm text-slate-600">Booking reference</dt>
                   <dd className="break-words font-medium text-navy">
-                    {stay.booking_reference ?? "Not recorded"}
+                    {entry.booking_reference ?? "Not recorded"}
                   </dd>
                 </div>
               </dl>
             </section>
-          ) : (
+          )}
+
+          {isStay && !isCancelled && (
             <>
               <section aria-labelledby="edit-heading" className={`mt-8 ${card}`}>
                 <h2 id="edit-heading" className="text-xl font-semibold text-navy">
@@ -130,8 +141,8 @@ export default async function GuestStayPage({
                 </h2>
                 <div className="mt-5">
                   <GuestStayForm
-                    action={updateGuestStay.bind(null, property.id, stay.id)}
-                    stay={stay}
+                    action={updateGuestStay.bind(null, property.id, entry.id)}
+                    stay={entry}
                     propertyName={property.name}
                     submitLabel="Save changes"
                     cancelHref={listHref}
@@ -139,7 +150,7 @@ export default async function GuestStayPage({
                 </div>
               </section>
 
-              {stay.guest_first_name && (
+              {entry.guest_first_name && (
                 <section aria-labelledby="remove-name-heading" className={`mt-8 ${card}`}>
                   <h2
                     id="remove-name-heading"
@@ -149,7 +160,7 @@ export default async function GuestStayPage({
                   </h2>
                   <p className="mt-2 text-slate-700">{REMOVE_GUEST_NAME_NOTICE}</p>
                   <form
-                    action={removeGuestName.bind(null, property.id, stay.id)}
+                    action={removeGuestName.bind(null, property.id, entry.id)}
                     className="mt-4"
                   >
                     <button
@@ -164,7 +175,7 @@ export default async function GuestStayPage({
 
               <div className="mt-8">
                 <ConfirmCalendarAction
-                  action={cancelGuestStay.bind(null, property.id, stay.id)}
+                  action={cancelGuestStay.bind(null, property.id, entry.id)}
                   confirmValue="cancel"
                   triggerLabel="Cancel stay"
                   heading="Cancel this guest stay?"
@@ -176,15 +187,42 @@ export default async function GuestStayPage({
             </>
           )}
 
+          {entry.entry_type !== "guest_stay" && (
+            <section aria-labelledby="edit-heading" className={`mt-8 ${card}`}>
+              <h2 id="edit-heading" className="text-xl font-semibold text-navy">
+                Entry details
+              </h2>
+              <div className="mt-5">
+                <CalendarEntryForm
+                  action={updateCalendarEntry.bind(
+                    null,
+                    property.id,
+                    entry.id,
+                    entry.entry_type,
+                  )}
+                  entryType={entry.entry_type}
+                  entry={entry}
+                  propertyName={property.name}
+                  submitLabel="Save changes"
+                  cancelHref={listHref}
+                />
+              </div>
+            </section>
+          )}
+
           <div className="mt-4">
             <ConfirmCalendarAction
-              action={deleteCalendarEntry.bind(null, property.id, stay.id)}
+              action={deleteCalendarEntry.bind(null, property.id, entry.id)}
               confirmValue="delete"
-              triggerLabel="Delete stay"
-              heading="Permanently delete this guest stay?"
-              body="This removes the stay and everything recorded on it. This can’t be undone."
+              triggerLabel={isStay ? "Delete stay" : "Delete entry"}
+              heading={
+                isStay
+                  ? "Permanently delete this guest stay?"
+                  : "Permanently delete this entry?"
+              }
+              body="This removes it and everything recorded on it. This can’t be undone."
               confirmLabel="Delete permanently"
-              keepLabel="Keep stay"
+              keepLabel={isStay ? "Keep stay" : "Keep entry"}
             />
           </div>
         </div>

@@ -1,31 +1,11 @@
 import Link from "next/link";
 import {
   attentionLevelLabel,
+  attentionLevelStyle as accent,
   formatDisplayDate,
   NOTHING_NEEDS_ATTENTION,
   type AttentionEntry,
-  type AttentionLevel,
 } from "@/lib/attention";
-
-// Colour always paired with a text badge, never used alone.
-const accent: Record<AttentionLevel, { row: string; badge: string }> = {
-  urgent: {
-    row: "border-l-4 border-red-600 bg-red-50",
-    badge: "bg-red-700 text-white",
-  },
-  due_soon: {
-    row: "border-l-4 border-amber-500 bg-amber-50",
-    badge: "bg-amber-200 text-amber-950",
-  },
-  upcoming: {
-    row: "border-l-4 border-teal-600 bg-white",
-    badge: "bg-slate-100 text-navy ring-1 ring-slate-200",
-  },
-  open: {
-    row: "border-l-4 border-slate-400 bg-white",
-    badge: "bg-white text-slate-800 ring-1 ring-slate-300",
-  },
-};
 
 export default function PropertyAttentionList({
   entries,

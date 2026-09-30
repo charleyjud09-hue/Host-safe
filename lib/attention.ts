@@ -9,10 +9,15 @@
  */
 
 /**
+ * Every open, dated reminder appears, at a level set by how close its date is:
+ *   urgent     — the date has passed (red)
+ *   very_soon  — today to 7 days away (lighter red)
+ *   due_soon   — 8 to 30 days away (yellow)
+ *   later      — more than 30 days away (clear)
  * "open" is only used for open maintenance issues with no due date: listed
- * neutrally after the date-based levels, with no date and no urgency.
+ * neutrally (clear), with no date and no urgency.
  */
-export type AttentionLevel = "urgent" | "due_soon" | "upcoming" | "open";
+export type AttentionLevel = "urgent" | "very_soon" | "due_soon" | "open" | "later";
 
 export type AttentionEntry = {
   key: string;
@@ -56,14 +61,16 @@ export type AttentionMaintenanceInput = {
 
 const openMaintenanceStatuses = new Set(["open", "in_progress", "waiting"]);
 
-const DUE_SOON_DAYS = 7;
-const UPCOMING_DAYS = 30;
+const VERY_SOON_DAYS = 7;
+const DUE_SOON_DAYS = 30;
 const openItemStatuses = new Set(["not_started", "in_progress", "needs_review"]);
+// Undated open issues sit before far-off ("later") reminders.
 const levelOrder: Record<AttentionLevel, number> = {
   urgent: 0,
-  due_soon: 1,
-  upcoming: 2,
+  very_soon: 1,
+  due_soon: 2,
   open: 3,
+  later: 4,
 };
 
 /** Today's calendar date in the UK (Europe/London), as YYYY-MM-DD. */
@@ -84,11 +91,11 @@ export function addDays(date: string, days: number): string {
   return d.toISOString().slice(0, 10);
 }
 
-function levelFor(date: string, today: string): AttentionLevel | null {
+function levelFor(date: string, today: string): AttentionLevel {
   if (date < today) return "urgent";
+  if (date <= addDays(today, VERY_SOON_DAYS)) return "very_soon";
   if (date <= addDays(today, DUE_SOON_DAYS)) return "due_soon";
-  if (date <= addDays(today, UPCOMING_DAYS)) return "upcoming";
-  return null;
+  return "later";
 }
 
 type Candidate = { level: AttentionLevel; dateLabel: "Due" | "Review"; date: string };
@@ -102,7 +109,6 @@ function bestCandidate(
   for (const { dateLabel, date } of dates) {
     if (!date) continue;
     const level = levelFor(date, today);
-    if (!level) continue;
     const candidate = { level, dateLabel, date };
     if (
       !best ||
@@ -171,7 +177,6 @@ export function buildAttention(
   for (const record of evidence) {
     if (record.status === "archived" || !record.review_date) continue;
     const level = levelFor(record.review_date, today);
-    if (!level) continue;
     entries.push({
       key: `evidence-${record.id}`,
       level,
@@ -188,8 +193,8 @@ export function buildAttention(
   }
 
   // Maintenance issues: open ones only (never resolved or archived).
-  // Dated issues use the same windows as everything else; issues with no
-  // due date are listed neutrally as "Open issue", after the dated ones.
+  // Dated issues use the same levels as everything else; issues with no
+  // due date are listed neutrally as "Open issue".
   for (const issue of maintenance) {
     if (!openMaintenanceStatuses.has(issue.status)) continue;
     if (!issue.due_date) {
@@ -206,7 +211,6 @@ export function buildAttention(
       continue;
     }
     const level = levelFor(issue.due_date, today);
-    if (!level) continue;
     entries.push({
       key: `maintenance-${issue.id}`,
       level,
@@ -234,9 +238,10 @@ export function buildAttention(
 export function countByLevel(entries: AttentionEntry[]) {
   const counts: Record<AttentionLevel, number> = {
     urgent: 0,
+    very_soon: 0,
     due_soon: 0,
-    upcoming: 0,
     open: 0,
+    later: 0,
   };
   for (const e of entries) counts[e.level] += 1;
   return counts;
@@ -244,9 +249,38 @@ export function countByLevel(entries: AttentionEntry[]) {
 
 export const attentionLevelLabel: Record<AttentionLevel, string> = {
   urgent: "Urgent",
+  very_soon: "Due very soon",
   due_soon: "Due soon",
-  upcoming: "Upcoming",
   open: "Open issue",
+  later: "Later",
+};
+
+/**
+ * Shared colours for every reminder list and badge: red for passed and very
+ * soon, yellow for soon, clear for far-off and undated. Always shown with the
+ * text label above, never colour alone.
+ */
+export const attentionLevelStyle: Record<AttentionLevel, { row: string; badge: string }> = {
+  urgent: {
+    row: "border-l-4 border-red-600 bg-red-50",
+    badge: "bg-red-700 text-white",
+  },
+  very_soon: {
+    row: "border-l-4 border-red-400 bg-red-50/60",
+    badge: "bg-red-100 text-red-900 ring-1 ring-red-300",
+  },
+  due_soon: {
+    row: "border-l-4 border-amber-400 bg-amber-50",
+    badge: "bg-amber-200 text-amber-950",
+  },
+  open: {
+    row: "border-l-4 border-slate-300 bg-white",
+    badge: "bg-white text-slate-800 ring-1 ring-slate-300",
+  },
+  later: {
+    row: "border-l-4 border-slate-200 bg-white",
+    badge: "bg-white text-slate-700 ring-1 ring-slate-200",
+  },
 };
 
 export const NOTHING_NEEDS_ATTENTION =

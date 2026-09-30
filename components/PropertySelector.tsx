@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import PropertyImagePlaceholder from "@/components/PropertyImagePlaceholder";
-import { type AttentionLevel } from "@/lib/attention";
+import { attentionLevelStyle, type AttentionLevel } from "@/lib/attention";
 
 export type SelectorProperty = {
   id: string;
@@ -37,18 +37,25 @@ function PencilIcon() {
 
 function Summary({ counts }: { counts: Record<AttentionLevel, number> }) {
   const parts = [
-    counts.urgent > 0 && { text: `${counts.urgent} urgent`, className: "bg-red-700 text-white" },
+    counts.urgent > 0 && {
+      text: `${counts.urgent} urgent`,
+      className: attentionLevelStyle.urgent.badge,
+    },
+    counts.very_soon > 0 && {
+      text: `${counts.very_soon} due very soon`,
+      className: attentionLevelStyle.very_soon.badge,
+    },
     counts.due_soon > 0 && {
       text: `${counts.due_soon} due soon`,
-      className: "bg-amber-200 text-amber-950",
-    },
-    counts.upcoming > 0 && {
-      text: `${counts.upcoming} upcoming`,
-      className: "bg-slate-100 text-navy ring-1 ring-slate-200",
+      className: attentionLevelStyle.due_soon.badge,
     },
     counts.open > 0 && {
       text: `${counts.open} open issue${counts.open === 1 ? "" : "s"}`,
-      className: "bg-white text-slate-800 ring-1 ring-slate-300",
+      className: attentionLevelStyle.open.badge,
+    },
+    counts.later > 0 && {
+      text: `${counts.later} later`,
+      className: attentionLevelStyle.later.badge,
     },
   ].filter((p): p is { text: string; className: string } => Boolean(p));
 

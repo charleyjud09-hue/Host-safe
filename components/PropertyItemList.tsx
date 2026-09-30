@@ -1,10 +1,10 @@
 import Link from "next/link";
 import {
   attentionLevelLabel,
+  attentionLevelStyle,
   formatDisplayDate,
   itemAttention,
   ukToday,
-  type AttentionLevel,
 } from "@/lib/attention";
 import {
   itemTypeLabel,
@@ -12,14 +12,6 @@ import {
   statusLabel,
   type PropertyItem,
 } from "@/lib/property-items";
-
-// Same badge colours as the "Needs attention" list; always paired with text.
-const badgeClass: Record<AttentionLevel, string> = {
-  urgent: "bg-red-700 text-white",
-  due_soon: "bg-amber-200 text-amber-950",
-  upcoming: "bg-slate-100 text-navy ring-1 ring-slate-200",
-  open: "bg-white text-slate-800 ring-1 ring-slate-300",
-};
 
 export default function PropertyItemList({
   propertyId,
@@ -60,7 +52,7 @@ export default function PropertyItemList({
             {attention && (
               <p className="mt-2 flex flex-wrap items-center gap-2 text-sm text-slate-700">
                 <span
-                  className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${badgeClass[attention.level]}`}
+                  className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${attentionLevelStyle[attention.level].badge}`}
                 >
                   {attentionLevelLabel[attention.level]}
                 </span>

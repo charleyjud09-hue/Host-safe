@@ -3,7 +3,7 @@
 -- (deleteAccount) AFTER the app has removed the user's Storage files —
 -- Supabase does not allow Storage files to be deleted from SQL.
 --
--- Status: see docs/database/README.md for whether this has been applied.
+-- ALREADY APPLIED in Supabase on 2026-09-30. Reference copy only — do not re-run.
 
 begin;
 

@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { mayNeedTailoredAdvice, parseAnswers, type Answers } from "@/lib/eligibility";
+import { errorCode } from "@/lib/log";
 import {
   parsePropertyInput,
   safePropertyReturnTo,
@@ -62,7 +63,7 @@ export async function createProperty(
     .single();
 
   if (error || !created) {
-    console.error("Create property failed:", error?.code, error?.message);
+    console.error("Create property failed:", errorCode(error));
     return {
       error: "We could not save this property. Please try again.",
       values: currentValues(formData),
@@ -76,7 +77,7 @@ export async function createProperty(
   });
 
   if (checkError) {
-    console.error("Save property check failed:", checkError.code, checkError.message);
+    console.error("Save property check failed:", errorCode(checkError));
     // Roll back the just-created (still empty) property so the two are
     // saved together or not at all.
     await supabase
@@ -117,7 +118,7 @@ export async function updateProperty(
     .eq("user_id", userData.user.id);
 
   if (error) {
-    console.error("Update property failed:", error.code, error.message);
+    console.error("Update property failed:", errorCode(error));
     return {
       error: "We could not save your changes. Please try again.",
       values: currentValues(formData),

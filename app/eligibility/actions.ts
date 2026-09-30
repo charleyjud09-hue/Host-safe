@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { mayNeedTailoredAdvice, type Answers } from "@/lib/eligibility";
+import { errorCode } from "@/lib/log";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -39,7 +40,7 @@ export async function saveEligibilityResult(
   });
 
   if (error) {
-    console.error("Save eligibility result failed:", error.code, error.message);
+    console.error("Save eligibility result failed:", errorCode(error));
     return { error: "We could not save this result. Please try again." };
   }
 

@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { errorCode } from "@/lib/log";
 import { parsePropertyItemInput, type PropertyItemFormState } from "@/lib/property-items";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
@@ -46,7 +47,7 @@ export async function createPropertyItem(
     .insert({ ...parsed.data, property_id: propertyId });
 
   if (error) {
-    console.error("Create property item failed:", error.code, error.message);
+    console.error("Create property item failed:", errorCode(error));
     return {
       error: "We could not save this item. Please try again.",
       values: parsed.values,
@@ -77,7 +78,7 @@ export async function updatePropertyItem(
     .eq("user_id", userId);
 
   if (error) {
-    console.error("Update property item failed:", error.code, error.message);
+    console.error("Update property item failed:", errorCode(error));
     return {
       error: "We could not save your changes. Please try again.",
       values: parsed.values,

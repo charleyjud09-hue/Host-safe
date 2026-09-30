@@ -7,6 +7,7 @@ import {
   MAX_ATTACHMENTS_PER_RECORD,
   validateAttachmentFile,
 } from "@/lib/evidence-attachments";
+import { errorCode } from "@/lib/log";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -81,7 +82,7 @@ export async function uploadAttachments(
       });
 
     if (uploadError) {
-      console.error("Attachment upload failed:", uploadError.message);
+      console.error("Attachment upload failed:", errorCode(uploadError));
       return { error: `We could not upload "${file.name}". Please try again.` };
     }
 
@@ -95,7 +96,7 @@ export async function uploadAttachments(
     });
 
     if (insertError) {
-      console.error("Attachment record insert failed:", insertError.code, insertError.message);
+      console.error("Attachment record insert failed:", errorCode(insertError));
       // Clean up the orphaned storage object rather than leaving a file
       // with no database row pointing at it.
       await supabase.storage.from(ATTACHMENTS_BUCKET).remove([storagePath]);

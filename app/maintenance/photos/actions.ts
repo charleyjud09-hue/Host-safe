@@ -7,6 +7,7 @@ import {
   MAX_PHOTOS_PER_ISSUE,
   validateMaintenancePhoto,
 } from "@/lib/maintenance-photos";
+import { errorCode } from "@/lib/log";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -76,7 +77,7 @@ export async function uploadMaintenancePhoto(
     .from(MAINTENANCE_PHOTOS_BUCKET)
     .upload(storagePath, file, { contentType: validation.contentType, upsert: false });
   if (uploadError) {
-    console.error("Maintenance photo upload failed:", uploadError.message);
+    console.error("Maintenance photo upload failed:", errorCode(uploadError));
     return { error: `We could not upload "${file.name}". Please try again.` };
   }
 
@@ -89,7 +90,7 @@ export async function uploadMaintenancePhoto(
     size_bytes: file.size,
   });
   if (insertError) {
-    console.error("Maintenance photo save failed:", insertError.code, insertError.message);
+    console.error("Maintenance photo save failed:", errorCode(insertError));
     // Don't leave a file behind with no record pointing at it.
     await supabase.storage.from(MAINTENANCE_PHOTOS_BUCKET).remove([storagePath]);
     return { error: `We could not save "${file.name}". Please try again.` };
@@ -126,7 +127,7 @@ export async function deleteMaintenancePhoto(
   if (!removeError) {
     await supabase.from("maintenance_photos").delete().eq("id", photoId);
   } else {
-    console.error("Maintenance photo removal failed:", removeError.message);
+    console.error("Maintenance photo removal failed:", errorCode(removeError));
   }
 
   redirect(issueUrl);

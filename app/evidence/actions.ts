@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { deleteAttachmentsForRecord } from "@/app/evidence/attachments/actions";
 import { parseEvidenceInput, type EvidenceFormState } from "@/lib/evidence-records";
+import { errorCode } from "@/lib/log";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -52,7 +53,7 @@ export async function createEvidenceRecord(
     .insert({ ...parsed.data, property_id: propertyId });
 
   if (error) {
-    console.error("Create evidence record failed:", error.code, error.message);
+    console.error("Create evidence record failed:", errorCode(error));
     return {
       error: "We could not save this record. Please try again.",
       values: parsed.values,
@@ -83,7 +84,7 @@ export async function updateEvidenceRecord(
     .eq("user_id", userId);
 
   if (error) {
-    console.error("Update evidence record failed:", error.code, error.message);
+    console.error("Update evidence record failed:", errorCode(error));
     return {
       error: "We could not save your changes. Please try again.",
       values: parsed.values,

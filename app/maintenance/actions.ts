@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { ukToday } from "@/lib/attention";
+import { errorCode } from "@/lib/log";
 import { parseMaintenanceInput, type MaintenanceFormState } from "@/lib/maintenance";
 import { MAINTENANCE_PHOTOS_BUCKET } from "@/lib/maintenance-photos";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
@@ -53,7 +54,7 @@ export async function createMaintenanceIssue(
     .single();
 
   if (error || !created) {
-    console.error("Create maintenance issue failed:", error?.code, error?.message);
+    console.error("Create maintenance issue failed:", errorCode(error));
     return {
       error: "We could not save this issue. Please try again.",
       values: parsed.values,
@@ -84,7 +85,7 @@ export async function updateMaintenanceIssue(
     .eq("user_id", userId);
 
   if (error) {
-    console.error("Update maintenance issue failed:", error.code, error.message);
+    console.error("Update maintenance issue failed:", errorCode(error));
     return {
       error: "We could not save your changes. Please try again.",
       values: parsed.values,
@@ -149,7 +150,7 @@ export async function deleteMaintenanceIssue(
       .from(MAINTENANCE_PHOTOS_BUCKET)
       .remove(photos.map((p) => p.storage_path));
     if (removeError) {
-      console.error("Issue photo cleanup failed:", removeError.message);
+      console.error("Issue photo cleanup failed:", errorCode(removeError));
       // Keep the issue (and its photo records) rather than orphan files.
       redirect(issueUrl(propertyId, issueId));
     }

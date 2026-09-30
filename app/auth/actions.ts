@@ -42,7 +42,7 @@ export async function signUp(
   });
 
   if (error) {
-    console.error("Sign-up failed:", error.code ?? error.status, error.message);
+    console.error("Sign-up failed:", error.code ?? error.status);
 
     switch (error.code) {
       case "weak_password":

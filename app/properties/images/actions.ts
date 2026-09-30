@@ -6,6 +6,7 @@ import {
   PROPERTY_IMAGES_BUCKET,
   validatePropertyImage,
 } from "@/lib/property-images";
+import { errorCode } from "@/lib/log";
 import { safePropertyReturnTo } from "@/lib/properties";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
@@ -72,7 +73,7 @@ export async function uploadPropertyImage(
     .from(PROPERTY_IMAGES_BUCKET)
     .upload(newPath, file, { contentType: validation.contentType, upsert: false });
   if (uploadError) {
-    console.error("Property image upload failed:", uploadError.message);
+    console.error("Property image upload failed:", errorCode(uploadError));
     return { error: "We could not upload that image. Please try again." };
   }
 
@@ -88,7 +89,7 @@ export async function uploadPropertyImage(
     .eq("user_id", userId);
 
   if (updateError) {
-    console.error("Property image save failed:", updateError.code, updateError.message);
+    console.error("Property image save failed:", errorCode(updateError));
     await supabase.storage.from(PROPERTY_IMAGES_BUCKET).remove([newPath]);
     return { error: "We could not save that image. Please try again." };
   }
@@ -100,7 +101,7 @@ export async function uploadPropertyImage(
     if (removeOldError) {
       // The property already points at the new image; the old file is
       // simply left behind. Logged so it can be cleaned up.
-      console.error("Old property image cleanup failed:", removeOldError.message);
+      console.error("Old property image cleanup failed:", errorCode(removeOldError));
     }
   }
 
@@ -127,7 +128,7 @@ export async function removePropertyImage(
       .from(PROPERTY_IMAGES_BUCKET)
       .remove([currentPath]);
     if (removeError) {
-      console.error("Property image removal failed:", removeError.message);
+      console.error("Property image removal failed:", errorCode(removeError));
       redirect(editPageUrl(propertyId, returnTo));
     }
 

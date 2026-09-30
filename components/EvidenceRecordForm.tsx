@@ -157,8 +157,7 @@ export default function EvidenceRecordForm({
             ))}
           </select>
           <p className="mt-1 text-sm text-slate-600">
-            An organisational label only. It does not represent a legal or
-            fire-safety compliance status.
+            An organisational label only — not a legal or compliance status.
           </p>
         </div>
       )}

@@ -6,7 +6,6 @@ import Disclaimer from "@/components/Disclaimer";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import PropertySelector, { type SelectorProperty } from "@/components/PropertySelector";
-import SavePendingResult from "@/components/SavePendingResult";
 import {
   buildAttention,
   countByLevel,
@@ -42,42 +41,17 @@ const iconProps = {
 
 const features: { title: string; body: string; icon: ReactNode }[] = [
   {
-    title: "Property profiles",
-    body: "Keep the basic details of each holiday let in one place, even if you manage more than one.",
+    title: "Maintenance & repairs",
+    body: "Record issues and repair photos for each property, and keep track of what’s open.",
     icon: (
       <svg {...iconProps}>
-        <path d="M3 10.5 12 3l9 7.5" />
-        <path d="M5 9.5V21h14V9.5" />
-        <path d="M10 21v-6h4v6" />
-      </svg>
-    ),
-  },
-  {
-    title: "Property checks",
-    body: "Answer six short questions for each property to see whether HostSafe's simplified approach is designed for it.",
-    icon: (
-      <svg {...iconProps}>
-        <rect x="5" y="4" width="14" height="17" rx="2" />
-        <path d="M9 4V3h6v1" />
-        <path d="m9 13 2 2 4-4" />
-      </svg>
-    ),
-  },
-  {
-    title: "Evidence & private attachments",
-    body: "Record checks and keep photos or PDF certificates alongside them, stored privately to your account.",
-    icon: (
-      <svg {...iconProps}>
-        <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
-        <path d="M14 3v5h5" />
-        <path d="M12 17v-5" />
-        <path d="m9.5 14.5 2.5 2.5 2.5-2.5" />
+        <path d="M14.7 6.3a4 4 0 0 0-5.4 5.2L3.5 17.3a1.8 1.8 0 0 0 2.5 2.5l5.8-5.8a4 4 0 0 0 5.2-5.4l-2.4 2.4-2.1-.4-.4-2.1z" />
       </svg>
     ),
   },
   {
     title: "Actions & reminders",
-    body: "Track things to keep, arrange or send, with in-app reminders based on the dates you set.",
+    body: "Track what needs doing, with reminders based on the dates you set.",
     icon: (
       <svg {...iconProps}>
         <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
@@ -85,20 +59,52 @@ const features: { title: string; body: string; icon: ReactNode }[] = [
       </svg>
     ),
   },
+  {
+    title: "Stays & calendar",
+    body: "Organise guest arrivals and departures, see turnovers and same-day turnovers, and schedule planned work, cleanups and blocks.",
+    icon: (
+      <svg {...iconProps}>
+        <rect x="4" y="5" width="16" height="16" rx="2" />
+        <path d="M8 3v4" />
+        <path d="M16 3v4" />
+        <path d="M4 10h16" />
+      </svg>
+    ),
+  },
+  {
+    title: "Documents & renewals",
+    body: "Keep certificates and documents together, with review dates you choose.",
+    icon: (
+      <svg {...iconProps}>
+        <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
+        <path d="M14 3v5h5" />
+        <path d="M9 13h6" />
+        <path d="M9 17h4" />
+      </svg>
+    ),
+  },
+];
+
+const bestFit = [
+  "Holiday lets and short-term rentals",
+  "Airbnb, Booking.com, Vrbo or direct-booking properties",
+  "Cottages, flats, apartments, houses, annexes, lodges and cabins",
+  "Your own occasional-use or owner-occupied rental",
+  "A small portfolio of privately managed properties",
 ];
 
 const steps = [
   {
-    title: "Add your property",
-    body: "Create a profile with the basics: name, address, type and size.",
+    title: "Add your properties",
+    body: "Create a private profile for each property you look after.",
   },
   {
-    title: "Check it and organise evidence",
-    body: "Take the short property check, then add records and supporting files.",
+    title: "Record what matters",
+    body: "Log maintenance issues, documents and the actions you need to remember.",
   },
   {
-    title: "Keep track of actions",
-    body: "Add actions with due or review dates and see what needs attention.",
+    title: "Plan stays and work",
+    body: "Keep guest dates, turnovers, planned work and cleanups in one schedule.",
   },
 ];
 
@@ -167,32 +173,18 @@ export default async function Home() {
       <>
         <Header />
         <AppShell>
-          {/* Saves a result from the public check, now that sign-in lands here. */}
-          <SavePendingResult />
           <PropertySelector properties={selectorProperties} />
-          {/* Moved unchanged from the retired /dashboard page. */}
           <div className="mx-auto max-w-5xl space-y-2 px-5 pb-12 text-sm text-slate-600">
             <p>
-              HostSafe is an organisational and educational tool for
-              properties in England. It does not provide legal advice,
-              fire-risk assessments, or compliance certification, and it does
-              not confirm that a property is safe or legally compliant.
-              Keeping records here does not by itself demonstrate legal
-              compliance.
+              HostSafe is an organisational tool. It doesn&apos;t give legal,
+              safety or compliance advice, and doesn&apos;t check or approve
+              any property. Keeping records here doesn&apos;t by itself show
+              that any requirement is met.
             </p>
             <p>
-              HostSafe&apos;s simplified guidance is intended for smaller,
-              straightforward accommodation in England. Larger, more complex,
-              shared, converted, or unusual properties may need different
-              guidance or advice from a competent fire-risk assessor.
-            </p>
-            <p>
-              HostSafe helps you organise property information, evidence,
-              documents, actions, and reminders. It is not an official
-              records repository. You remain responsible for keeping original
-              documents and appropriate backups, checking applicable
-              requirements and deadlines, and submitting information directly
-              to the relevant organisation where required.
+              It isn&apos;t an official records store. Keep your original
+              documents and backups, and check the requirements and deadlines
+              that apply to you.
             </p>
           </div>
         </AppShell>
@@ -210,28 +202,27 @@ export default async function Home() {
           <div aria-hidden className="hero-dots absolute inset-0 -z-10" />
           <div className="mx-auto max-w-6xl px-5 py-20 sm:py-28">
             <p className="inline-block rounded-full bg-white/10 px-3 py-1 text-sm text-teal-100 ring-1 ring-white/15">
-              Early access for self-catering hosts in England
+              Early access for holiday-let and short-term rental hosts
             </p>
             <h1 className="mt-6 max-w-3xl font-display text-4xl font-medium leading-[1.05] tracking-tight sm:text-6xl">
-              A clearer starting point for holiday-let fire-safety paperwork
+              The private organiser for holiday lets and short-term rentals
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-200">
-              HostSafe helps owners of small, simple holiday lets organise
-              property details, keep fire-safety evidence together and keep
-              track of actions, in plain English.
+              Keep maintenance, reminders, documents and guest dates for every
+              property you look after in one private place.
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4">
               <Link
-                href="/check"
+                href="/sign-up"
                 className="rounded-lg bg-teal-400 px-6 py-3 font-semibold text-navy shadow-sm hover:bg-teal-300"
               >
-                Check if HostSafe fits your property
+                Create an account
               </Link>
               <a
                 href="#limitations"
                 className="text-slate-200 underline underline-offset-4 hover:text-white"
               >
-                What HostSafe is not
+                What HostSafe doesn&apos;t do
               </a>
             </div>
           </div>
@@ -240,11 +231,11 @@ export default async function Home() {
         <section className="mx-auto max-w-6xl px-5 py-20 sm:py-28">
           <p className={eyebrow}>Features</p>
           <h2 className="mt-3 font-display text-3xl font-medium tracking-tight text-navy sm:text-4xl">
-            What HostSafe does
+            What it helps with
           </h2>
           <p className="mt-4 max-w-2xl text-lg text-slate-700">
-            An organisational and educational tool that helps you keep track
-            of the information you provide.
+            Everything is private to your account. Other HostSafe users
+            can&apos;t see your properties, records or schedule.
           </p>
           <div className="mt-10 grid gap-5 sm:grid-cols-2">
             {features.map((f) => (
@@ -298,19 +289,10 @@ export default async function Home() {
           <div className="mx-auto max-w-6xl px-5 py-20 sm:py-28">
             <p className={eyebrow}>Who it is for</p>
             <h2 className="mt-3 font-display text-3xl font-medium tracking-tight text-navy sm:text-4xl">
-              Small, simple holiday lets in England
+              Built for hosts who manage their own properties
             </h2>
-            <p className="mt-4 max-w-2xl text-lg text-slate-700">
-              HostSafe is designed for owners of small, simple self-catering
-              holiday lets in England, especially if you feel unsure where to
-              start.
-            </p>
-            <ul className="mt-10 grid gap-4 sm:grid-cols-3">
-              {[
-                "Two floors or fewer",
-                "Up to 10 overnight guests",
-                "A simple layout with a clear escape route",
-              ].map((t) => (
+            <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {bestFit.map((t) => (
                 <li
                   key={t}
                   className="flex items-start gap-3 rounded-xl border border-slate-200/80 bg-paper p-5 font-medium text-navy"
@@ -327,9 +309,10 @@ export default async function Home() {
                 </li>
               ))}
             </ul>
-            <p className="mt-6 max-w-2xl text-slate-700">
-              Larger, more complex or unusual properties may need more tailored
-              advice from a competent fire-risk assessor.
+            <p className="mt-6 max-w-2xl text-sm text-slate-600">
+              HostSafe isn&apos;t affiliated with Airbnb, Booking.com or Vrbo,
+              and doesn&apos;t connect to them. You enter your own dates and
+              details.
             </p>
           </div>
         </section>
@@ -338,16 +321,17 @@ export default async function Home() {
 
         <section className="mx-auto max-w-6xl px-5 py-20 text-center sm:py-28">
           <h2 className="font-display text-3xl font-medium tracking-tight text-navy sm:text-4xl">
-            See if HostSafe fits your property
+            Get your properties organised
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-lg text-slate-700">
-            It takes about a minute, and nothing you enter is saved or sent.
+            Create an account and add your first property in a couple of
+            minutes.
           </p>
           <Link
-            href="/check"
+            href="/sign-up"
             className="mt-8 inline-block rounded-lg bg-navy px-6 py-3 font-semibold text-white shadow-sm hover:bg-navy-light"
           >
-            Start the check
+            Create an account
           </Link>
         </section>
       </main>

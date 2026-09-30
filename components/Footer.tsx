@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 
 // Legal wording: keep identical in both versions (disclaimer audit row 3).
 const disclaimer =
-  "HostSafe is an early-stage organisational and educational tool. It does not provide legal advice, fire-risk assessments or compliance certification, and does not confirm that any property is safe or legally compliant. You remain responsible for your property’s fire safety and legal obligations.";
+  "HostSafe is an early-stage organisational tool. It doesn’t give legal, safety or compliance advice, and doesn’t check or approve any property. You remain responsible for your property and your legal obligations.";
 
 export default async function Footer() {
   let signedIn = false;

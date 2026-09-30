@@ -3,18 +3,18 @@ export default function Disclaimer() {
     <section id="limitations" className="bg-slate-100">
       <div className="mx-auto max-w-5xl px-5 py-16">
         <h2 className="text-3xl font-semibold text-navy">
-          What HostSafe is not
+          What HostSafe doesn&apos;t do
         </h2>
         <p className="mt-3 max-w-2xl text-slate-700">
-          We want to be clear about the limits, so you know what to expect.
+          HostSafe is an organisational tool. To be clear about its limits:
         </p>
         <ul className="mt-8 grid gap-4 sm:grid-cols-2">
           {[
-            "HostSafe is not a fire-risk assessor and does not carry out fire-risk assessments.",
-            "It does not give legal advice, and it does not certify or approve any property.",
-            "It cannot guarantee that a property is safe or meets any legal requirement.",
-            "You remain responsible for your property’s fire safety and for meeting your legal obligations.",
-            "If your property is complex or outside its intended scope, you should speak with a competent fire-risk assessor.",
+            "It doesn’t give legal, safety or compliance advice.",
+            "It doesn’t inspect, check, certify or approve any property.",
+            "It doesn’t connect to, or manage bookings on, Airbnb, Booking.com, Vrbo or any other platform.",
+            "Reminders come only from the dates you enter, and won’t cover every requirement or deadline.",
+            "You remain responsible for your property, your guests’ safety and your legal obligations.",
           ].map((t) => (
             <li
               key={t}

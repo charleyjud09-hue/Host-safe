@@ -190,6 +190,51 @@ liability belongs in the Terms of Service
 (`terms-of-service-draft.md`) and **must be drafted or approved by a
 qualified legal professional** before launch.
 
+### E. Repositioning — 30 September 2026 (later the same day)
+
+At the founder's instruction HostSafe was repositioned from "fire-safety
+paperwork for small holiday lets in England" to **"the private organiser
+for holiday lets and short-term rentals"**, to minimise liability:
+
+- **The property check was removed entirely** (public `/check`, the
+  add-property questions, and the Safety & checks page — old links now
+  redirect). It was the only place HostSafe gave an opinion about a
+  property. Rows 6, 7, A3, A5, A6, A9, A10 and B3/B5 therefore no longer
+  apply. Previously saved check answers remain in `eligibility_results`
+  but are no longer shown or collected (retention decision pending).
+- **Public homepage rewritten** from the founder's own "best fit" and
+  "what it helps with" lists (homepage freeze lifted in full). It names
+  Airbnb, Booking.com and Vrbo only to describe who it's for, with: "HostSafe
+  isn’t affiliated with Airbnb, Booking.com or Vrbo, and doesn’t connect to
+  them. You enter your own dates and details."
+- **"What HostSafe doesn’t do"** (homepage): "It doesn’t give legal,
+  safety or compliance advice." / "It doesn’t inspect, check, certify or
+  approve any property." / "It doesn’t connect to, or manage bookings on,
+  Airbnb, Booking.com, Vrbo or any other platform." / "Reminders come only
+  from the dates you enter, and won’t cover every requirement or
+  deadline." / "You remain responsible for your property, your guests’
+  safety and your legal obligations."
+- **Footer (row 3):** "HostSafe is an early-stage organisational tool. It
+  doesn’t give legal, safety or compliance advice, and doesn’t check or
+  approve any property. You remain responsible for your property and your
+  legal obligations."
+- **Property selector (rows 9–10):** "HostSafe is an organisational tool.
+  It doesn’t give legal, safety or compliance advice, and doesn’t check or
+  approve any property. Keeping records here doesn’t by itself show that
+  any requirement is met." / "It isn’t an official records store. Keep
+  your original documents and backups, and check the requirements and
+  deadlines that apply to you." (The "simplified guidance" paragraph was
+  removed — HostSafe no longer offers guidance.)
+- **Page description (row 4):** "Keep maintenance, reminders, documents
+  and guest dates for your holiday lets and short-term rentals in one
+  private place. An organisational tool, not legal, safety or compliance
+  advice."
+- No wording refers to England any more. **Open founder decision:**
+  England only or the whole UK — affects the Terms and Privacy Notice.
+- **Open founder decision (next session): the product name.** "Safe" in
+  "HostSafe" is now the strongest remaining implication of a safety
+  promise; take to the solicitor with a trademark search.
+
 ## Overall finding
 
 *(28 Sep 2026)* No wording was found to falsely claim legal advice, legal

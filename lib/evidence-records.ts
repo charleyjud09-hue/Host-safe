@@ -53,13 +53,13 @@ export const evidenceCategories: {
   },
   {
     value: "maintenance",
-    label: "Maintenance",
+    label: "Maintenance records",
     helper: "Keep maintenance records here.",
   },
   {
     value: "certificate",
-    label: "Certificate",
-    helper: "Keep certificates here, for example electrical or gas.",
+    label: "Certificates & inspections",
+    helper: "Keep certificates and inspection reports here, for example gas or electrical.",
   },
   {
     value: "training",

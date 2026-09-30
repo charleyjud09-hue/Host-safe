@@ -11,7 +11,7 @@ this document, or any Privacy Notice based on it, without that review.
 |---|---|---|
 | Account information | Email, password (hashed by Supabase Auth), email-confirmation status | Supabase Auth (`auth.users`) |
 | Property details | Name, address, type, floors, guest capacity, notes | `public.properties` |
-| Questionnaire answers/results | Eligibility-checker answers, and whether the result was flagged, linked to a property (or unlinked for early results) | `public.eligibility_results` |
+| Questionnaire answers/results | **No longer collected from 30 Sep 2026** (the property check was removed). Answers saved before then remain stored but are no longer shown; a retention/deletion decision is needed | `public.eligibility_results` |
 | Evidence-record details | Category, title, notes, dates, status | `public.evidence_records` |
 | Uploaded attachments | Files (JPG/PNG/WebP/PDF), original filename, content type, size, upload date | Supabase Storage, private bucket `evidence-attachments`; metadata in `public.evidence_attachments` |
 | Property items/actions/reminders | Title, description, type, priority, status, due/review/completed/submitted dates, destination, notes | `public.property_items` |

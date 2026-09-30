@@ -78,10 +78,10 @@ export default async function Header() {
             </Link>
           )}
           <Link
-            href="/check"
+            href="/sign-up"
             className="rounded-lg bg-navy px-4 py-2 text-sm font-medium text-white hover:bg-navy-light"
           >
-            Check if HostSafe fits
+            Create an account
           </Link>
         </nav>
       </div>

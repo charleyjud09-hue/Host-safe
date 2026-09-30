@@ -36,7 +36,8 @@ export type ItemService =
   | "stays_calendar";
 
 export const itemServices: { value: ItemService; label: string }[] = [
-  { value: "safety_checks", label: "Safety & checks" },
+  // Stored value unchanged; label no longer implies a "safety" section.
+  { value: "safety_checks", label: "Checks & inspections" },
   { value: "documents_renewals", label: "Documents & renewals" },
   { value: "maintenance_repairs", label: "Maintenance & repairs" },
   { value: "stays_calendar", label: "Stays & calendar" },

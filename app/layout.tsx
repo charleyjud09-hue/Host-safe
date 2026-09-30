@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "HostSafe | Fire-safety organisation for holiday lets in England",
+  title: "HostSafe | The private organiser for holiday lets and short-term rentals",
   description:
-    "HostSafe helps owners of small, simple self-catering holiday lets organise fire-safety information. It is an organisational and educational tool, not legal advice or a fire-risk assessment.",
+    "Keep maintenance, reminders, documents and guest dates for your holiday lets and short-term rentals in one private place. An organisational tool, not legal, safety or compliance advice.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

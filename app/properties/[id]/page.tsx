@@ -149,40 +149,11 @@ export default async function PropertyOverviewPage({
             </h2>
             <div className="mt-5 grid gap-6 sm:grid-cols-2">
               <ServiceCard
-                title="Safety & checks"
-                description="Keep property check records together."
-                href={`/properties/${property.id}/safety`}
-                actionLabel="Open safety & checks"
-                tone="teal"
-                icon={
-                  <svg {...iconProps}>
-                    <rect x="5" y="4" width="14" height="17" rx="2" />
-                    <path d="M9 4V3h6v1" />
-                    <path d="m9 13 2 2 4-4" />
-                  </svg>
-                }
-              />
-              <ServiceCard
-                title="Documents & renewals"
-                description="Keep documents, evidence and review dates organised."
-                href={`/properties/${property.id}/documents`}
-                actionLabel="Open documents"
-                tone="paper"
-                icon={
-                  <svg {...iconProps}>
-                    <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
-                    <path d="M14 3v5h5" />
-                    <path d="M9 13h6" />
-                    <path d="M9 17h4" />
-                  </svg>
-                }
-              />
-              <ServiceCard
                 title="Maintenance & repairs"
                 description="Keep faults, damage and repair tasks organised for this property."
                 href={`/properties/${property.id}/maintenance`}
                 actionLabel="Open maintenance"
-                tone="white"
+                tone="teal"
                 icon={
                   <svg {...iconProps}>
                     <path d="M14.7 6.3a4 4 0 0 0-5.4 5.2L3.5 17.3a1.8 1.8 0 0 0 2.5 2.5l5.8-5.8a4 4 0 0 0 5.2-5.4l-2.4 2.4-2.1-.4-.4-2.1z" />
@@ -194,7 +165,7 @@ export default async function PropertyOverviewPage({
                 description="Organise guest stays, planned work, cleanups and blocked dates for this property."
                 href={`/properties/${property.id}/calendar`}
                 actionLabel="Open stays & calendar"
-                tone="teal"
+                tone="paper"
                 icon={
                   <svg {...iconProps}>
                     <rect x="4" y="5" width="16" height="16" rx="2" />
@@ -204,17 +175,36 @@ export default async function PropertyOverviewPage({
                   </svg>
                 }
               />
+              <ServiceCard
+                title="Actions & reminders"
+                description="Track what needs doing for this property, with reminders from the dates you set."
+                href={`/properties/${property.id}/items`}
+                actionLabel="Open actions & reminders"
+                tone="paper"
+                icon={
+                  <svg {...iconProps}>
+                    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+                    <path d="M10.3 21a1.9 1.9 0 0 0 3.4 0" />
+                  </svg>
+                }
+              />
+              <ServiceCard
+                title="Documents & renewals"
+                description="Keep documents, certificates and review dates organised."
+                href={`/properties/${property.id}/documents`}
+                actionLabel="Open documents"
+                tone="teal"
+                icon={
+                  <svg {...iconProps}>
+                    <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
+                    <path d="M14 3v5h5" />
+                    <path d="M9 13h6" />
+                    <path d="M9 17h4" />
+                  </svg>
+                }
+              />
             </div>
           </section>
-
-          <p className="mt-10 text-sm">
-            <Link
-              href={`/properties/${property.id}/items`}
-              className="text-slate-700 underline underline-offset-4 hover:text-navy"
-            >
-              All actions &amp; reminders for this property
-            </Link>
-          </p>
         </div>
       </AppShell>
       <Footer />

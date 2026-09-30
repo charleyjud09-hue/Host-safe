@@ -183,10 +183,24 @@ export default async function PropertyOverviewPage({
                 href={`/properties/${property.id}/maintenance`}
                 actionLabel="Open maintenance"
                 tone="white"
-                className="sm:col-span-2"
                 icon={
                   <svg {...iconProps}>
                     <path d="M14.7 6.3a4 4 0 0 0-5.4 5.2L3.5 17.3a1.8 1.8 0 0 0 2.5 2.5l5.8-5.8a4 4 0 0 0 5.2-5.4l-2.4 2.4-2.1-.4-.4-2.1z" />
+                  </svg>
+                }
+              />
+              <ServiceCard
+                title="Stays & calendar"
+                description="Keep planned guest stays for this property in date order."
+                href={`/properties/${property.id}/calendar`}
+                actionLabel="Open stays & calendar"
+                tone="teal"
+                icon={
+                  <svg {...iconProps}>
+                    <rect x="4" y="5" width="16" height="16" rx="2" />
+                    <path d="M8 3v4" />
+                    <path d="M16 3v4" />
+                    <path d="M4 10h16" />
                   </svg>
                 }
               />

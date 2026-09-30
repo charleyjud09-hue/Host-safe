@@ -17,6 +17,7 @@ this document, or any Privacy Notice based on it, without that review.
 | Property items/actions/reminders | Title, description, type, priority, status, due/review/completed/submitted dates, destination, notes | `public.property_items` |
 | Maintenance issues (added in Phase 7a, pending review) | Per property: title, optional location within the property, optional description, priority, status, reported/due/resolved dates, optional free-text notes. No photos, attachments, contractor or guest fields. Free-text description/notes could still contain third-party personal data (e.g. a contractor's or guest's name) if a user types it | `public.maintenance_issues` |
 | Maintenance photos (added in Phase 7b, pending review) | Up to 10 photos per maintenance issue (JPG/PNG/WebP, 10MB each), original filename, content type, size, upload date. Photos may show people, guest belongings, documents or other personal data; retention is until the user deletes the photo or the issue | Supabase Storage, private bucket `maintenance-photos`; metadata in `public.maintenance_photos` |
+| Guest stays (added in Stays & calendar Phase B, pending review) | Per property: arrival date, departure date, status (planned/cancelled), and three optional fields — guest first name, number of guests, booking reference. **This is the first category holding personal data about people who are not HostSafe users (guests).** No surname, email, phone, notes, payment, identity or health data is collected. The first name is cleared automatically when a stay is cancelled and can be removed by the host at any time; the whole stay can be permanently deleted. Retention is otherwise until the user deletes it | `public.calendar_entries` |
 | Technical/session data | Authentication session cookies necessary to keep a user signed in | Managed by Supabase Auth / `@supabase/ssr` |
 
 ## Checklist — information still required before a public Privacy Notice can be finalised
@@ -39,6 +40,15 @@ this document, or any Privacy Notice based on it, without that review.
 - [ ] ICO complaint information (the standard "you can complain to the ICO"
       notice, with correct current ICO contact details)
 - [ ] Whether a Data Protection Officer is required or appointed
+- [ ] Guest data — controller/processor roles (whether the host, HostSafe,
+      or both are controllers of guest first names and booking references,
+      and whether processor terms are needed between HostSafe and hosts)
+- [ ] Guest data — lawful basis, and what hosts may need to tell their
+      guests about recording their details in HostSafe
+- [ ] Guest data — how a guest's request to access, correct or delete
+      their data would reach HostSafe or the host, and be handled
+- [ ] Guest data — all of the above resolved before any external user
+      uses the guest-stay feature
 - [ ] Cookie/analytics details, if any tracking or analytics tooling is
       added in future (none is currently in the app)
 

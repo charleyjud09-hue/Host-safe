@@ -1,0 +1,150 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound, redirect } from "next/navigation";
+import AppShell from "@/components/AppShell";
+import CalendarEntryList from "@/components/CalendarEntryList";
+import Footer from "@/components/Footer";
+import Header from "@/components/Header";
+import { formatDisplayDate, ukToday } from "@/lib/attention";
+import {
+  CALENDAR_LIST_COLUMNS,
+  groupByMonth,
+  isCurrentStay,
+  stayNights,
+  type CalendarListEntry,
+} from "@/lib/calendar";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { createClient } from "@/lib/supabase/server";
+
+export const metadata: Metadata = {
+  title: "Stays & calendar | HostSafe",
+};
+
+export default async function CalendarPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  if (!isSupabaseConfigured) redirect("/sign-in");
+  const { id } = await params;
+
+  const supabase = await createClient();
+  const { data: userData } = await supabase.auth.getUser();
+  if (!userData.user) redirect("/sign-in");
+
+  const { data: property } = await supabase
+    .from("properties")
+    .select("id, name")
+    .eq("id", id)
+    .maybeSingle();
+  if (!property) notFound();
+
+  const today = ukToday();
+
+  // Planned stays that have not yet departed. List columns only — no guest
+  // details. Returns no rows (not an error page) before the table exists.
+  const { data } = await supabase
+    .from("calendar_entries")
+    .select(CALENDAR_LIST_COLUMNS)
+    .eq("property_id", id)
+    .eq("entry_type", "guest_stay")
+    .eq("status", "planned")
+    .gt("end_date", today)
+    .order("start_date", { ascending: true })
+    .returns<CalendarListEntry[]>();
+  const stays = data ?? [];
+
+  const current = stays.find((s) => isCurrentStay(s, today));
+  const upcoming = groupByMonth(stays.filter((s) => s.start_date > today));
+  const base = `/properties/${property.id}/calendar`;
+  const card = "rounded-2xl border border-slate-200/80 bg-white p-6 shadow-card";
+
+  return (
+    <>
+      <Header />
+      <AppShell>
+        <div className="mx-auto max-w-3xl px-5 py-10 sm:py-12">
+          <nav aria-label="Breadcrumb" className="text-sm text-slate-600">
+            <Link href="/" className="hover:text-navy">
+              All properties
+            </Link>
+            <span aria-hidden> / </span>
+            <Link href={`/properties/${property.id}`} className="hover:text-navy">
+              {property.name}
+            </Link>
+          </nav>
+
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
+            <h1 className="text-3xl font-semibold tracking-tight text-navy">
+              Stays &amp; calendar
+            </h1>
+            <Link
+              href={`${base}/new`}
+              className="rounded-xl bg-action px-4 py-2.5 text-sm font-semibold text-white hover:bg-action-hover"
+            >
+              Add guest stay
+            </Link>
+          </div>
+          <p className="mt-2 text-slate-700">
+            Keep the guest stays you have planned for this property in date order.
+          </p>
+
+          {current && (
+            <section aria-labelledby="current-heading" className={`mt-6 ${card}`}>
+              <h2 id="current-heading" className="text-xl font-semibold text-navy">
+                Current stay
+              </h2>
+              <p className="mt-3 font-medium text-navy">
+                {formatDisplayDate(current.start_date)} –{" "}
+                {formatDisplayDate(current.end_date)}
+              </p>
+              <p className="mt-1 text-sm text-slate-600">
+                Guest stay · {stayNights(current)}{" "}
+                {stayNights(current) === 1 ? "night" : "nights"} · Departure{" "}
+                {formatDisplayDate(current.end_date)}
+              </p>
+              <Link
+                href={`${base}/${current.id}`}
+                className="mt-4 inline-block rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-navy hover:bg-slate-50"
+              >
+                Open current stay
+              </Link>
+            </section>
+          )}
+
+          <section aria-labelledby="upcoming-heading" className={`mt-6 ${card}`}>
+            <h2 id="upcoming-heading" className="text-xl font-semibold text-navy">
+              Upcoming
+            </h2>
+            {upcoming.length === 0 ? (
+              <p className="mt-4 text-slate-700">
+                No upcoming guest stays recorded for this property.
+              </p>
+            ) : (
+              upcoming.map((month) => (
+                <div key={month.key} className="mt-5">
+                  <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-600">
+                    {month.label}
+                  </h3>
+                  <div className="mt-3">
+                    <CalendarEntryList propertyId={property.id} entries={month.entries} />
+                  </div>
+                </div>
+              ))
+            )}
+          </section>
+
+          <p className="mt-8 text-sm">
+            <Link
+              href={`${base}/past`}
+              className="text-slate-700 underline underline-offset-4 hover:text-navy"
+            >
+              Past &amp; cancelled guest stays
+            </Link>
+          </p>
+        </div>
+      </AppShell>
+      <Footer />
+    </>
+  );
+}

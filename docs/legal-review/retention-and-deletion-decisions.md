@@ -57,6 +57,18 @@ that go inactive for a long period (e.g. a reminder email, or eventual
 deletion)? None of this is built, and none is recommended here as a
 default.
 
+## 8. Guest stays (completed and cancelled)
+**Current state:** a guest stay is kept until the host permanently deletes
+it. Cancelling a stay clears the guest first name immediately but keeps
+the dates, guest count and booking reference. The host can also remove the
+guest first name from a planned stay at any time. Nothing is cleared or
+deleted automatically after a stay ends.
+**Decision needed from founder:** how long should completed and cancelled
+stays be kept? Should the guest first name and/or booking reference be
+cleared automatically some time after departure, and should old stays be
+deleted automatically? How does backup retention (item 4) apply to guest
+data that a host has removed? No period is suggested here.
+
 ---
 
 **Each item above is a "Decision needed from founder" — nothing in this

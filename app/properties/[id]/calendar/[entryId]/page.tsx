@@ -65,6 +65,16 @@ export default async function CalendarEntryPage({
   const isCancelled = entry.status === "cancelled";
   const label = calendarEntryTypeLabel(entry.entry_type);
   const card = "rounded-2xl border border-slate-200/80 bg-white p-6 shadow-card sm:p-8";
+  const formKey = JSON.stringify([
+    entry.start_date,
+    entry.end_date,
+    entry.title,
+    entry.description,
+    entry.blocks_guest_stays,
+    entry.guest_first_name,
+    entry.guest_count,
+    entry.booking_reference,
+  ]);
 
   let summary: string;
   if (isStay) {
@@ -141,6 +151,9 @@ export default async function CalendarEntryPage({
                 </h2>
                 <div className="mt-5">
                   <GuestStayForm
+                    // Remount when the saved values change (e.g. after "Remove
+                    // guest name"), so the form never shows or re-saves stale data.
+                    key={formKey}
                     action={updateGuestStay.bind(null, property.id, entry.id)}
                     stay={entry}
                     propertyName={property.name}
@@ -194,6 +207,7 @@ export default async function CalendarEntryPage({
               </h2>
               <div className="mt-5">
                 <CalendarEntryForm
+                  key={formKey}
                   action={updateCalendarEntry.bind(
                     null,
                     property.id,

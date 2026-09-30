@@ -40,7 +40,7 @@ export default async function EditPropertyPage({
   if (!property) notFound();
 
   const action = updateProperty.bind(null, property.id);
-  // Only "/" or this property's overview; anything else keeps /dashboard.
+  // Only "/" or this property's overview; anything else falls back to the overview.
   const safeReturnTo = safePropertyReturnTo(returnTo, property.id);
 
   return (
@@ -58,7 +58,7 @@ export default async function EditPropertyPage({
               property={property}
               submitLabel="Save changes"
               returnTo={safeReturnTo ?? undefined}
-              cancelHref={safeReturnTo ?? "/dashboard"}
+              cancelHref={safeReturnTo ?? `/properties/${property.id}`}
             />
           </div>
 

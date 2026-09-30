@@ -98,14 +98,17 @@ export async function uploadMaintenancePhoto(
   return {};
 }
 
+/** Only runs when the confirmation step was completed. */
 export async function deleteMaintenancePhoto(
   propertyId: string,
   issueId: string,
   photoId: string,
+  formData: FormData,
 ) {
   if (!isSupabaseConfigured) return;
-  const { supabase } = await requireOwnIssue(propertyId, issueId);
   const issueUrl = `/properties/${propertyId}/maintenance/${issueId}`;
+  if (formData.get("confirm") !== "delete") redirect(issueUrl);
+  const { supabase } = await requireOwnIssue(propertyId, issueId);
 
   const { data: photo } = await supabase
     .from("maintenance_photos")

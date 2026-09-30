@@ -114,9 +114,12 @@ export async function uploadPropertyImage(
 export async function removePropertyImage(
   propertyId: string,
   returnToRaw: string | null,
+  formData: FormData,
 ) {
   if (!isSupabaseConfigured) return;
   const returnTo = safePropertyReturnTo(returnToRaw, propertyId);
+  // Only runs when the confirmation step was completed.
+  if (formData.get("confirm") !== "remove") redirect(editPageUrl(propertyId, returnTo));
   const { supabase, userId, currentPath } = await requireOwnProperty(propertyId);
 
   if (currentPath) {

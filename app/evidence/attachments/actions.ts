@@ -29,7 +29,7 @@ async function requireOwnEvidenceRecord(propertyId: string, recordId: string) {
     .eq("property_id", propertyId)
     .maybeSingle();
 
-  if (!record) redirect("/dashboard");
+  if (!record) redirect("/");
 
   return { supabase, userId: userData.user.id };
 }
@@ -106,12 +106,17 @@ export async function uploadAttachments(
   redirect(`/properties/${propertyId}/evidence/${recordId}/edit`);
 }
 
+/** Only runs when the confirmation step was completed. */
 export async function deleteAttachment(
   propertyId: string,
   recordId: string,
   attachmentId: string,
+  formData: FormData,
 ) {
   if (!isSupabaseConfigured) return;
+  if (formData.get("confirm") !== "delete") {
+    redirect(`/properties/${propertyId}/evidence/${recordId}/edit`);
+  }
   const { supabase } = await requireOwnEvidenceRecord(propertyId, recordId);
 
   const { data: attachment } = await supabase

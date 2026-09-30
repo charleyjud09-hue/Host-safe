@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useActionState, useState } from "react";
 import type { PropertyImageFormState } from "@/app/properties/images/actions";
+import ConfirmAction from "@/components/ConfirmAction";
 import PropertyImagePlaceholder from "@/components/PropertyImagePlaceholder";
 import { MAX_PROPERTY_IMAGE_BYTES, PROPERTY_IMAGE_TYPES } from "@/lib/property-images";
 
@@ -17,7 +18,7 @@ export default function PropertyImageForm({
     prev: PropertyImageFormState,
     formData: FormData,
   ) => Promise<PropertyImageFormState>;
-  removeAction: () => Promise<void>;
+  removeAction: (formData: FormData) => Promise<void>;
 }) {
   const [state, formAction, pending] = useActionState<PropertyImageFormState, FormData>(
     uploadAction,
@@ -99,14 +100,15 @@ export default function PropertyImageForm({
       </form>
 
       {imageUrl && (
-        <form action={removeAction}>
-          <button
-            type="submit"
-            className="w-full rounded-lg border border-red-200 bg-white px-6 py-3 font-semibold text-red-700 hover:bg-red-50 sm:w-auto"
-          >
-            Remove image
-          </button>
-        </form>
+        <ConfirmAction
+          action={removeAction}
+          confirmValue="remove"
+          triggerLabel="Remove image"
+          heading="Remove this property image?"
+          body="The image will be permanently deleted. You can upload a new one at any time."
+          confirmLabel="Remove image"
+          keepLabel="Keep image"
+        />
       )}
     </div>
   );

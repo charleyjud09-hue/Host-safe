@@ -1,4 +1,5 @@
 import { deleteAttachment } from "@/app/evidence/attachments/actions";
+import ConfirmAction from "@/components/ConfirmAction";
 import { formatFileSize, type EvidenceAttachment } from "@/lib/evidence-attachments";
 
 export default function AttachmentList({
@@ -37,14 +38,17 @@ export default function AttachmentList({
                 {new Date(a.created_at).toLocaleDateString("en-GB")}
               </p>
             </div>
-            <form action={removeAction}>
-              <button
-                type="submit"
-                className="shrink-0 rounded-lg border border-red-200 px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-50"
-              >
-                Delete
-              </button>
-            </form>
+            <ConfirmAction
+              action={removeAction}
+              confirmValue="delete"
+              size="sm"
+              triggerLabel="Delete"
+              triggerAriaLabel={`Delete attachment ${a.original_file_name}`}
+              heading="Delete this attachment?"
+              body="The file will be permanently removed. This can’t be undone."
+              confirmLabel="Delete permanently"
+              keepLabel="Keep file"
+            />
           </li>
         );
       })}

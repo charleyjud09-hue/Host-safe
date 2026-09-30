@@ -26,10 +26,14 @@ async function requireOwnProperty(propertyId: string) {
     .eq("id", propertyId)
     .maybeSingle();
 
-  if (!property) redirect("/dashboard");
+  if (!property) redirect("/");
 
   return { supabase, userId: userData.user.id };
 }
+
+const documentsUrl = (propertyId: string) => `/properties/${propertyId}/documents`;
+const recordUrl = (propertyId: string, recordId: string) =>
+  `/properties/${propertyId}/evidence/${recordId}/edit`;
 
 export async function createEvidenceRecord(
   propertyId: string,
@@ -55,7 +59,7 @@ export async function createEvidenceRecord(
     };
   }
 
-  redirect(`/dashboard`);
+  redirect(documentsUrl(propertyId));
 }
 
 export async function updateEvidenceRecord(
@@ -86,7 +90,7 @@ export async function updateEvidenceRecord(
     };
   }
 
-  redirect(`/dashboard`);
+  redirect(documentsUrl(propertyId));
 }
 
 export async function archiveEvidenceRecord(
@@ -103,14 +107,20 @@ export async function archiveEvidenceRecord(
     .eq("property_id", propertyId)
     .eq("user_id", userId);
 
-  redirect(`/dashboard`);
+  redirect(documentsUrl(propertyId));
 }
 
+/**
+ * Permanent delete of the record and its attachments. Only runs when the
+ * confirmation step was completed, so a stray submission can't delete it.
+ */
 export async function deleteEvidenceRecord(
   propertyId: string,
   recordId: string,
+  formData: FormData,
 ) {
   if (!isSupabaseConfigured) return;
+  if (formData.get("confirm") !== "delete") redirect(recordUrl(propertyId, recordId));
   const { supabase, userId } = await requireOwnProperty(propertyId);
 
   // Remove attachment files from Storage first, so the row cascade below
@@ -124,5 +134,5 @@ export async function deleteEvidenceRecord(
     .eq("property_id", propertyId)
     .eq("user_id", userId);
 
-  redirect(`/dashboard`);
+  redirect(documentsUrl(propertyId));
 }

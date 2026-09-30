@@ -173,7 +173,7 @@ export default function EligibilityChecker({
           )}
           {!propertyId && accountsEnabled && signedIn && (
             <Link
-              href="/dashboard"
+              href="/"
               onClick={() => {
                 stashPendingResult(answers);
                 setSaved(true);

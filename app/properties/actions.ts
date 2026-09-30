@@ -125,6 +125,8 @@ export async function updateProperty(
   }
 
   // Re-validated here, never trusted from the form: only "/" or this
-  // property's overview are allowed; otherwise keep the original /dashboard.
-  redirect(safePropertyReturnTo(formData.get("returnTo"), propertyId) ?? "/dashboard");
+  // property's overview are allowed; otherwise go to this property's overview.
+  redirect(
+    safePropertyReturnTo(formData.get("returnTo"), propertyId) ?? `/properties/${propertyId}`,
+  );
 }

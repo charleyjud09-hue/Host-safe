@@ -24,7 +24,7 @@ async function requireOwnProperty(propertyId: string) {
     .eq("id", propertyId)
     .maybeSingle();
 
-  if (!property) redirect("/dashboard");
+  if (!property) redirect("/");
 
   return { supabase, userId: userData.user.id };
 }
@@ -116,8 +116,16 @@ export async function archivePropertyItem(propertyId: string, itemId: string) {
   redirect(`/properties/${propertyId}/items`);
 }
 
-export async function deletePropertyItem(propertyId: string, itemId: string) {
+/** Permanent delete. Only runs when the confirmation step was completed. */
+export async function deletePropertyItem(
+  propertyId: string,
+  itemId: string,
+  formData: FormData,
+) {
   if (!isSupabaseConfigured) return;
+  if (formData.get("confirm") !== "delete") {
+    redirect(`/properties/${propertyId}/items/${itemId}/edit`);
+  }
   const { supabase, userId } = await requireOwnProperty(propertyId);
 
   await supabase

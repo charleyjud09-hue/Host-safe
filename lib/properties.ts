@@ -34,7 +34,7 @@ export type PropertyFormState = {
  * Allow-list for where the property edit flow may return to. Only the
  * property selector ("/") or this property's own overview are accepted —
  * never an arbitrary or external path. Anything else returns null, and
- * callers fall back to /dashboard (the original behaviour).
+ * callers fall back to the property's overview.
  */
 export function safePropertyReturnTo(
   value: unknown,

@@ -6,6 +6,7 @@ import Disclaimer from "@/components/Disclaimer";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import PropertySelector, { type SelectorProperty } from "@/components/PropertySelector";
+import SavePendingResult from "@/components/SavePendingResult";
 import {
   buildAttention,
   countByLevel,
@@ -166,6 +167,8 @@ export default async function Home() {
       <>
         <Header />
         <AppShell>
+          {/* Saves a result from the public check, now that sign-in lands here. */}
+          <SavePendingResult />
           <PropertySelector properties={selectorProperties} />
         </AppShell>
         <Footer />

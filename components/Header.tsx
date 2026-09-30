@@ -29,8 +29,8 @@ export default async function Header() {
         <nav className="flex items-center gap-1 sm:gap-2" aria-label="Main">
           {signedIn ? (
             <>
-              <Link href="/dashboard" className={linkClass}>
-                Dashboard
+              <Link href="/" className={linkClass}>
+                My properties
               </Link>
               <form action={signOut}>
                 <button type="submit" className={linkClass}>

@@ -1,39 +1,47 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 
 /**
- * Two-step confirmation for cancelling or permanently deleting a calendar
- * entry. The server action also refuses to run unless the confirm field
- * is present, so this can't be skipped.
+ * Two-step "are you sure?" for anything that deletes, cancels or removes.
+ * The server action also refuses to run unless the confirm field is
+ * present, so this step can't be skipped by posting the form directly.
  */
-export default function ConfirmCalendarAction({
+export default function ConfirmAction({
   action,
   confirmValue,
   triggerLabel,
+  triggerAriaLabel,
   heading,
   body,
   confirmLabel,
   keepLabel,
+  size = "md",
 }: {
   action: (formData: FormData) => Promise<void>;
   /** Sent as the hidden "confirm" field the server action checks for. */
   confirmValue: string;
   triggerLabel: string;
+  /** Fuller accessible name when the visible label is short (e.g. "Delete"). */
+  triggerAriaLabel?: string;
   heading: string;
   body: string;
   confirmLabel: string;
   keepLabel: string;
+  /** "sm" for compact rows such as attachment lists and photo cards. */
+  size?: "md" | "sm";
 }) {
   const [confirming, setConfirming] = useState(false);
-  const headingId = `confirm-${confirmValue}-heading`;
+  const headingId = useId();
+  const pad = size === "sm" ? "px-3 py-1.5 text-sm" : "px-5 py-2.5";
 
   if (!confirming) {
     return (
       <button
         type="button"
         onClick={() => setConfirming(true)}
-        className="rounded-lg border border-red-200 bg-white px-5 py-2.5 font-medium text-red-700 hover:bg-red-50"
+        aria-label={triggerAriaLabel}
+        className={`shrink-0 rounded-lg border border-red-200 bg-white font-medium text-red-700 hover:bg-red-50 ${pad}`}
       >
         {triggerLabel}
       </button>
@@ -54,14 +62,14 @@ export default function ConfirmCalendarAction({
         <input type="hidden" name="confirm" value={confirmValue} />
         <button
           type="submit"
-          className="rounded-lg bg-red-700 px-5 py-2.5 font-medium text-white hover:bg-red-800"
+          className={`rounded-lg bg-red-700 font-medium text-white hover:bg-red-800 ${pad}`}
         >
           {confirmLabel}
         </button>
         <button
           type="button"
           onClick={() => setConfirming(false)}
-          className="rounded-lg border border-slate-300 bg-white px-5 py-2.5 font-medium text-navy hover:bg-slate-50"
+          className={`rounded-lg border border-slate-300 bg-white font-medium text-navy hover:bg-slate-50 ${pad}`}
         >
           {keepLabel}
         </button>

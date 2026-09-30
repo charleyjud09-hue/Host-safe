@@ -6,6 +6,7 @@ import {
   reopenPropertyItem,
   updatePropertyItem,
 } from "@/app/property-items/actions";
+import ConfirmAction from "@/components/ConfirmAction";
 import PropertyItemForm from "@/components/PropertyItemForm";
 import AppShell from "@/components/AppShell";
 import Footer from "@/components/Footer";
@@ -86,14 +87,17 @@ export default async function EditPropertyItemPage({
                 </button>
               </form>
             )}
-            <form action={deleteAction}>
-              <button
-                type="submit"
-                className="rounded-lg border border-red-200 px-5 py-2.5 font-medium text-red-700 hover:bg-red-50"
-              >
-                Delete item
-              </button>
-            </form>
+          </div>
+          <div className="mt-4">
+            <ConfirmAction
+              action={deleteAction}
+              confirmValue="delete"
+              triggerLabel="Delete item"
+              heading="Permanently delete this item?"
+              body="This can’t be undone. If you just want it out of the way, archive it instead."
+              confirmLabel="Delete permanently"
+              keepLabel="Keep item"
+            />
           </div>
         </div>
       </AppShell>

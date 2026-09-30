@@ -104,7 +104,7 @@ export async function signIn(
     return { error: "Your email or password did not match. Please try again." };
   }
 
-  redirect("/dashboard");
+  redirect("/");
 }
 
 export async function signOut() {

@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
       }));
     }
 
-    if (!error) return NextResponse.redirect(`${origin}/dashboard`);
+    if (!error) return NextResponse.redirect(`${origin}/`);
   }
 
   return NextResponse.redirect(`${origin}/sign-in?notice=confirm-failed`);

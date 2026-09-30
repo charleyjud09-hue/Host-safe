@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { deleteMaintenancePhoto } from "@/app/maintenance/photos/actions";
+import ConfirmAction from "@/components/ConfirmAction";
 import { formatFileSize } from "@/lib/evidence-attachments";
 import type { MaintenancePhoto } from "@/lib/maintenance-photos";
 
@@ -40,21 +41,21 @@ export default function MaintenancePhotoGrid({
                 className="object-cover"
               />
             </a>
-            <div className="flex items-center justify-between gap-3 p-3">
+            <div className="flex flex-wrap items-center justify-between gap-3 p-3">
               <p className="min-w-0 truncate text-sm text-slate-600">
                 {photo.original_file_name} · {formatFileSize(photo.size_bytes)}
               </p>
-              <form
+              <ConfirmAction
                 action={deleteMaintenancePhoto.bind(null, propertyId, issueId, photo.id)}
-              >
-                <button
-                  type="submit"
-                  aria-label={`Delete photo ${photo.original_file_name}`}
-                  className="shrink-0 rounded-lg border border-red-200 px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-50"
-                >
-                  Delete
-                </button>
-              </form>
+                confirmValue="delete"
+                size="sm"
+                triggerLabel="Delete"
+                triggerAriaLabel={`Delete photo ${photo.original_file_name}`}
+                heading="Delete this photo?"
+                body="The photo will be permanently removed. This can’t be undone."
+                confirmLabel="Delete permanently"
+                keepLabel="Keep photo"
+              />
             </div>
           </li>
         );

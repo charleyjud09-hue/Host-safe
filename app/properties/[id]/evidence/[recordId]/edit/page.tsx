@@ -4,6 +4,7 @@ import { archiveEvidenceRecord, deleteEvidenceRecord, updateEvidenceRecord } fro
 import { uploadAttachments } from "@/app/evidence/attachments/actions";
 import AttachmentList from "@/components/AttachmentList";
 import AttachmentUploadForm from "@/components/AttachmentUploadForm";
+import ConfirmAction from "@/components/ConfirmAction";
 import EvidenceRecordForm from "@/components/EvidenceRecordForm";
 import AppShell from "@/components/AppShell";
 import Footer from "@/components/Footer";
@@ -112,14 +113,23 @@ export default async function EditEvidenceRecordPage({
                 Archive record
               </button>
             </form>
-            <form action={deleteAction}>
-              <button
-                type="submit"
-                className="rounded-lg border border-red-200 px-5 py-2.5 font-medium text-red-700 hover:bg-red-50"
-              >
-                Delete record
-              </button>
-            </form>
+          </div>
+          <div className="mt-4">
+            <ConfirmAction
+              action={deleteAction}
+              confirmValue="delete"
+              triggerLabel="Delete record"
+              heading="Permanently delete this record?"
+              body={
+                attachmentCount > 0
+                  ? `This removes the record and its ${attachmentCount} attachment${
+                      attachmentCount === 1 ? "" : "s"
+                    }. This can’t be undone. If you just want it out of the way, archive it instead.`
+                  : "This removes the record. This can’t be undone. If you just want it out of the way, archive it instead."
+              }
+              confirmLabel="Delete permanently"
+              keepLabel="Keep record"
+            />
           </div>
         </div>
       </AppShell>

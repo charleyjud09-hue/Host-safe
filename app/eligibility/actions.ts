@@ -43,5 +43,5 @@ export async function saveEligibilityResult(
     return { error: "We could not save this result. Please try again." };
   }
 
-  redirect("/dashboard");
+  redirect(`/properties/${propertyId}`);
 }

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { signOut } from "@/app/auth/actions";
+import HeaderNavLink from "@/components/HeaderNavLink";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -9,6 +10,50 @@ export default async function Header() {
     const supabase = await createClient();
     const { data } = await supabase.auth.getUser();
     signedIn = Boolean(data.user);
+  }
+
+  // Signed-in pages use the warm paper theme. The signed-out header (and so
+  // the public homepage) keeps its original look.
+  if (signedIn) {
+    return (
+      <header className="border-b border-paper-line bg-paper-deep/90 backdrop-blur">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 px-4 py-3 sm:px-5 sm:py-4">
+          <Link
+            href="/"
+            aria-label="HostSafe home"
+            className="flex items-center gap-2 text-lg font-semibold text-navy"
+          >
+            <span
+              aria-hidden
+              className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-action text-sm text-white"
+            >
+              H
+            </span>
+            {/* Just the mark on very narrow phones, so the menu keeps its margin. */}
+            <span aria-hidden className="hidden min-[420px]:inline">
+              HostSafe
+            </span>
+          </Link>
+          <nav className="flex shrink-0 items-center gap-0.5 sm:gap-2" aria-label="Main">
+            <HeaderNavLink href="/" match="properties">
+              <span className="sm:hidden">Properties</span>
+              <span className="hidden sm:inline">My properties</span>
+            </HeaderNavLink>
+            <HeaderNavLink href="/account" match="account">
+              Account
+            </HeaderNavLink>
+            <form action={signOut}>
+              <button
+                type="submit"
+                className="ml-1 whitespace-nowrap rounded-lg bg-white px-2.5 py-1.5 text-sm font-medium text-navy ring-1 ring-paper-line hover:bg-paper sm:px-3"
+              >
+                Sign out
+              </button>
+            </form>
+          </nav>
+        </div>
+      </header>
+    );
   }
 
   const linkClass =
@@ -27,36 +72,17 @@ export default async function Header() {
           HostSafe
         </Link>
         <nav className="flex items-center gap-1 sm:gap-2" aria-label="Main">
-          {signedIn ? (
-            <>
-              <Link href="/" className={linkClass}>
-                My properties
-              </Link>
-              <Link href="/account" className={linkClass}>
-                Account
-              </Link>
-              <form action={signOut}>
-                <button type="submit" className={linkClass}>
-                  Sign out
-                </button>
-              </form>
-            </>
-          ) : (
-            isSupabaseConfigured && (
-              <Link href="/sign-in" className={linkClass}>
-                Sign in
-              </Link>
-            )
-          )}
-          {/* Signed-in users check each property from its own pages instead. */}
-          {!signedIn && (
-            <Link
-              href="/check"
-              className="rounded-lg bg-navy px-4 py-2 text-sm font-medium text-white hover:bg-navy-light"
-            >
-              Check suitability
+          {isSupabaseConfigured && (
+            <Link href="/sign-in" className={linkClass}>
+              Sign in
             </Link>
           )}
+          <Link
+            href="/check"
+            className="rounded-lg bg-navy px-4 py-2 text-sm font-medium text-white hover:bg-navy-light"
+          >
+            Check suitability
+          </Link>
         </nav>
       </div>
     </header>

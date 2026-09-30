@@ -12,6 +12,10 @@ import ConfirmDeleteIssue from "@/components/ConfirmDeleteIssue";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import MaintenanceIssueForm from "@/components/MaintenanceIssueForm";
+import MaintenancePhotoGrid from "@/components/MaintenancePhotoGrid";
+import MaintenancePhotoUpload from "@/components/MaintenancePhotoUpload";
+import { uploadMaintenancePhoto } from "@/app/maintenance/photos/actions";
+import { MAX_PHOTOS_PER_ISSUE, type MaintenancePhoto } from "@/lib/maintenance-photos";
 import { formatDisplayDate, ukToday } from "@/lib/attention";
 import {
   maintenanceStatusLabel,
@@ -54,6 +58,16 @@ export default async function MaintenanceIssuePage({
     .eq("property_id", id)
     .maybeSingle<MaintenanceIssue>();
   if (!issue) notFound();
+
+  // Returns no rows (not an error page) before the photos table exists.
+  const { data: photoRows } = await supabase
+    .from("maintenance_photos")
+    .select("id, issue_id, storage_path, original_file_name, content_type, size_bytes, created_at")
+    .eq("issue_id", issue.id)
+    .order("created_at", { ascending: true })
+    .returns<MaintenancePhoto[]>();
+  const photos = photoRows ?? [];
+  const remainingPhotos = MAX_PHOTOS_PER_ISSUE - photos.length;
 
   const listHref = `/properties/${property.id}/maintenance`;
   const isOpen = OPEN_MAINTENANCE_STATUSES.has(issue.status);
@@ -124,6 +138,35 @@ export default async function MaintenanceIssuePage({
                 submitLabel="Save changes"
                 cancelHref={listHref}
               />
+            </div>
+          </section>
+
+          <section
+            aria-labelledby="photos-heading"
+            className="mt-8 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-card sm:p-8"
+          >
+            <h2 id="photos-heading" className="text-xl font-semibold text-navy">
+              Photos
+            </h2>
+            <div className="mt-4">
+              <MaintenancePhotoGrid
+                propertyId={property.id}
+                issueId={issue.id}
+                photos={photos}
+              />
+            </div>
+            <div className="mt-6 border-t border-slate-100 pt-6">
+              {remainingPhotos > 0 ? (
+                <MaintenancePhotoUpload
+                  uploadAction={uploadMaintenancePhoto.bind(null, property.id, issue.id)}
+                  remaining={remainingPhotos}
+                />
+              ) : (
+                <p className="text-sm text-slate-600">
+                  This issue has reached the limit of {MAX_PHOTOS_PER_ISSUE}{" "}
+                  photos. Delete one to add another.
+                </p>
+              )}
             </div>
           </section>
 

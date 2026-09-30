@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { ukToday } from "@/lib/attention";
 import { parseMaintenanceInput, type MaintenanceFormState } from "@/lib/maintenance";
+import { MAINTENANCE_PHOTOS_BUCKET } from "@/lib/maintenance-photos";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -135,6 +136,24 @@ export async function deleteMaintenanceIssue(
   if (formData.get("confirm") !== "delete") redirect(issueUrl(propertyId, issueId));
 
   const { supabase, userId } = await requireOwnProperty(propertyId);
+
+  // Remove this issue's photo files from Storage first, so deleting the
+  // issue (which cascades to the photo records) never orphans files.
+  const { data: photos } = await supabase
+    .from("maintenance_photos")
+    .select("storage_path")
+    .eq("issue_id", issueId)
+    .eq("property_id", propertyId);
+  if (photos && photos.length > 0) {
+    const { error: removeError } = await supabase.storage
+      .from(MAINTENANCE_PHOTOS_BUCKET)
+      .remove(photos.map((p) => p.storage_path));
+    if (removeError) {
+      console.error("Issue photo cleanup failed:", removeError.message);
+      // Keep the issue (and its photo records) rather than orphan files.
+      redirect(issueUrl(propertyId, issueId));
+    }
+  }
 
   await supabase
     .from("maintenance_issues")

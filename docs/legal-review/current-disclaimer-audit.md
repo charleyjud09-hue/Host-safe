@@ -28,6 +28,7 @@ made alongside these documents.
 | 14 | "An organisational status only — not a legal or compliance judgement." | `components/PropertyItemForm.tsx` (status field helper) | — none identified |
 | 15 | "HostSafe does not decide what is legally required — you add and manage these items yourself." | `app/properties/[id]/items/page.tsx` | — none identified |
 | 16 | "Marking an issue resolved records what you entered in HostSafe. It does not confirm that a repair is complete, safe or compliant." (added in Phase 7a, pending review) | `lib/maintenance.ts` (`RESOLVED_NOTICE`), shown in `components/MaintenanceIssueForm.tsx` when Resolved is selected and on `app/properties/[id]/maintenance/[issueId]/page.tsx` for resolved issues | — none identified; directly addresses "repair verified / property safe" risk |
+| 17 | "Photos are stored privately and only shown to you. Please avoid photos that show people or personal information." (added in Phase 7b, pending review) | `lib/maintenance-photos.ts` (`MAINTENANCE_PHOTO_NOTE`), shown in `components/MaintenancePhotoUpload.tsx` on the maintenance issue page | — none identified; "stored privately / only shown to you" is a factual privacy statement that should be checked against the final Privacy Notice |
 
 ## Overall finding
 

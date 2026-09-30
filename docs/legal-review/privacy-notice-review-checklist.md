@@ -16,6 +16,7 @@ this document, or any Privacy Notice based on it, without that review.
 | Uploaded attachments | Files (JPG/PNG/WebP/PDF), original filename, content type, size, upload date | Supabase Storage, private bucket `evidence-attachments`; metadata in `public.evidence_attachments` |
 | Property items/actions/reminders | Title, description, type, priority, status, due/review/completed/submitted dates, destination, notes | `public.property_items` |
 | Maintenance issues (added in Phase 7a, pending review) | Per property: title, optional location within the property, optional description, priority, status, reported/due/resolved dates, optional free-text notes. No photos, attachments, contractor or guest fields. Free-text description/notes could still contain third-party personal data (e.g. a contractor's or guest's name) if a user types it | `public.maintenance_issues` |
+| Maintenance photos (added in Phase 7b, pending review) | Up to 10 photos per maintenance issue (JPG/PNG/WebP, 10MB each), original filename, content type, size, upload date. Photos may show people, guest belongings, documents or other personal data; retention is until the user deletes the photo or the issue | Supabase Storage, private bucket `maintenance-photos`; metadata in `public.maintenance_photos` |
 | Technical/session data | Authentication session cookies necessary to keep a user signed in | Managed by Supabase Auth / `@supabase/ssr` |
 
 ## Checklist — information still required before a public Privacy Notice can be finalised

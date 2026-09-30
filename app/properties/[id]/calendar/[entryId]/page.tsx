@@ -67,7 +67,7 @@ export default async function CalendarEntryPage({
   const isCancelled = entry.status === "cancelled";
 
   // Zero-gap warning: a planned stay leaving or arriving at exactly the
-  // same time as this one. Only dates and times are read â€” no guest details.
+  // same time as this one. Only dates and times are read — no guest details.
   let zeroGap = false;
   if (isStay && !isCancelled && (entry.arrival_time || entry.departure_time)) {
     const { data: neighbours } = await supabase
@@ -102,13 +102,13 @@ export default async function CalendarEntryPage({
   let summary: string;
   if (isStay) {
     const nights = stayNights(entry);
-    summary = `${formatDisplayDate(entry.start_date)} â€“ ${formatDisplayDate(entry.end_date)} Â· ${nights} ${
+    summary = `${formatDisplayDate(entry.start_date)} – ${formatDisplayDate(entry.end_date)} · ${nights} ${
       nights === 1 ? "night" : "nights"
-    } Â· ${isCancelled ? "Cancelled" : "Planned"}`;
+    } · ${isCancelled ? "Cancelled" : "Planned"}`;
   } else if (entry.start_date === entry.end_date) {
     summary = formatDisplayDate(entry.start_date);
   } else {
-    summary = `${formatDisplayDate(entry.start_date)} â€“ ${formatDisplayDate(entry.end_date)}`;
+    summary = `${formatDisplayDate(entry.start_date)} – ${formatDisplayDate(entry.end_date)}`;
   }
 
   return (
@@ -131,7 +131,7 @@ export default async function CalendarEntryPage({
           {isStay && (entry.arrival_time || entry.departure_time) && (
             <p className="mt-1 text-sm text-slate-600">
               {entry.arrival_time && `Check-in ${shortTime(entry.arrival_time)}`}
-              {entry.arrival_time && entry.departure_time && " Â· "}
+              {entry.arrival_time && entry.departure_time && " · "}
               {entry.departure_time && `Check-out ${shortTime(entry.departure_time)}`}
             </p>
           )}
@@ -265,7 +265,7 @@ export default async function CalendarEntryPage({
                   ? "Permanently delete this guest stay?"
                   : "Permanently delete this entry?"
               }
-              body="This removes it and everything recorded on it. This canâ€™t be undone."
+              body="This removes it and everything recorded on it. This can’t be undone."
               confirmLabel="Delete permanently"
               keepLabel={isStay ? "Keep stay" : "Keep entry"}
             />

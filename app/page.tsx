@@ -170,6 +170,31 @@ export default async function Home() {
           {/* Saves a result from the public check, now that sign-in lands here. */}
           <SavePendingResult />
           <PropertySelector properties={selectorProperties} />
+          {/* Moved unchanged from the retired /dashboard page. */}
+          <div className="mx-auto max-w-5xl space-y-2 px-5 pb-12 text-sm text-slate-600">
+            <p>
+              HostSafe is an organisational and educational tool for
+              properties in England. It does not provide legal advice,
+              fire-risk assessments, or compliance certification, and it does
+              not confirm that a property is safe or legally compliant.
+              Keeping records here does not by itself demonstrate legal
+              compliance.
+            </p>
+            <p>
+              HostSafe&apos;s simplified guidance is intended for smaller,
+              straightforward accommodation in England. Larger, more complex,
+              shared, converted, or unusual properties may need different
+              guidance or advice from a competent fire-risk assessor.
+            </p>
+            <p>
+              HostSafe helps you organise property information, evidence,
+              documents, actions, and reminders. It is not an official
+              records repository. You remain responsible for keeping original
+              documents and appropriate backups, checking applicable
+              requirements and deadlines, and submitting information directly
+              to the relevant organisation where required.
+            </p>
+          </div>
         </AppShell>
         <Footer />
       </>

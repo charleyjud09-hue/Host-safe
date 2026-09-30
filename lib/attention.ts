@@ -3,10 +3,9 @@
  * statuses the user has recorded. Never claims anything is overdue in a
  * legal sense, non-compliant, unsafe, or "all clear".
  *
- * Used by the property selector, the property overview, and the maintenance
- * section of the Actions & reminders page. The older getAttentionReason() in
- * lib/property-items.ts still drives /dashboard and the action reminders on
- * the items page, unchanged.
+ * The single source of reminder logic: used by the property selector, the
+ * property overview, and the Actions & reminders page (including the badge
+ * on each item in its list).
  */
 
 /**
@@ -116,6 +115,46 @@ function bestCandidate(
   return best;
 }
 
+/** The reminder for one action item, or null if it doesn't need attention. */
+export function itemAttention(
+  item: AttentionItemInput,
+  today: string = ukToday(),
+): AttentionEntry | null {
+  if (!openItemStatuses.has(item.status)) return null;
+  const c = bestCandidate(
+    [
+      { dateLabel: "Due", date: item.due_date },
+      { dateLabel: "Review", date: item.review_date },
+    ],
+    today,
+  );
+  if (!c) return null;
+
+  let reason: string | null = null;
+  if (c.level === "urgent") {
+    if (c.dateLabel === "Review") {
+      reason = "Review date has passed — check whether this item needs reviewing.";
+    } else if (item.item_type === "submit_send") {
+      reason =
+        "This item is not marked as submitted. Check the relevant requirement and take appropriate action.";
+    } else {
+      reason = "Due date has passed — this item may need attention.";
+    }
+  }
+
+  return {
+    key: `item-${item.id}`,
+    level: c.level,
+    // No service classification exists on items yet — never guess one.
+    serviceLabel: "Action",
+    title: item.title,
+    reason,
+    dateLabel: c.dateLabel,
+    date: c.date,
+    href: `/properties/${item.property_id}/items/${item.id}/edit`,
+  };
+}
+
 export function buildAttention(
   items: AttentionItemInput[],
   evidence: AttentionEvidenceInput[],
@@ -125,39 +164,8 @@ export function buildAttention(
   const entries: AttentionEntry[] = [];
 
   for (const item of items) {
-    if (!openItemStatuses.has(item.status)) continue;
-    const c = bestCandidate(
-      [
-        { dateLabel: "Due", date: item.due_date },
-        { dateLabel: "Review", date: item.review_date },
-      ],
-      today,
-    );
-    if (!c) continue;
-
-    let reason: string | null = null;
-    if (c.level === "urgent") {
-      if (c.dateLabel === "Review") {
-        reason = "Review date has passed — check whether this item needs reviewing.";
-      } else if (item.item_type === "submit_send") {
-        reason =
-          "This item is not marked as submitted. Check the relevant requirement and take appropriate action.";
-      } else {
-        reason = "Due date has passed — this item may need attention.";
-      }
-    }
-
-    entries.push({
-      key: `item-${item.id}`,
-      level: c.level,
-      // No service classification exists on items yet — never guess one.
-      serviceLabel: "Action",
-      title: item.title,
-      reason,
-      dateLabel: c.dateLabel,
-      date: c.date,
-      href: `/properties/${item.property_id}/items/${item.id}/edit`,
-    });
+    const entry = itemAttention(item, today);
+    if (entry) entries.push(entry);
   }
 
   for (const record of evidence) {

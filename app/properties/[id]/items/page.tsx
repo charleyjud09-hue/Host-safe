@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import NeedsAttentionList, { type AttentionRow } from "@/components/NeedsAttentionList";
 import PropertyAttentionList from "@/components/PropertyAttentionList";
 import PropertyItemList from "@/components/PropertyItemList";
 import {
   buildAttention,
+  REMINDER_NOTICE,
   ukToday,
   type AttentionMaintenanceInput,
 } from "@/lib/attention";
 import AppShell from "@/components/AppShell";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import { getAttentionReason, type PropertyItem } from "@/lib/property-items";
+import type { PropertyItem } from "@/lib/property-items";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -55,27 +55,14 @@ export default async function PropertyItemsPage({
       .in("status", ["open", "in_progress", "waiting"]),
   ]);
 
-  const maintenanceEntries = buildAttention(
-    [],
+  // Actions and open maintenance issues, using the same rules as the
+  // property overview and selector.
+  const attention = buildAttention(
+    items ?? [],
     [],
     ukToday(),
     (maintenance ?? []) as AttentionMaintenanceInput[],
   );
-
-  const attentionRows: AttentionRow[] = (items ?? []).flatMap((item) => {
-    const reason = getAttentionReason(item);
-    if (!reason) return [];
-    return [
-      {
-        itemId: item.id,
-        propertyId: id,
-        title: item.title,
-        message: reason.message,
-        date: reason.date,
-        level: reason.level,
-      },
-    ];
-  });
 
   return (
     <>
@@ -104,43 +91,10 @@ export default async function PropertyItemsPage({
             <h2 className="text-xl font-semibold text-navy">
               Needs attention
             </h2>
-            <p className="mt-1 text-sm text-slate-600">
-              Reminders are based on the dates and statuses recorded in
-              HostSafe. They are organisational prompts only and may not
-              identify every requirement or deadline that applies to you.
-            </p>
-            {maintenanceEntries.length === 0 ? (
-              <div className="mt-4">
-                <NeedsAttentionList rows={attentionRows} />
-              </div>
-            ) : (
-              <>
-                {attentionRows.length > 0 && (
-                  <div className="mt-5">
-                    <h3 className="font-semibold text-navy">Actions</h3>
-                    <div className="mt-3">
-                      <NeedsAttentionList rows={attentionRows} />
-                    </div>
-                  </div>
-                )}
-                <div className="mt-5">
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <h3 className="font-semibold text-navy">
-                      Maintenance &amp; repairs
-                    </h3>
-                    <Link
-                      href={`/properties/${id}/maintenance`}
-                      className="text-sm font-medium text-navy underline underline-offset-4"
-                    >
-                      Open maintenance
-                    </Link>
-                  </div>
-                  <div className="mt-3">
-                    <PropertyAttentionList entries={maintenanceEntries} />
-                  </div>
-                </div>
-              </>
-            )}
+            <p className="mt-1 text-sm text-slate-600">{REMINDER_NOTICE}</p>
+            <div className="mt-4">
+              <PropertyAttentionList entries={attention} />
+            </div>
           </section>
 
           <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">

@@ -8,7 +8,9 @@ wording is legally sufficient — that requires a qualified legal
 professional.
 
 Audited: 28 September 2026, against commit `a06db38` and the footer update
-made alongside these documents.
+made alongside these documents. Rows 16 onwards were added as features
+shipped. **Strict full review: 30 September 2026, against commit
+`f9eb72c`** — see "Strict review" below the table.
 
 | # | Wording (exact) | Location | Could it accidentally imply... |
 |---|---|---|---|
@@ -16,7 +18,7 @@ made alongside these documents.
 | 2 | "If your property is complex or outside its intended scope, you should speak with a competent fire-risk assessor." | `components/Disclaimer.tsx` | — none identified |
 | 3 | "HostSafe is an early-stage organisational and educational tool. It does not provide legal advice, fire-risk assessments, or compliance certification, and it does not confirm that a property is safe or legally compliant." | `components/Footer.tsx` (updated as part of this pack) | — none identified |
 | 4 | "HostSafe helps owners of small, simple self-catering holiday lets organise fire-safety information. It is an organisational and educational tool, not legal advice or a fire-risk assessment." | `app/layout.tsx` (page meta description) | — none identified |
-| 5 | "HostSafe is an organisational and educational tool. It does not provide legal advice, fire-risk assessments, or compliance certification, and it does not confirm that a property is safe or legally compliant." | `app/page.tsx` (signed-in homepage) | — none identified |
+| 5 | ~~"HostSafe is an organisational and educational tool. It does not provide legal advice, fire-risk assessments, or compliance certification, and it does not confirm that a property is safe or legally compliant."~~ **No longer in the app** (the old signed-in homepage was replaced by the property selector; row 9 now carries the equivalent wording there) | — | — |
 | 6 | "HostSafe is designed for owners of small, simple self-catering holiday lets in England..." / "...advice from a competent fire-risk assessor." | `app/page.tsx` (public landing page) | — none identified |
 | 7 | Eligibility-checker result messages (`suitableMessage`/`unsuitableMessage` in `lib/eligibility.ts`) — already state "not a fire-risk assessment" and "cannot tell you whether your property meets any legal requirement" | `/check`, `/properties/[id]/check`, dashboard | — none identified |
 | 8 | "Reminders are based on the dates and statuses recorded in HostSafe. They are organisational prompts only and may not identify every requirement or deadline that applies to you." | `lib/attention.ts` (`REMINDER_NOTICE`), shown on `app/properties/[id]/page.tsx` and `app/properties/[id]/items/page.tsx` (the retired `/dashboard` no longer shows it) | — none identified; explicitly disclaims guaranteed reminders |
@@ -45,21 +47,133 @@ made alongside these documents.
 | 32 | "Subscriptions and billing are not set up yet. There is nothing to manage here at the moment, and no payment details are held." (added 30 Sep 2026) | `app/account/billing/page.tsx` | — none identified; factual placeholder, must be replaced when billing is built |
 | 27 | "Don’t include names or contact details of guests, cleaners or contractors." (Stays & calendar, pending review) | `lib/calendar.ts` (`FREE_TEXT_HINT`), under the title and description fields for planned work and custom blocks | — none identified; a data-minimisation prompt |
 
+## Strict review — 30 September 2026
+
+A line-by-line pass of every user-facing sentence that touches safety,
+law, compliance, privacy, advice or readiness. Standard applied: each
+statement must be **true as an absolute**, must not imply a judgement
+HostSafe cannot make, and should be as short as the meaning allows.
+**No app wording has been changed by this review** — rewrites below are
+proposals awaiting founder approval (and legal review where marked).
+
+### A. Wording not previously logged
+
+| # | Wording (exact) | Location |
+|---|---|---|
+| A1 | "It does not give legal advice, and it does not certify or approve any property." / "It cannot guarantee that a property is safe or meets any legal requirement." / "Everything it produces is based on information you provide, and you remain responsible for checking it." | `components/Disclaimer.tsx` (public homepage, alongside rows 1–2) |
+| A2 | Evidence category helpers, including "A written fire risk assessment is a legal requirement for the responsible person." and "… can be useful evidence where relevant to your property." (×8) | `lib/evidence-records.ts`, shown on the evidence form |
+| A3 | "The property check is HostSafe's short suitability check. It helps show whether HostSafe's simplified approach is designed for a property like this one. It is not a fire-risk assessment or a legal compliance result." | `app/properties/[id]/safety/page.tsx` |
+| A4 | "Keep property check records together." | Safety & checks service card, `app/properties/[id]/page.tsx` |
+| A5 | "Six quick questions. This is not an assessment. It only helps you see whether HostSafe is designed for a property like yours." | `app/check/page.tsx`, `components/AddPropertyFlow.tsx`, `app/properties/[id]/check/page.tsx` (variant) |
+| A6 | "Check if your property is suitable" (page title and heading) / "Check suitability" (header button) | `app/check/page.tsx`; `components/Header.tsx` (signed-out); `app/page.tsx` (frozen public homepage) |
+| A7 | "Images are stored privately and are only shown to you. Please avoid photos that show people or personal information." | `components/PropertyImageForm.tsx` |
+| A8 | "An organisational action, record, or submission tracker — not a legal requirement unless you've verified it yourself." | `app/properties/[id]/items/new/page.tsx` |
+| A9 | "It takes about a minute, and nothing you enter is saved or sent." | `app/page.tsx` (frozen public homepage) |
+| A10 | "Your answers are not saved or sent anywhere unless you choose to create an account." | `components/EligibilityChecker.tsx` (public check result) |
+| A11 | Reminder level label "Urgent" (row 30) | `lib/attention.ts` |
+
+### B. Findings, most serious first
+
+**B1 — Inaccurate absolute privacy claim (fix before any external user).**
+Rows 17 and A7 say files are "only shown to you". The service operator
+can access stored files through the Supabase dashboard, and Supabase as
+processor has infrastructure access. The true, testable claim is narrower.
+*Proposed:* "Stored privately — other HostSafe users can't see it. Avoid
+photos showing people or personal details."
+
+**B2 — HostSafe states the law (legal review required).**
+A2: "A written fire risk assessment is a legal requirement for the
+responsible person." This is the only sentence in the app that asserts a
+legal obligation. Whether it is accurate and complete for self-catering
+lets is for a qualified adviser to confirm. It also sits beside helpers
+calling records "useful evidence", which can read as "evidence of
+compliance". *Proposed pending advice:* "Keep your fire risk assessment
+here." (drop the legal assertion) and, for the others, "Keep [alarm and
+detector check] records here." (drop "useful evidence").
+
+**B3 — "Suitable" / "suitability" invites a safety reading.**
+A3, A6: "Check if your property is suitable" can be read as "suitable to
+let" or "safe". What the check actually answers is whether HostSafe's
+simplified approach fits the property. The public homepage already uses
+the better phrasing "See if HostSafe fits your property".
+*Proposed:* page title/heading "Does HostSafe fit your property?"; header
+button "Check fit"; Safety page intro "The property check shows whether
+HostSafe's simplified approach fits this property. It is not a fire-risk
+assessment or a compliance result." **Note:** A6 also appears on the
+frozen public homepage, which cannot change without lifting the freeze.
+
+**B4 — "Urgent" is a judgement HostSafe can't make.**
+A11 / row 30: HostSafe only knows a date has passed, not how urgent the
+matter is. *Proposed:* rename the level "Date passed" (keeps red).
+
+**B5 — Positive result shown in reassuring teal.**
+Row 7: the "appears to fit" result sits in a teal box, visually close to
+an "all clear". The words are careful; the colour isn't. *Proposed:*
+neutral (white/grey) styling for the fit result; keep amber for "may need
+more tailored advice".
+
+**B6 — Confusing legal phrasing.**
+A8: "not a legal requirement unless you've verified it yourself" implies
+the user can make something a legal requirement by verifying it.
+*Proposed:* "Your own list of things to do, keep or send. HostSafe
+doesn't decide what the law requires."
+
+**B7 — Accurate but wordy (tighten; no meaning change).**
+- Row 8 → "Reminders come only from the dates you've entered. They won't
+  cover every requirement or deadline that applies to you."
+- Rows 11 (two paragraphs) → "HostSafe doesn't check, certify or assess
+  what you add, and isn't a substitute for professional advice."
+- Rows 12 / Documents page → "Files are stored privately to help you
+  organise records. HostSafe doesn't check, verify or approve them."
+- Row 7 `suitableMessage` → "Your answers suggest your property fits the
+  small, simple type HostSafe is designed for. This isn't a fire-risk
+  assessment and can't tell you whether any legal requirement is met."
+- Row 7 `unsuitableMessage` → "HostSafe is designed for small, simple
+  properties. Your answers suggest you may need more tailored advice from
+  a competent fire-risk assessor."
+- Row 23 (planned work) → "A calendar entry only. It doesn't show that
+  any work was done, or that the property is safe, compliant or ready for
+  guests."
+- Row 25 (turnover) → "Turnover dates come from departure dates only.
+  They don't mean the property is cleaned, ready, safe or suitable."
+
+**B8 — Accurate; keep as is.** Rows 1–3, 9, 10, 13, 14, 16, 19, 21, 24,
+27–29, 31–32, A1, A5, A9, A10. A9 and A10 remain true only while no
+analytics or tracking is added to the public check — re-check if that
+changes.
+
+### C. Consistency notes
+
+- Five different phrasings of "not legal advice / not a fire-risk
+  assessment" exist (rows 3, 4, 9, 11, A1). Each is accurate; converging on
+  one canonical sentence would make future legal review easier.
+- "Evidence" is used as a section name ("Evidence records"). Combined with
+  row 9 ("does not by itself demonstrate legal compliance") this is
+  acceptable, but "Records" alone would be the more neutral label.
+
 ## Overall finding
 
-No wording currently in the app was found to falsely claim legal advice,
-legal compliance, guaranteed reminders, official document storage,
-document verification, Government submission, certification, or a
-professional fire-safety assessment. Every user-facing surface reviewed
-carries an explicit disclaimer addressing at least one of these risks.
+*(28 Sep 2026)* No wording was found to falsely claim legal advice, legal
+compliance, guaranteed reminders, official document storage, document
+verification, Government submission, certification, or a professional
+fire-safety assessment.
+
+*(30 Sep 2026, strict review)* That still holds, with two exceptions that
+should be fixed before any external user: **B1** (an absolute privacy
+claim — "only shown to you" — that is not literally true) and **B2** (a
+statement of law that needs qualified confirmation). B3–B6 are
+misreadings the wording invites rather than false claims. B7 is length
+only.
 
 ## Recommendation
 
-The footer (row 3) previously lacked the "safe or legally compliant"
-phrasing used elsewhere; it has been updated (see the commit accompanying
-this document) to match the fuller wording already used on the dashboard
-and signed-in homepage. No other correction was identified as necessary at
-the time of this audit.
+*(28 Sep 2026)* The footer (row 3) previously lacked the "safe or legally
+compliant" phrasing used elsewhere; it was updated to match.
+
+*(30 Sep 2026)* Apply B1 immediately; take B2 to the legal reviewer
+(removing the assertion in the meantime is the cautious option); decide
+B3 together with whether to lift the public-homepage freeze; apply B4–B7
+at the founder's discretion.
 
 This finding is a content review only and is not a substitute for
 professional legal review of the application as a whole.

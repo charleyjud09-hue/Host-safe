@@ -6,8 +6,8 @@ import {
   supabaseUrl,
 } from "@/lib/supabase/config";
 
-// Keeps the Supabase login session fresh. Page-level checks still decide
-// who may see /dashboard.
+// Keeps the Supabase login session fresh. Each page still checks for itself
+// who may see it.
 export async function proxy(request: NextRequest) {
   if (!isSupabaseConfigured) return NextResponse.next();
 

@@ -43,10 +43,19 @@ export default function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
           aria-describedby={isSignUp ? "password-hint" : undefined}
           className={inputClass}
         />
-        {isSignUp && (
+        {isSignUp ? (
           <p id="password-hint" className="mt-1 text-sm text-slate-600">
             At least 8 characters, including an uppercase letter, a
             lowercase letter, a number and a symbol.
+          </p>
+        ) : (
+          <p className="mt-2 text-right text-sm">
+            <Link
+              href="/forgot-password"
+              className="font-medium text-navy underline underline-offset-4"
+            >
+              Forgot password?
+            </Link>
           </p>
         )}
       </div>

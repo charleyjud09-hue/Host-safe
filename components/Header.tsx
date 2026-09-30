@@ -45,12 +45,15 @@ export default async function Header() {
               </Link>
             )
           )}
-          <Link
-            href="/check"
-            className="rounded-lg bg-navy px-4 py-2 text-sm font-medium text-white hover:bg-navy-light"
-          >
-            Check suitability
-          </Link>
+          {/* Signed-in users check each property from its own pages instead. */}
+          {!signedIn && (
+            <Link
+              href="/check"
+              className="rounded-lg bg-navy px-4 py-2 text-sm font-medium text-white hover:bg-navy-light"
+            >
+              Check suitability
+            </Link>
+          )}
         </nav>
       </div>
     </header>

@@ -252,7 +252,8 @@ export function countByLevel(entries: AttentionEntry[]) {
 }
 
 export const attentionLevelLabel: Record<AttentionLevel, string> = {
-  urgent: "Urgent",
+  // "Date passed", not "Urgent": HostSafe only knows the date, not how urgent it is.
+  urgent: "Date passed",
   very_soon: "Due very soon",
   due_soon: "Due soon",
   open: "Open issue",
@@ -291,7 +292,7 @@ export const NOTHING_NEEDS_ATTENTION =
   "Nothing needs attention right now, based on the dates and records you have added.";
 
 export const REMINDER_NOTICE =
-  "Reminders are based on the dates and statuses recorded in HostSafe. They are organisational prompts only and may not identify every requirement or deadline that applies to you.";
+  "Reminders come only from the dates you’ve entered. They won’t cover every requirement or deadline that applies to you.";
 
 /** Formats a YYYY-MM-DD date for display without timezone shifting. */
 export function formatDisplayDate(date: string): string {

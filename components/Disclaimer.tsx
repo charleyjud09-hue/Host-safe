@@ -13,7 +13,7 @@ export default function Disclaimer() {
             "HostSafe is not a fire-risk assessor and does not carry out fire-risk assessments.",
             "It does not give legal advice, and it does not certify or approve any property.",
             "It cannot guarantee that a property is safe or meets any legal requirement.",
-            "Everything it produces is based on information you provide, and you remain responsible for checking it.",
+            "You remain responsible for your property’s fire safety and for meeting your legal obligations.",
             "If your property is complex or outside its intended scope, you should speak with a competent fire-risk assessor.",
           ].map((t) => (
             <li

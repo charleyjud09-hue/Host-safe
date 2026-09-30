@@ -74,10 +74,10 @@ export function mayNeedTailoredAdvice(answers: Answers): boolean {
 }
 
 export const unsuitableMessage =
-  "HostSafe is designed for small, simple properties. Based on your answers, your property may need more tailored fire-safety advice. Consider speaking with a competent fire-risk assessor.";
+  "HostSafe is designed for small, simple properties. Your answers suggest you may need tailored advice from a competent fire-risk assessor.";
 
 export const suitableMessage =
-  "Based on your answers, your property appears to fit the small, simple type of property HostSafe is designed for. HostSafe is an organisational and educational tool. It is not a fire-risk assessment, and it cannot tell you whether your property meets any legal requirement.";
+  "Your answers suggest HostSafe fits your property. This is not a fire-risk assessment and says nothing about whether your property is safe or meets any legal requirement.";
 
 export type EligibilityResultRow = {
   id: string;

@@ -38,7 +38,7 @@ function PencilIcon() {
 function Summary({ counts }: { counts: Record<AttentionLevel, number> }) {
   const parts = [
     counts.urgent > 0 && {
-      text: `${counts.urgent} urgent`,
+      text: `${counts.urgent} date passed`,
       className: attentionLevelStyle.urgent.badge,
     },
     counts.very_soon > 0 && {

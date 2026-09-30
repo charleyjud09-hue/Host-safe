@@ -81,7 +81,7 @@ export default async function Header() {
             href="/check"
             className="rounded-lg bg-navy px-4 py-2 text-sm font-medium text-white hover:bg-navy-light"
           >
-            Check suitability
+            Check if HostSafe fits
           </Link>
         </nav>
       </div>

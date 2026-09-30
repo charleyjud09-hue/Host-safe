@@ -79,10 +79,9 @@ export default async function EditEvidenceRecordPage({
           <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
             <h2 className="text-xl font-semibold text-navy">Attachments</h2>
             <p className="mt-1 text-sm text-slate-600">
-              Files uploaded to HostSafe are stored privately to help you
-              organise your records. HostSafe does not verify, approve,
-              submit, certify, or confirm the validity, completeness,
-              currency, or legal effect of anything you upload.
+              Files are stored privately to help you organise records.
+              HostSafe doesn&apos;t check, verify or approve them, or confirm
+              they are valid, complete or up to date.
             </p>
             <div className="mt-4">
               <AttachmentList

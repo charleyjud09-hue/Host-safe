@@ -95,10 +95,9 @@ export default async function DocumentsAndRenewalsPage({
             </Link>
           </div>
           <p className="mt-2 text-sm text-slate-600">
-            Files uploaded to HostSafe are stored privately to help you
-            organise your records. HostSafe does not verify, approve, submit,
-            certify, or confirm the validity, completeness, currency, or legal
-            effect of anything you upload.
+            Files are stored privately to help you organise records. HostSafe
+            doesn&apos;t check, verify or approve them, or confirm they are
+            valid, complete or up to date.
           </p>
 
           {/* Plain links between two views; aria-current marks the one shown. */}

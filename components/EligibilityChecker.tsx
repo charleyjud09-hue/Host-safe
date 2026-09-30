@@ -93,7 +93,7 @@ export default function EligibilityChecker({
           className={`mt-4 rounded-xl p-4 leading-relaxed ${
             flagged
               ? "bg-amber-50 text-amber-950 ring-1 ring-amber-200"
-              : "bg-teal-50 text-slate-800 ring-1 ring-teal-200"
+              : "bg-slate-50 text-slate-800 ring-1 ring-slate-200"
           }`}
         >
           {flagged ? unsuitableMessage : suitableMessage}
@@ -136,7 +136,7 @@ export default function EligibilityChecker({
           className={`mt-4 rounded-xl p-4 leading-relaxed ${
             flagged
               ? "bg-amber-50 text-amber-950 ring-1 ring-amber-200"
-              : "bg-teal-50 text-slate-800 ring-1 ring-teal-200"
+              : "bg-slate-50 text-slate-800 ring-1 ring-slate-200"
           }`}
         >
           {flagged ? unsuitableMessage : suitableMessage}

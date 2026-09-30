@@ -53,8 +53,9 @@ A line-by-line pass of every user-facing sentence that touches safety,
 law, compliance, privacy, advice or readiness. Standard applied: each
 statement must be **true as an absolute**, must not imply a judgement
 HostSafe cannot make, and should be as short as the meaning allows.
-**No app wording has been changed by this review** — rewrites below are
-proposals awaiting founder approval (and legal review where marked).
+The rewrites were first proposed, then **applied the same day at the
+founder's instruction — see section D for the live wording.** B2 still
+needs legal confirmation before any legal statement is reintroduced.
 
 ### A. Wording not previously logged
 
@@ -150,6 +151,44 @@ changes.
 - "Evidence" is used as a section name ("Evidence records"). Combined with
   row 9 ("does not by itself demonstrate legal compliance") this is
   acceptable, but "Records" alone would be the more neutral label.
+
+### D. Applied — 30 September 2026
+
+At the founder's instruction, B1–B7 were applied the same day, including
+the two public-homepage button labels (the homepage freeze was lifted for
+these lines only). The table rows above keep their original wording for
+history; **the live wording is now:**
+
+| Item | Live wording |
+|---|---|
+| B1 photos (row 17) | "Stored privately — other HostSafe users can’t see them. Avoid photos showing people or personal details." |
+| B1 property image (A7) | "JPG, PNG or WebP, up to 5MB. Stored privately — other HostSafe users can’t see it. Avoid photos showing people or personal details." |
+| B2 category helpers (A2) | "Keep your fire risk assessment here." / "Keep records of alarm and detector checks here." (and equivalents); no legal assertion, no "useful evidence" |
+| B3 check page (A6) | Title and heading "Does HostSafe fit your property?"; header button "Check if HostSafe fits"; homepage buttons "Check if HostSafe fits your property" and "Start the check" |
+| B3 Safety page (A3) | "The property check shows whether HostSafe’s simplified approach fits this property. It is not a fire-risk assessment or a compliance result." |
+| B4 level label (A11) | "Date passed" (selector pill "N date passed") |
+| B5 result styling | Neutral grey box for the fit result; amber kept for "may need tailored advice" |
+| B6 new action (A8) | "Your own list of things to do, keep or send. HostSafe doesn’t decide what the law requires." |
+| B7 reminders (row 8) | "Reminders come only from the dates you’ve entered. They won’t cover every requirement or deadline that applies to you." |
+| B7 new record (row 11) | "HostSafe doesn’t check, certify or assess what you add, and isn’t a substitute for professional advice." |
+| B7 files (row 12) | "Files are stored privately to help you organise records. HostSafe doesn’t check, verify or approve them, or confirm they are valid, complete or up to date." |
+| B7 fit result (row 7) | "Your answers suggest HostSafe fits your property. This is not a fire-risk assessment and says nothing about whether your property is safe or meets any legal requirement." |
+| B7 advice result (row 7) | "HostSafe is designed for small, simple properties. Your answers suggest you may need tailored advice from a competent fire-risk assessor." |
+| B7 planned work (row 23) | "A calendar entry only, separate from Maintenance & repairs. It doesn’t show that any work was done, or that the property is safe, compliant or ready for guests." |
+| B7 turnover (row 25) | "Turnover dates come from departure dates only. They don’t mean the property is cleaned, ready or safe for guests." |
+| Responsibility (row 3, footer) | Added: "You remain responsible for your property’s fire safety and legal obligations." |
+| Responsibility (A1, homepage) | "Everything it produces is based on information you provide, and you remain responsible for checking it." → "You remain responsible for your property’s fire safety and for meeting your legal obligations." |
+
+**Limit of on-screen wording.** The founder asked for wording that
+"completely negates any legal responsibility". On-screen statements can
+describe what HostSafe is and place responsibility on the owner, as above,
+but under UK law (Consumer Rights Act 2015, Unfair Contract Terms Act
+1977) liability cannot be excluded entirely — for example for death or
+personal injury caused by negligence — and over-broad exclusion wording
+can be unenforceable or itself misleading. Any limitation of HostSafe's
+liability belongs in the Terms of Service
+(`terms-of-service-draft.md`) and **must be drafted or approved by a
+qualified legal professional** before launch.
 
 ## Overall finding
 

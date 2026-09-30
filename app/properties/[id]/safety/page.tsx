@@ -71,10 +71,9 @@ export default async function SafetyAndChecksPage({
             Safety &amp; checks
           </h1>
           <p className="mt-2 text-slate-700">
-            The property check is HostSafe&apos;s short suitability check. It
-            helps show whether HostSafe&apos;s simplified approach is designed
-            for a property like this one. It is not a fire-risk assessment or a
-            legal compliance result.
+            The property check shows whether HostSafe&apos;s simplified
+            approach fits this property. It is not a fire-risk assessment or a
+            compliance result.
           </p>
 
           <section className="mt-8 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-card sm:p-8">
@@ -104,7 +103,7 @@ export default async function SafetyAndChecksPage({
                   className={`mt-4 rounded-xl p-4 leading-relaxed ${
                     latest.may_need_tailored_advice
                       ? "bg-amber-50 text-amber-950 ring-1 ring-amber-200"
-                      : "bg-teal-50 text-slate-800 ring-1 ring-teal-200"
+                      : "bg-slate-50 text-slate-800 ring-1 ring-slate-200"
                   }`}
                 >
                   {latest.may_need_tailored_advice ? unsuitableMessage : suitableMessage}

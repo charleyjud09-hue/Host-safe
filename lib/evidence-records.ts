@@ -13,10 +13,8 @@ export type EvidenceCategory =
 export type EvidenceStatus = "active" | "needs_review" | "archived";
 
 /**
- * Deliberately neutral. Only the fire-risk assessment is described as a
- * legal requirement — everything else is "can be useful evidence where
- * relevant", never a claim that it's mandatory or that having it proves
- * compliance.
+ * Deliberately neutral: helpers say what to keep here, never what the law
+ * requires or that a record proves anything (disclaimer audit B2).
  */
 export const evidenceCategories: {
   value: EvidenceCategory;
@@ -26,61 +24,52 @@ export const evidenceCategories: {
   {
     value: "fire_risk_assessment",
     label: "Fire risk assessment",
-    helper:
-      "A written fire risk assessment is a legal requirement for the responsible person.",
+    helper: "Keep your fire risk assessment here.",
   },
   {
     value: "alarm_checks",
     label: "Alarm and detector checks",
-    helper:
-      "Records of alarm and detector checks can be useful evidence where relevant to your property.",
+    helper: "Keep records of alarm and detector checks here.",
   },
   {
     value: "escape_route",
     label: "Escape route checks",
-    helper:
-      "Records of escape-route checks can be useful evidence where relevant to your property.",
+    helper: "Keep records of escape-route checks here.",
   },
   {
     value: "emergency_lighting",
     label: "Emergency lighting checks",
-    helper:
-      "Records of emergency lighting checks can be useful evidence where relevant to your property.",
+    helper: "Keep records of emergency lighting checks here.",
   },
   {
     value: "extinguishers",
     label: "Extinguishers and fire blankets",
-    helper:
-      "Records of extinguisher or fire blanket servicing can be useful evidence where relevant to your property.",
+    helper: "Keep records of extinguisher and fire blanket servicing here.",
   },
   {
     value: "guest_information",
     label: "Guest fire safety information",
-    helper:
-      "Keeping a record of the fire safety information given to guests can be useful evidence.",
+    helper: "Keep a copy of the fire safety information you give guests here.",
   },
   {
     value: "maintenance",
     label: "Maintenance",
-    helper:
-      "Records of relevant maintenance can be useful evidence where relevant to your property.",
+    helper: "Keep maintenance records here.",
   },
   {
     value: "certificate",
     label: "Certificate",
-    helper:
-      "Certificates (for example electrical or gas) can be useful evidence where relevant to your property.",
+    helper: "Keep certificates here, for example electrical or gas.",
   },
   {
     value: "training",
     label: "Training",
-    helper:
-      "Records of relevant training can be useful evidence where relevant to your property.",
+    helper: "Keep training records here.",
   },
   {
     value: "other",
     label: "Other",
-    helper: "Anything else you want to keep organised alongside your property.",
+    helper: "Anything else you want to keep with this property.",
   },
 ];
 

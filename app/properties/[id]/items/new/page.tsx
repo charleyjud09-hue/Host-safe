@@ -41,8 +41,8 @@ export default async function NewPropertyItemPage({
           <p className="text-sm text-slate-600">{property.name}</p>
           <h1 className="text-3xl font-semibold text-navy">Add an item</h1>
           <p className="mt-3 mb-8 text-slate-700">
-            An organisational action, record, or submission tracker — not a
-            legal requirement unless you&apos;ve verified it yourself.
+            Your own list of things to do, keep or send. HostSafe doesn&apos;t
+            decide what the law requires.
           </p>
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
             <PropertyItemForm action={action} submitLabel="Save item" />

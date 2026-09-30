@@ -42,15 +42,10 @@ export default async function NewEvidenceRecordPage({
           <h1 className="text-3xl font-semibold text-navy">
             Add an evidence record
           </h1>
-          <p className="mt-3 text-slate-700">
-            For {property.name}. Keep this organisational — HostSafe does not
-            check, certify, or assess what you add.
-          </p>
+          <p className="mt-3 text-slate-700">For {property.name}.</p>
           <p className="mt-2 mb-8 text-sm text-slate-600">
-            HostSafe does not provide legal advice, fire-risk assessments, or
-            compliance certification. This may help you organise information
-            relevant to your fire-safety responsibilities, but isn&apos;t a
-            substitute for professional advice.
+            HostSafe doesn&apos;t check, certify or assess what you add, and
+            isn&apos;t a substitute for professional advice.
           </p>
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
             <EvidenceRecordForm action={action} submitLabel="Save record" />

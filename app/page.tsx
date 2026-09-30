@@ -225,7 +225,7 @@ export default async function Home() {
                 href="/check"
                 className="rounded-lg bg-teal-400 px-6 py-3 font-semibold text-navy shadow-sm hover:bg-teal-300"
               >
-                Check if your property is suitable
+                Check if HostSafe fits your property
               </Link>
               <a
                 href="#limitations"
@@ -347,7 +347,7 @@ export default async function Home() {
             href="/check"
             className="mt-8 inline-block rounded-lg bg-navy px-6 py-3 font-semibold text-white shadow-sm hover:bg-navy-light"
           >
-            Check if your property is suitable
+            Start the check
           </Link>
         </section>
       </main>

@@ -6,7 +6,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Check if your property is suitable | HostSafe",
+  title: "Does HostSafe fit your property? | HostSafe",
   description:
     "Six short questions to see whether HostSafe is designed for your kind of property.",
 };
@@ -25,7 +25,7 @@ export default async function CheckPage() {
       <main className="flex-1">
         <div className="mx-auto max-w-2xl px-5 py-12">
           <h1 className="text-3xl font-semibold text-navy">
-            Check if your property is suitable
+            Does HostSafe fit your property?
           </h1>
           <p className="mt-3 mb-8 text-slate-700">
             Six quick questions. This is not an assessment. It only helps you

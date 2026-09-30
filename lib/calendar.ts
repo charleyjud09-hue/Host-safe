@@ -177,7 +177,7 @@ export const CANCEL_STAY_NOTICE =
   "Cancelling removes the guest’s first name, and these dates will no longer stop another planned stay being recorded. Dates, guest count and booking reference will be kept. A cancelled stay cannot be changed back to planned.";
 
 export const PLANNED_WORK_NOTICE =
-  "Planned work is a calendar entry only. It is separate from Maintenance & repairs issues and does not confirm that any work has been done, or that the property is safe, compliant or ready for guests.";
+  "A calendar entry only, separate from Maintenance & repairs. It doesn’t show that any work was done, or that the property is safe, compliant or ready for guests.";
 
 export const PLANNED_CLEANUP_NOTICE =
   "A planned cleanup is a date you have chosen. HostSafe does not record or confirm that the property has been cleaned or is ready for guests.";
@@ -186,7 +186,7 @@ export const BLOCKING_HINT =
   "If yes, HostSafe will not let you record a planned guest stay on any of these dates, including the first and last day.";
 
 export const TURNOVER_NOTICE =
-  "Turnover dates are worked out from guest departure dates. They do not mean the property has been cleaned or is ready, safe or suitable for guests.";
+  "Turnover dates come from departure dates only. They don’t mean the property is cleaned, ready or safe for guests.";
 
 const isoDate = /^\d{4}-\d{2}-\d{2}$/;
 const clockTime = /^([01]\d|2[0-3]):[0-5]\d$/;

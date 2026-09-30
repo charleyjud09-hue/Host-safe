@@ -8,6 +8,8 @@
  * on each item in its list).
  */
 
+import { itemServiceLabel } from "@/lib/property-items";
+
 /**
  * Every open, dated reminder appears, at a level set by how close its date is:
  *   urgent     — the date has passed (red)
@@ -38,6 +40,8 @@ export type AttentionItemInput = {
   property_id: string;
   title: string;
   item_type: string;
+  /** Optional service tag; when absent the reminder is labelled "Action". */
+  service?: string | null;
   status: string;
   due_date: string | null;
   review_date: string | null;
@@ -151,8 +155,8 @@ export function itemAttention(
   return {
     key: `item-${item.id}`,
     level: c.level,
-    // No service classification exists on items yet — never guess one.
-    serviceLabel: "Action",
+    // Only the service the user chose; never guessed.
+    serviceLabel: itemServiceLabel(item.service) ?? "Action",
     title: item.title,
     reason,
     dateLabel: c.dateLabel,

@@ -7,6 +7,7 @@ import {
   ukToday,
 } from "@/lib/attention";
 import {
+  itemServiceLabel,
   itemTypeLabel,
   priorityLabel,
   statusLabel,
@@ -36,6 +37,7 @@ export default function PropertyItemList({
               <div>
                 <p className="font-medium text-navy">{item.title}</p>
                 <p className="text-sm text-slate-600">
+                  {itemServiceLabel(item.service) && `${itemServiceLabel(item.service)} · `}
                   {itemTypeLabel(item.item_type)} · {priorityLabel(item.priority)}{" "}
                   priority · {statusLabel(item.status)}
                   {item.due_date && ` · Due ${formatDisplayDate(item.due_date)}`}

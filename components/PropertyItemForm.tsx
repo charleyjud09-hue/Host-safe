@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from "react";
 import {
+  itemServices,
   itemTypes,
   priorities,
   statuses,
@@ -12,6 +13,7 @@ import {
 
 const emptyValues: PropertyItemInput = {
   item_type: "",
+  service: "",
   category: "",
   title: "",
   description: "",
@@ -37,29 +39,32 @@ export default function PropertyItemForm({
   item?: PropertyItem;
   submitLabel: string;
 }) {
+  // Start from the saved item when editing; after a failed save the
+  // server hands back what was typed instead.
+  const initialValues: PropertyItemInput = item
+    ? {
+        item_type: item.item_type,
+        service: item.service ?? "",
+        category: item.category ?? "",
+        title: item.title,
+        description: item.description ?? "",
+        priority: item.priority,
+        status: item.status,
+        due_date: item.due_date ?? "",
+        review_date: item.review_date ?? "",
+        completed_date: item.completed_date ?? "",
+        submitted_date: item.submitted_date ?? "",
+        destination: item.destination ?? "",
+        notes: item.notes ?? "",
+      }
+    : emptyValues;
+
   const [state, formAction, pending] = useActionState<PropertyItemFormState, FormData>(
     action,
-    { values: emptyValues },
+    { values: initialValues },
   );
 
-  const values: PropertyItemInput =
-    state.values ??
-    (item
-      ? {
-          item_type: item.item_type,
-          category: item.category ?? "",
-          title: item.title,
-          description: item.description ?? "",
-          priority: item.priority,
-          status: item.status,
-          due_date: item.due_date ?? "",
-          review_date: item.review_date ?? "",
-          completed_date: item.completed_date ?? "",
-          submitted_date: item.submitted_date ?? "",
-          destination: item.destination ?? "",
-          notes: item.notes ?? "",
-        }
-      : emptyValues);
+  const values: PropertyItemInput = state.values ?? initialValues;
 
   const [itemType, setItemType] = useState(values.item_type);
   const [status, setStatus] = useState(values.status);
@@ -107,6 +112,30 @@ export default function PropertyItemForm({
           placeholder="e.g. Arrange annual alarm service"
           className={inputClass}
         />
+      </div>
+
+      <div>
+        <label htmlFor="service" className="font-medium text-navy">
+          Service <span className="font-normal text-slate-500">(optional)</span>
+        </label>
+        <select
+          id="service"
+          name="service"
+          defaultValue={values.service}
+          aria-describedby="service-hint"
+          className={inputClass}
+        >
+          <option value="">Not set</option>
+          {itemServices.map((s) => (
+            <option key={s.value} value={s.value}>
+              {s.label}
+            </option>
+          ))}
+        </select>
+        <p id="service-hint" className="mt-1 text-sm text-slate-600">
+          Which part of the property this action relates to. Shown next to it
+          in your reminders.
+        </p>
       </div>
 
       <div>

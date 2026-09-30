@@ -15,6 +15,7 @@ Files are named in the order they were applied.
 | `2026-09-30_03_storage_policy_fix_and_property_image_policies.sql` | 30 Sep 2026 | Replaces the broken maintenance-photos upload policy; adds the missing property-images Storage policies |
 | `2026-09-30_04_property_images_columns_and_bucket.sql` | 30 Sep 2026 | Property image columns on `properties` and the private `property-images` bucket (these had never been applied) |
 | `2026-09-30_05_delete_my_account.sql` | 30 Sep 2026 | `delete_my_account()` function used by Account settings → Delete your account (verified: exists, refuses anonymous callers) |
+| `2026-09-30_06_property_items_service.sql` | 30 Sep 2026 | Optional `service` tag on actions (verified: column exists) |
 
 ## Not yet recorded here
 

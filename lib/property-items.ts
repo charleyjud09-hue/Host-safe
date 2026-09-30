@@ -28,6 +28,25 @@ export const itemTypes: { value: ItemType; label: string; helper: string }[] = [
   { value: "other", label: "Other", helper: "Anything else you want to track." },
 ];
 
+/** Which property service an action belongs to. Optional; null = not set. */
+export type ItemService =
+  | "safety_checks"
+  | "documents_renewals"
+  | "maintenance_repairs"
+  | "stays_calendar";
+
+export const itemServices: { value: ItemService; label: string }[] = [
+  { value: "safety_checks", label: "Safety & checks" },
+  { value: "documents_renewals", label: "Documents & renewals" },
+  { value: "maintenance_repairs", label: "Maintenance & repairs" },
+  { value: "stays_calendar", label: "Stays & calendar" },
+];
+
+/** The service's name, or null when none is set. */
+export function itemServiceLabel(v: string | null | undefined): string | null {
+  return itemServices.find((s) => s.value === v)?.label ?? null;
+}
+
 export const priorities: { value: Priority; label: string }[] = [
   { value: "low", label: "Low" },
   { value: "medium", label: "Medium" },
@@ -45,6 +64,7 @@ export const statuses: { value: Status; label: string }[] = [
 ];
 
 const itemTypeValues = new Set(itemTypes.map((t) => t.value));
+const serviceValues = new Set<string>(itemServices.map((s) => s.value));
 const priorityValues = new Set(priorities.map((p) => p.value));
 const statusValues = new Set(statuses.map((s) => s.value));
 
@@ -62,6 +82,7 @@ export type PropertyItem = {
   id: string;
   property_id: string;
   item_type: ItemType;
+  service: ItemService | null;
   category: string | null;
   title: string;
   description: string | null;
@@ -79,6 +100,7 @@ export type PropertyItem = {
 
 export type PropertyItemInput = {
   item_type: string;
+  service: string;
   category: string;
   title: string;
   description: string;
@@ -100,6 +122,7 @@ export type PropertyItemFormState = {
 function readValues(formData: FormData): PropertyItemInput {
   return {
     item_type: String(formData.get("item_type") ?? ""),
+    service: String(formData.get("service") ?? ""),
     category: String(formData.get("category") ?? ""),
     title: String(formData.get("title") ?? ""),
     description: String(formData.get("description") ?? ""),
@@ -135,6 +158,9 @@ export function parsePropertyItemInput(
   }
   if (!title) {
     return { error: "Please enter a title.", values };
+  }
+  if (values.service && !serviceValues.has(values.service)) {
+    return { error: "Please choose a service, or leave it as not set.", values };
   }
   const priority = priorityValues.has(values.priority as Priority)
     ? values.priority
@@ -199,6 +225,7 @@ export function parsePropertyItemInput(
   return {
     data: {
       item_type: values.item_type,
+      service: values.service || null,
       category: values.category.trim() || null,
       title,
       description: values.description.trim() || null,

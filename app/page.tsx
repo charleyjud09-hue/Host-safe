@@ -125,7 +125,7 @@ export default async function Home() {
           .returns<Property[]>(),
         supabase
           .from("property_items")
-          .select("id, property_id, title, item_type, status, due_date, review_date"),
+          .select("id, property_id, title, item_type, service, status, due_date, review_date"),
         supabase
           .from("evidence_records")
           .select("id, property_id, title, status, review_date")

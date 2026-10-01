@@ -16,6 +16,7 @@ Files are named in the order they were applied.
 | `2026-09-30_04_property_images_columns_and_bucket.sql` | 30 Sep 2026 | Property image columns on `properties` and the private `property-images` bucket (these had never been applied) |
 | `2026-09-30_05_delete_my_account.sql` | 30 Sep 2026 | `delete_my_account()` function used by Account settings → Delete your account (verified: exists, refuses anonymous callers) |
 | `2026-09-30_06_property_items_service.sql` | 30 Sep 2026 | Optional `service` tag on actions (verified: column exists) |
+| `2026-10-01_07_memberships.sql` | **Draft, not yet applied** | Memberships table (server-written), access checks, read-only and property-limit enforcement, upload rule, complimentary Premium for existing accounts |
 
 ## Not yet recorded here
 

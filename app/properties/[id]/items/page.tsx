@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import PropertyAttentionList from "@/components/PropertyAttentionList";
 import PropertyItemList from "@/components/PropertyItemList";
@@ -12,6 +11,7 @@ import {
 import AppShell from "@/components/AppShell";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import MembersOnlyLink from "@/components/MembersOnlyLink";
 import type { PropertyItem } from "@/lib/property-items";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
@@ -74,12 +74,12 @@ export default async function PropertyItemsPage({
             <h1 className="text-3xl font-semibold text-navy">
               Actions &amp; reminders
             </h1>
-            <Link
+            <MembersOnlyLink
               href={`/properties/${id}/items/new`}
               className="rounded-lg bg-action px-4 py-2 text-sm font-medium text-white hover:bg-action-hover"
             >
               Add item
-            </Link>
+            </MembersOnlyLink>
           </div>
           <p className="mt-3 text-slate-700">
             Organisational actions, records, and submission tracking for this

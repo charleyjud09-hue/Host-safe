@@ -34,9 +34,11 @@ export default function PropertyForm({
   /** Extra values submitted with the form (the server validates them). */
   hiddenFields?: Record<string, string>;
 }) {
+  // Empty initial state, so an edit form starts from the saved property;
+  // after a failed save, the submitted values are shown instead.
   const [state, formAction, pending] = useActionState<PropertyFormState, FormData>(
     action,
-    { values: emptyValues },
+    {},
   );
 
   const values: PropertyInput =

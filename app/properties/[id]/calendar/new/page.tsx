@@ -12,6 +12,7 @@ import {
   calendarEntryTypes,
   isCalendarEntryType,
 } from "@/lib/calendar";
+import { requireEditAccess } from "@/lib/membership-server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -33,6 +34,7 @@ export default async function NewCalendarEntryPage({
   const supabase = await createClient();
   const { data: userData } = await supabase.auth.getUser();
   if (!userData.user) redirect("/sign-in");
+  await requireEditAccess();
 
   const { data: property } = await supabase
     .from("properties")

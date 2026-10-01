@@ -8,6 +8,7 @@ import {
   validateMaintenancePhoto,
 } from "@/lib/maintenance-photos";
 import { errorCode } from "@/lib/log";
+import { editBlockedMessage } from "@/lib/membership-server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -46,6 +47,8 @@ export async function uploadMaintenancePhoto(
     return { error: "Accounts are not switched on yet. Please try again later." };
   }
   const { supabase, userId } = await requireOwnIssue(propertyId, issueId);
+  const blocked = await editBlockedMessage();
+  if (blocked) return { error: blocked };
 
   const file = formData.get("photo");
   if (!(file instanceof File) || file.size === 0) {

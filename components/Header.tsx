@@ -2,6 +2,8 @@ import Link from "next/link";
 import { signOut } from "@/app/auth/actions";
 import HeaderNavLink from "@/components/HeaderNavLink";
 import LogoMark from "@/components/LogoMark";
+import { canEdit, membershipCta } from "@/lib/membership";
+import { getMembership } from "@/lib/membership-server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -12,6 +14,10 @@ export default async function Header() {
     const { data } = await supabase.auth.getUser();
     signedIn = Boolean(data.user);
   }
+  const membership = signedIn ? await getMembership() : null;
+  const cta = membership ? membershipCta(membership) : null;
+  const subscribed = membership ? canEdit(membership) : false;
+  const neverJoined = membership?.status === "none";
 
   // Signed-in pages use the warm paper theme. The signed-out header (and so
   // the public homepage) keeps its original look.
@@ -38,6 +44,30 @@ export default async function Header() {
             <HeaderNavLink href="/account" match="account">
               Account
             </HeaderNavLink>
+            {cta &&
+              (subscribed ? (
+                // Subscribed: a quiet link, hidden on phones where Account covers it.
+                <Link
+                  href={cta.href}
+                  className="hidden whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-paper-line/60 sm:inline"
+                >
+                  {cta.label}
+                </Link>
+              ) : (
+                <Link
+                  href={cta.href}
+                  className="ml-1 whitespace-nowrap rounded-lg bg-action px-2.5 py-1.5 text-sm font-semibold text-white hover:bg-action-hover sm:px-3"
+                >
+                  {neverJoined ? (
+                    <>
+                      <span className="md:hidden">Free trial</span>
+                      <span className="hidden md:inline">{cta.label}</span>
+                    </>
+                  ) : (
+                    cta.label
+                  )}
+                </Link>
+              ))}
             <form action={signOut}>
               <button
                 type="submit"
@@ -63,6 +93,9 @@ export default async function Header() {
           Letnook
         </Link>
         <nav className="flex items-center gap-1 sm:gap-2" aria-label="Main">
+          <Link href="/membership" className={linkClass}>
+            Pricing
+          </Link>
           {isSupabaseConfigured && (
             <Link href="/sign-in" className={linkClass}>
               Sign in

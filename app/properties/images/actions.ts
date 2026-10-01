@@ -7,6 +7,7 @@ import {
   validatePropertyImage,
 } from "@/lib/property-images";
 import { errorCode } from "@/lib/log";
+import { editBlockedMessage } from "@/lib/membership-server";
 import { safePropertyReturnTo } from "@/lib/properties";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
@@ -58,6 +59,8 @@ export async function uploadPropertyImage(
   }
   const returnTo = safePropertyReturnTo(returnToRaw, propertyId);
   const { supabase, userId, currentPath } = await requireOwnProperty(propertyId);
+  const blocked = await editBlockedMessage();
+  if (blocked) return { error: blocked };
 
   const file = formData.get("image");
   if (!(file instanceof File) || file.size === 0) {

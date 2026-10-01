@@ -2,6 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { errorCode } from "@/lib/log";
+import { canEdit, propertyLimit, propertyLimitMessage, READ_ONLY_ERROR } from "@/lib/membership";
+import { editBlockedMessage, getMembership } from "@/lib/membership-server";
 import {
   parsePropertyInput,
   safePropertyReturnTo,
@@ -40,6 +42,17 @@ export async function createProperty(
   const { data: userData } = await supabase.auth.getUser();
   if (!userData.user) redirect("/sign-in");
 
+  const membership = await getMembership();
+  if (!canEdit(membership)) {
+    return { error: READ_ONLY_ERROR, values: currentValues(formData) };
+  }
+  const { count } = await supabase
+    .from("properties")
+    .select("id", { count: "exact", head: true });
+  if ((count ?? 0) >= propertyLimit(membership)) {
+    return { error: propertyLimitMessage(membership), values: currentValues(formData) };
+  }
+
   const { data: created, error } = await supabase
     .from("properties")
     .insert(parsed.data)
@@ -72,6 +85,9 @@ export async function updateProperty(
   const supabase = await createClient();
   const { data: userData } = await supabase.auth.getUser();
   if (!userData.user) redirect("/sign-in");
+
+  const blocked = await editBlockedMessage();
+  if (blocked) return { error: blocked, values: currentValues(formData) };
 
   // RLS also enforces this; the explicit filter just keeps intent clear.
   const { error } = await supabase

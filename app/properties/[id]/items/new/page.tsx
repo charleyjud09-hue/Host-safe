@@ -5,6 +5,7 @@ import PropertyItemForm from "@/components/PropertyItemForm";
 import AppShell from "@/components/AppShell";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import { requireEditAccess } from "@/lib/membership-server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -23,6 +24,7 @@ export default async function NewPropertyItemPage({
   const supabase = await createClient();
   const { data: userData } = await supabase.auth.getUser();
   if (!userData.user) redirect("/sign-in");
+  await requireEditAccess();
 
   const { data: property } = await supabase
     .from("properties")

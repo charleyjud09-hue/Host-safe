@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import MembersOnlyLink from "@/components/MembersOnlyLink";
 import PropertyImagePlaceholder from "@/components/PropertyImagePlaceholder";
 import { attentionLevelStyle, type AttentionLevel } from "@/lib/attention";
 
@@ -81,8 +82,11 @@ function Summary({ counts }: { counts: Record<AttentionLevel, number> }) {
 
 export default function PropertySelector({
   properties,
+  limit,
 }: {
   properties: SelectorProperty[];
+  /** The plan's property limit, or 0 without an active membership. */
+  limit: number;
 }) {
   if (properties.length === 0) {
     return (
@@ -93,9 +97,9 @@ export default function PropertySelector({
             <h1 className="text-2xl font-semibold text-navy">
               Add your first property to get started
             </h1>
-            <Link href="/properties/new" className={`mt-6 ${primaryButton}`}>
+            <MembersOnlyLink href="/properties/new" className={`mt-6 ${primaryButton}`}>
               Add property
-            </Link>
+            </MembersOnlyLink>
           </div>
         </div>
       </div>
@@ -114,9 +118,16 @@ export default function PropertySelector({
             services.
           </p>
         </div>
-        <Link href="/properties/new" className={primaryButton}>
-          Add property
-        </Link>
+        <div className="flex flex-col items-start gap-1.5 sm:items-end">
+          <MembersOnlyLink href="/properties/new" className={primaryButton}>
+            Add property
+          </MembersOnlyLink>
+          {limit > 0 && (
+            <p className="text-sm text-slate-600">
+              {properties.length} of {limit} properties used
+            </p>
+          )}
+        </div>
       </div>
 
       <ul className="mt-8 grid gap-6 sm:grid-cols-2">

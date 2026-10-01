@@ -33,6 +33,9 @@ export default async function Footer() {
               <Link href="/account" className="text-navy underline-offset-4 hover:underline">
                 Account settings
               </Link>
+              <Link href="/membership" className="text-navy underline-offset-4 hover:underline">
+                Pricing
+              </Link>
             </nav>
           </div>
           <p className="mt-3 max-w-2xl">{disclaimer}</p>
@@ -44,10 +47,15 @@ export default async function Footer() {
   return (
     <footer className="border-t border-slate-200 bg-white">
       <div className="mx-auto max-w-5xl px-5 py-8 text-sm text-slate-600">
-        <p className="flex items-center gap-2 font-medium text-navy">
-          <LogoMark className="h-5 w-5" />
-          Letnook
-        </p>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="flex items-center gap-2 font-medium text-navy">
+            <LogoMark className="h-5 w-5" />
+            Letnook
+          </p>
+          <Link href="/membership" className="text-navy underline-offset-4 hover:underline">
+            Pricing
+          </Link>
+        </div>
         <p className="mt-2 max-w-2xl">{disclaimer}</p>
       </div>
     </footer>

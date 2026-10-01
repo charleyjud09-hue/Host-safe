@@ -5,6 +5,7 @@ import AppShell from "@/components/AppShell";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import MaintenanceIssueList from "@/components/MaintenanceIssueList";
+import MembersOnlyLink from "@/components/MembersOnlyLink";
 import { OPEN_MAINTENANCE_STATUSES, type MaintenanceIssue } from "@/lib/maintenance";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
@@ -76,12 +77,12 @@ export default async function MaintenancePage({
             <h1 className="text-3xl font-semibold tracking-tight text-navy">
               Maintenance &amp; repairs
             </h1>
-            <Link
+            <MembersOnlyLink
               href={`${base}/new`}
               className="rounded-xl bg-action px-4 py-2.5 text-sm font-semibold text-white hover:bg-action-hover"
             >
               Report an issue
-            </Link>
+            </MembersOnlyLink>
           </div>
           <p className="mt-2 text-slate-700">
             Keep faults, damage and repair tasks organised for this property.

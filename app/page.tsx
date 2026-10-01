@@ -1,5 +1,6 @@
 import { Fraunces } from "next/font/google";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import AppShell from "@/components/AppShell";
 import Disclaimer from "@/components/Disclaimer";
@@ -14,6 +15,8 @@ import {
   type AttentionItemInput,
   type AttentionMaintenanceInput,
 } from "@/lib/attention";
+import { propertyLimit } from "@/lib/membership";
+import { getMembership } from "@/lib/membership-server";
 import { propertyImageUrl } from "@/lib/property-images";
 import type { Property } from "@/lib/properties";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
@@ -169,11 +172,18 @@ export default async function Home() {
   }
 
   if (signedIn) {
+    // New accounts start on the free-trial page, which leads with its conditions.
+    const membership = await getMembership();
+    if (membership.status === "none") redirect("/membership/trial");
+
     return (
       <>
         <Header />
         <AppShell>
-          <PropertySelector properties={selectorProperties} />
+          <PropertySelector
+            properties={selectorProperties}
+            limit={propertyLimit(membership)}
+          />
           <div className="mx-auto max-w-5xl space-y-2 px-5 pb-12 text-sm text-slate-600">
             <p>
               Letnook is an organisational tool. It doesn&apos;t give legal,

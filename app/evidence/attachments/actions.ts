@@ -8,6 +8,7 @@ import {
   validateAttachmentFile,
 } from "@/lib/evidence-attachments";
 import { errorCode } from "@/lib/log";
+import { editBlockedMessage } from "@/lib/membership-server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -46,6 +47,8 @@ export async function uploadAttachments(
   }
 
   const { supabase, userId } = await requireOwnEvidenceRecord(propertyId, recordId);
+  const blocked = await editBlockedMessage();
+  if (blocked) return { error: blocked };
 
   const files = formData.getAll("files").filter((f): f is File => f instanceof File && f.size > 0);
   if (files.length === 0) {

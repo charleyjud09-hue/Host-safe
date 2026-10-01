@@ -5,6 +5,7 @@ import AppShell from "@/components/AppShell";
 import CalendarEntryList, { turnoverText, ZeroGapWarning } from "@/components/CalendarEntryList";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import MembersOnlyLink from "@/components/MembersOnlyLink";
 import { formatDisplayDate, ukToday } from "@/lib/attention";
 import {
   buildTurnovers,
@@ -86,12 +87,12 @@ export default async function CalendarPage({
             <h1 className="text-3xl font-semibold tracking-tight text-navy">
               Stays &amp; calendar
             </h1>
-            <Link
+            <MembersOnlyLink
               href={`${base}/new`}
               className="rounded-xl bg-action px-4 py-2.5 text-sm font-semibold text-white hover:bg-action-hover"
             >
               Add entry
-            </Link>
+            </MembersOnlyLink>
           </div>
           <p className="mt-2 text-slate-700">
             Organise when this property has guests, is blocked, has work planned or

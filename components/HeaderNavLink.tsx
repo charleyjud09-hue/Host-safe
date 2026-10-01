@@ -28,7 +28,7 @@ export default function HeaderNavLink({
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
-      className={`whitespace-nowrap rounded-lg px-2 py-2 text-sm font-medium text-navy underline-offset-[6px] hover:bg-paper-line/60 sm:px-3 ${
+      className={`whitespace-nowrap rounded-lg px-1.5 py-2 text-sm font-medium text-navy underline-offset-[6px] hover:bg-paper-line/60 sm:px-3 ${
         active ? "underline decoration-action decoration-2" : ""
       }`}
     >

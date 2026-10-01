@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { deleteAttachmentsForRecord } from "@/app/evidence/attachments/actions";
 import { parseEvidenceInput, type EvidenceFormState } from "@/lib/evidence-records";
 import { errorCode } from "@/lib/log";
+import { editBlockedMessage, requireEditAccess } from "@/lib/membership-server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -47,6 +48,8 @@ export async function createEvidenceRecord(
   if ("error" in parsed) return { error: parsed.error, values: parsed.values };
 
   const { supabase } = await requireOwnProperty(propertyId);
+  const blocked = await editBlockedMessage();
+  if (blocked) return { error: blocked, values: parsed.values };
 
   const { error } = await supabase
     .from("evidence_records")
@@ -75,6 +78,8 @@ export async function updateEvidenceRecord(
   if ("error" in parsed) return { error: parsed.error, values: parsed.values };
 
   const { supabase, userId } = await requireOwnProperty(propertyId);
+  const blocked = await editBlockedMessage();
+  if (blocked) return { error: blocked, values: parsed.values };
 
   const { error } = await supabase
     .from("evidence_records")
@@ -100,6 +105,7 @@ export async function archiveEvidenceRecord(
 ) {
   if (!isSupabaseConfigured) return;
   const { supabase, userId } = await requireOwnProperty(propertyId);
+  await requireEditAccess();
 
   await supabase
     .from("evidence_records")

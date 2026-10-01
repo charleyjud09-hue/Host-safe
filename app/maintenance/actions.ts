@@ -5,6 +5,7 @@ import { ukToday } from "@/lib/attention";
 import { errorCode } from "@/lib/log";
 import { parseMaintenanceInput, type MaintenanceFormState } from "@/lib/maintenance";
 import { MAINTENANCE_PHOTOS_BUCKET } from "@/lib/maintenance-photos";
+import { editBlockedMessage, requireEditAccess } from "@/lib/membership-server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -46,6 +47,8 @@ export async function createMaintenanceIssue(
   if ("error" in parsed) return { error: parsed.error, values: parsed.values };
 
   const { supabase } = await requireOwnProperty(propertyId);
+  const blocked = await editBlockedMessage();
+  if (blocked) return { error: blocked, values: parsed.values };
 
   const { data: created, error } = await supabase
     .from("maintenance_issues")
@@ -76,6 +79,8 @@ export async function updateMaintenanceIssue(
   if ("error" in parsed) return { error: parsed.error, values: parsed.values };
 
   const { supabase, userId } = await requireOwnProperty(propertyId);
+  const blocked = await editBlockedMessage();
+  if (blocked) return { error: blocked, values: parsed.values };
 
   const { error } = await supabase
     .from("maintenance_issues")
@@ -99,6 +104,7 @@ export async function updateMaintenanceIssue(
 export async function resolveMaintenanceIssue(propertyId: string, issueId: string) {
   if (!isSupabaseConfigured) return;
   const { supabase, userId } = await requireOwnProperty(propertyId);
+  await requireEditAccess();
 
   await supabase
     .from("maintenance_issues")
@@ -113,6 +119,7 @@ export async function resolveMaintenanceIssue(propertyId: string, issueId: strin
 export async function archiveMaintenanceIssue(propertyId: string, issueId: string) {
   if (!isSupabaseConfigured) return;
   const { supabase, userId } = await requireOwnProperty(propertyId);
+  await requireEditAccess();
 
   await supabase
     .from("maintenance_issues")

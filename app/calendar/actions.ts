@@ -13,6 +13,7 @@ import {
   type EntryFormState,
   type GuestStayFormState,
 } from "@/lib/calendar";
+import { editBlockedMessage } from "@/lib/membership-server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -160,6 +161,8 @@ export async function createGuestStay(
   if ("error" in parsed) return { error: parsed.error, values: parsed.values };
 
   const { supabase } = await requireOwnProperty(propertyId);
+  const blocked = await editBlockedMessage();
+  if (blocked) return { error: blocked, values: parsed.values };
 
   const conflict = await guestStayConflict(supabase, propertyId, parsed.data as StayTimes);
   if (conflict) return { error: conflict, values: parsed.values };
@@ -195,6 +198,8 @@ export async function updateGuestStay(
   if ("error" in parsed) return { error: parsed.error, values: parsed.values };
 
   const { supabase, userId } = await requireOwnProperty(propertyId);
+  const blocked = await editBlockedMessage();
+  if (blocked) return { error: blocked, values: parsed.values };
 
   const conflict = await guestStayConflict(
     supabase,
@@ -239,6 +244,8 @@ async function saveEntry(
   if ("error" in parsed) return { error: parsed.error, values: parsed.values };
 
   const { supabase, userId } = await requireOwnProperty(propertyId);
+  const blocked = await editBlockedMessage();
+  if (blocked) return { error: blocked, values: parsed.values };
 
   if (
     parsed.data.blocks_guest_stays === true &&
@@ -329,7 +336,11 @@ export async function cancelGuestStay(
   redirect(entryUrl(propertyId, entryId));
 }
 
-/** Clears only the guest first name; everything else on the stay is kept. */
+/**
+ * Clears only the guest first name; everything else on the stay is kept.
+ * Like cancelling and deleting, this stays available without a membership:
+ * removing personal data is never paywalled.
+ */
 export async function removeGuestName(propertyId: string, entryId: string) {
   if (!isSupabaseConfigured) return;
   const { supabase, userId } = await requireOwnProperty(propertyId);

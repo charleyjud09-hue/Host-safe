@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import AppShell from "@/components/AppShell";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import MembersOnlyLink from "@/components/MembersOnlyLink";
 import { formatDisplayDate } from "@/lib/attention";
 import {
   evidenceCategoryLabel,
@@ -87,12 +88,12 @@ export default async function DocumentsAndRenewalsPage({
             <h1 className="text-3xl font-semibold tracking-tight text-navy">
               Documents &amp; renewals
             </h1>
-            <Link
+            <MembersOnlyLink
               href={`/properties/${property.id}/evidence/new`}
               className="rounded-xl bg-action px-4 py-2.5 text-sm font-semibold text-white hover:bg-action-hover"
             >
               Add record
-            </Link>
+            </MembersOnlyLink>
           </div>
           <p className="mt-2 text-sm text-slate-600">
             Files are stored privately to help you organise records. Letnook

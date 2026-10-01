@@ -6,6 +6,8 @@ import { signOut } from "@/app/auth/actions";
 import AppShell from "@/components/AppShell";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import { PLANS, type Membership } from "@/lib/membership";
+import { getMembership } from "@/lib/membership-server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -28,6 +30,14 @@ function Chevron() {
       <path d="m9 6 6 6-6 6" />
     </svg>
   );
+}
+
+function membershipSummary(m: Membership): string {
+  if (m.status === "none") return "No membership yet";
+  if (m.status === "ended") return "Membership ended (read-only)";
+  const name = m.plan ? PLANS[m.plan].name : "";
+  if (m.cancelAtPeriodEnd) return `${name}, cancelled`;
+  return m.status === "trialing" ? `${name}, free trial` : name;
 }
 
 function SettingLink({
@@ -78,6 +88,7 @@ export default async function AccountSettingsPage({
     .from("properties")
     .select("id", { count: "exact", head: true });
   const propertyCount = count ?? 0;
+  const membership = await getMembership();
 
   return (
     <>
@@ -123,7 +134,8 @@ export default async function AccountSettingsPage({
             <SettingLink
               href="/account/billing"
               title="Subscription & billing"
-              description="Your plan and payment details. Not set up yet."
+              detail={membershipSummary(membership)}
+              description="Your plan, payments and cancelling."
             />
             <li>
               <form

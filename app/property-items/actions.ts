@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { errorCode } from "@/lib/log";
+import { editBlockedMessage, requireEditAccess } from "@/lib/membership-server";
 import { parsePropertyItemInput, type PropertyItemFormState } from "@/lib/property-items";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
@@ -41,6 +42,8 @@ export async function createPropertyItem(
   if ("error" in parsed) return { error: parsed.error, values: parsed.values };
 
   const { supabase } = await requireOwnProperty(propertyId);
+  const blocked = await editBlockedMessage();
+  if (blocked) return { error: blocked, values: parsed.values };
 
   const { error } = await supabase
     .from("property_items")
@@ -69,6 +72,8 @@ export async function updatePropertyItem(
   if ("error" in parsed) return { error: parsed.error, values: parsed.values };
 
   const { supabase, userId } = await requireOwnProperty(propertyId);
+  const blocked = await editBlockedMessage();
+  if (blocked) return { error: blocked, values: parsed.values };
 
   const { error } = await supabase
     .from("property_items")
@@ -92,6 +97,7 @@ export async function updatePropertyItem(
 export async function reopenPropertyItem(propertyId: string, itemId: string) {
   if (!isSupabaseConfigured) return;
   const { supabase, userId } = await requireOwnProperty(propertyId);
+  await requireEditAccess();
 
   await supabase
     .from("property_items")
@@ -106,6 +112,7 @@ export async function reopenPropertyItem(propertyId: string, itemId: string) {
 export async function archivePropertyItem(propertyId: string, itemId: string) {
   if (!isSupabaseConfigured) return;
   const { supabase, userId } = await requireOwnProperty(propertyId);
+  await requireEditAccess();
 
   await supabase
     .from("property_items")

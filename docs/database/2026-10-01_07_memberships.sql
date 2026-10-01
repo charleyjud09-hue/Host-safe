@@ -1,4 +1,5 @@
--- DRAFT — NOT YET APPLIED. For review before it is run in the Supabase SQL editor.
+-- ALREADY APPLIED in Supabase on 2026-10-01. Reference copy only — do not re-run.
+-- (Verified: the founder's account could still save a property afterwards.)
 --
 -- Membership phase 2a: the database remembers each account's membership,
 -- and enforces read-only mode and property limits itself, so they can't be

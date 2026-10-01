@@ -1,7 +1,7 @@
 # Current Disclaimer Audit
 
 **This is an internal content review, not legal advice or legal approval.**
-It records what disclaimer wording currently exists in the HostSafe
+It records what disclaimer wording currently exists in the Letnook
 application, and a non-legal assessment of whether it could accidentally
 imply something it shouldn't. It does not constitute confirmation that the
 wording is legally sufficient — that requires a qualified legal
@@ -14,36 +14,36 @@ shipped. **Strict full review: 30 September 2026, against commit
 
 | # | Wording (exact) | Location | Could it accidentally imply... |
 |---|---|---|---|
-| 1 | "HostSafe is not a fire-risk assessor and does not carry out fire-risk assessments." | `components/Disclaimer.tsx` | — none identified |
+| 1 | "Letnook is not a fire-risk assessor and does not carry out fire-risk assessments." | `components/Disclaimer.tsx` | — none identified |
 | 2 | "If your property is complex or outside its intended scope, you should speak with a competent fire-risk assessor." | `components/Disclaimer.tsx` | — none identified |
-| 3 | "HostSafe is an early-stage organisational and educational tool. It does not provide legal advice, fire-risk assessments, or compliance certification, and it does not confirm that a property is safe or legally compliant." | `components/Footer.tsx` (updated as part of this pack) | — none identified |
-| 4 | "HostSafe helps owners of small, simple self-catering holiday lets organise fire-safety information. It is an organisational and educational tool, not legal advice or a fire-risk assessment." | `app/layout.tsx` (page meta description) | — none identified |
-| 5 | ~~"HostSafe is an organisational and educational tool. It does not provide legal advice, fire-risk assessments, or compliance certification, and it does not confirm that a property is safe or legally compliant."~~ **No longer in the app** (the old signed-in homepage was replaced by the property selector; row 9 now carries the equivalent wording there) | — | — |
-| 6 | "HostSafe is designed for owners of small, simple self-catering holiday lets in England..." / "...advice from a competent fire-risk assessor." | `app/page.tsx` (public landing page) | — none identified |
+| 3 | "Letnook is an early-stage organisational and educational tool. It does not provide legal advice, fire-risk assessments, or compliance certification, and it does not confirm that a property is safe or legally compliant." | `components/Footer.tsx` (updated as part of this pack) | — none identified |
+| 4 | "Letnook helps owners of small, simple self-catering holiday lets organise fire-safety information. It is an organisational and educational tool, not legal advice or a fire-risk assessment." | `app/layout.tsx` (page meta description) | — none identified |
+| 5 | ~~"Letnook is an organisational and educational tool. It does not provide legal advice, fire-risk assessments, or compliance certification, and it does not confirm that a property is safe or legally compliant."~~ **No longer in the app** (the old signed-in homepage was replaced by the property selector; row 9 now carries the equivalent wording there) | — | — |
+| 6 | "Letnook is designed for owners of small, simple self-catering holiday lets in England..." / "...advice from a competent fire-risk assessor." | `app/page.tsx` (public landing page) | — none identified |
 | 7 | Eligibility-checker result messages (`suitableMessage`/`unsuitableMessage` in `lib/eligibility.ts`) — already state "not a fire-risk assessment" and "cannot tell you whether your property meets any legal requirement" | `/check`, `/properties/[id]/check`, dashboard | — none identified |
-| 8 | "Reminders are based on the dates and statuses recorded in HostSafe. They are organisational prompts only and may not identify every requirement or deadline that applies to you." | `lib/attention.ts` (`REMINDER_NOTICE`), shown on `app/properties/[id]/page.tsx` and `app/properties/[id]/items/page.tsx` (the retired `/dashboard` no longer shows it) | — none identified; explicitly disclaims guaranteed reminders |
-| 9 | "HostSafe is an organisational and educational tool for properties in England. It does not provide legal advice, fire-risk assessments, or compliance certification, and it does not confirm that a property is safe or legally compliant. Keeping records here does not by itself demonstrate legal compliance." | `app/page.tsx` signed-in property selector (moved unchanged from the retired `/dashboard` on 30 Sep 2026, together with the "simplified guidance is intended for smaller, straightforward accommodation" paragraph) | — none identified |
-| 10 | "HostSafe helps you organise property information, evidence, documents, actions, and reminders. It is not an official records repository. You remain responsible for keeping original documents and appropriate backups, checking applicable requirements and deadlines, and submitting information directly to the relevant organisation where required." | `app/page.tsx` signed-in property selector (moved unchanged from the retired `/dashboard`) | — none identified; directly addresses "official document storage" and "Government submission" risks |
-| 11 | "Keep this organisational — HostSafe does not..." / "HostSafe does not provide legal advice, fire-risk assessments, or..." | `app/properties/[id]/evidence/new/page.tsx` | — none identified |
-| 12 | "Files uploaded to HostSafe are stored privately to help you organise your records. HostSafe does not verify, approve, submit, certify, or confirm the validity, completeness, currency, or legal effect of anything you upload." | `app/properties/[id]/evidence/[recordId]/edit/page.tsx` | — none identified; directly addresses "document verification" risk |
-| 13 | "Marking an item as submitted records what you entered in HostSafe. It does not confirm that the document was received, accepted, valid, complete, or submitted by any deadline." | `components/PropertyItemForm.tsx` | — none identified; directly addresses "Government submission"/certification risk |
+| 8 | "Reminders are based on the dates and statuses recorded in Letnook. They are organisational prompts only and may not identify every requirement or deadline that applies to you." | `lib/attention.ts` (`REMINDER_NOTICE`), shown on `app/properties/[id]/page.tsx` and `app/properties/[id]/items/page.tsx` (the retired `/dashboard` no longer shows it) | — none identified; explicitly disclaims guaranteed reminders |
+| 9 | "Letnook is an organisational and educational tool for properties in England. It does not provide legal advice, fire-risk assessments, or compliance certification, and it does not confirm that a property is safe or legally compliant. Keeping records here does not by itself demonstrate legal compliance." | `app/page.tsx` signed-in property selector (moved unchanged from the retired `/dashboard` on 30 Sep 2026, together with the "simplified guidance is intended for smaller, straightforward accommodation" paragraph) | — none identified |
+| 10 | "Letnook helps you organise property information, evidence, documents, actions, and reminders. It is not an official records repository. You remain responsible for keeping original documents and appropriate backups, checking applicable requirements and deadlines, and submitting information directly to the relevant organisation where required." | `app/page.tsx` signed-in property selector (moved unchanged from the retired `/dashboard`) | — none identified; directly addresses "official document storage" and "Government submission" risks |
+| 11 | "Keep this organisational — Letnook does not..." / "Letnook does not provide legal advice, fire-risk assessments, or..." | `app/properties/[id]/evidence/new/page.tsx` | — none identified |
+| 12 | "Files uploaded to Letnook are stored privately to help you organise your records. Letnook does not verify, approve, submit, certify, or confirm the validity, completeness, currency, or legal effect of anything you upload." | `app/properties/[id]/evidence/[recordId]/edit/page.tsx` | — none identified; directly addresses "document verification" risk |
+| 13 | "Marking an item as submitted records what you entered in Letnook. It does not confirm that the document was received, accepted, valid, complete, or submitted by any deadline." | `components/PropertyItemForm.tsx` | — none identified; directly addresses "Government submission"/certification risk |
 | 14 | "An organisational status only — not a legal or compliance judgement." | `components/PropertyItemForm.tsx` (status field helper) | — none identified |
-| 15 | "HostSafe does not decide what is legally required — you add and manage these items yourself." | `app/properties/[id]/items/page.tsx` | — none identified |
-| 16 | "Marking an issue resolved records what you entered in HostSafe. It does not confirm that a repair is complete, safe or compliant." (added in Phase 7a, pending review) | `lib/maintenance.ts` (`RESOLVED_NOTICE`), shown in `components/MaintenanceIssueForm.tsx` when Resolved is selected and on `app/properties/[id]/maintenance/[issueId]/page.tsx` for resolved issues | — none identified; directly addresses "repair verified / property safe" risk |
+| 15 | "Letnook does not decide what is legally required — you add and manage these items yourself." | `app/properties/[id]/items/page.tsx` | — none identified |
+| 16 | "Marking an issue resolved records what you entered in Letnook. It does not confirm that a repair is complete, safe or compliant." (added in Phase 7a, pending review) | `lib/maintenance.ts` (`RESOLVED_NOTICE`), shown in `components/MaintenanceIssueForm.tsx` when Resolved is selected and on `app/properties/[id]/maintenance/[issueId]/page.tsx` for resolved issues | — none identified; directly addresses "repair verified / property safe" risk |
 | 17 | "Photos are stored privately and only shown to you. Please avoid photos that show people or personal information." (added in Phase 7b, pending review) | `lib/maintenance-photos.ts` (`MAINTENANCE_PHOTO_NOTE`), shown in `components/MaintenancePhotoUpload.tsx` on the maintenance issue page | — none identified; "stored privately / only shown to you" is a factual privacy statement that should be checked against the final Privacy Notice |
-| 18 | "Only add what you need to recognise this booking." (added in Stays & calendar Phase B, pending review) | `lib/calendar.ts` (`GUEST_NAME_HINT`), shown under the optional guest first name field in `components/GuestStayForm.tsx` | — none identified; a data-minimisation prompt, not a statement about what HostSafe does with the data |
+| 18 | "Only add what you need to recognise this booking." (added in Stays & calendar Phase B, pending review) | `lib/calendar.ts` (`GUEST_NAME_HINT`), shown under the optional guest first name field in `components/GuestStayForm.tsx` | — none identified; a data-minimisation prompt, not a statement about what Letnook does with the data |
 | 19 | "This removes the guest’s first name. Dates, guest count, booking reference and stay status will be kept." (added in Stays & calendar Phase B, pending review) | `lib/calendar.ts` (`REMOVE_GUEST_NAME_NOTICE`), shown beside "Remove guest name" on `app/properties/[id]/calendar/[entryId]/page.tsx` | — none identified; deliberately does not describe this as deleting all guest-related data, because guest count and booking reference remain. Whether removal from the live database is "deletion" for privacy purposes (backups) needs legal review |
 | 20 | "Cancelling removes the guest’s first name, and these dates will no longer stop another planned stay being recorded. Dates, guest count and booking reference will be kept. A cancelled stay cannot be changed back to planned." (added in Stays & calendar Phase B, pending review) | `lib/calendar.ts` (`CANCEL_STAY_NOTICE`), shown in the cancel confirmation on the guest stay page | — none identified; describes record-keeping only and makes no statement that the property is available |
 | 21 | "These dates overlap an existing planned guest stay for this property. Choose different dates." (added in Stays & calendar Phase B, pending review) | `lib/calendar.ts` (`STAY_OVERLAP_ERROR`), shown on the guest stay form | — none identified; reveals nothing about the other stay |
 | 22 | "Organise guest stays, planned work, cleanups and blocked dates for this property." / "Organise when this property has guests, is blocked, has work planned or is due a cleanup." (Stays & calendar, pending review) | Service card on `app/properties/[id]/page.tsx`; intro on `app/properties/[id]/calendar/page.tsx` | — none identified; organisational wording only, no claim that the property is available, ready or suitable for guests |
 | 23 | "Planned work is a calendar entry only. It is separate from Maintenance & repairs issues and does not confirm that any work has been done, or that the property is safe, compliant or ready for guests." (Stays & calendar, pending review) | `lib/calendar.ts` (`PLANNED_WORK_NOTICE`), shown on the planned work form | — none identified; directly addresses "repair complete / property safe" risk |
-| 24 | "A planned cleanup is a date you have chosen. HostSafe does not record or confirm that the property has been cleaned or is ready for guests." (Stays & calendar, pending review) | `lib/calendar.ts` (`PLANNED_CLEANUP_NOTICE`), shown on the planned cleanup form | — none identified; directly addresses "property cleaned / ready" risk |
+| 24 | "A planned cleanup is a date you have chosen. Letnook does not record or confirm that the property has been cleaned or is ready for guests." (Stays & calendar, pending review) | `lib/calendar.ts` (`PLANNED_CLEANUP_NOTICE`), shown on the planned cleanup form | — none identified; directly addresses "property cleaned / ready" risk |
 | 25 | "Turnover dates are worked out from guest departure dates. They do not mean the property has been cleaned or is ready, safe or suitable for guests." plus the neutral row label "Same-day turnover" (Stays & calendar, pending review) | `lib/calendar.ts` (`TURNOVER_NOTICE`), shown on `app/properties/[id]/calendar/page.tsx` when guest stays are listed | — none identified |
-| 26 | "If yes, HostSafe will not let you record a planned guest stay on any of these dates, including the first and last day." and the block overlap error "These dates overlap a planned guest stay for this property. Change the dates, or choose not to block guest stays." / "These dates overlap a custom block that blocks guest stays for this property. Choose different dates." (Stays & calendar, pending review) | `lib/calendar.ts` (`BLOCKING_HINT`, `BLOCK_OVERLAP_ERROR`, `STAY_BLOCKED_ERROR`) | — none identified; reveal nothing about the other entry |
-| 28 | "Zero gap: check-out and the next check-in are at the same time, so there is no time for a turnover between these stays." shown as a warning, plus neutral gap wording such as "6 hours between check-out and check-in" (Stays & calendar, pending review) | `lib/calendar.ts` (`ZERO_GAP_WARNING`), `components/CalendarEntryList.tsx`; shown on the schedule and on both stays' pages | — none identified; states a timing fact only. The absence of a warning must not be read as HostSafe confirming a turnover is possible or that the property will be ready |
+| 26 | "If yes, Letnook will not let you record a planned guest stay on any of these dates, including the first and last day." and the block overlap error "These dates overlap a planned guest stay for this property. Change the dates, or choose not to block guest stays." / "These dates overlap a custom block that blocks guest stays for this property. Choose different dates." (Stays & calendar, pending review) | `lib/calendar.ts` (`BLOCKING_HINT`, `BLOCK_OVERLAP_ERROR`, `STAY_BLOCKED_ERROR`) | — none identified; reveal nothing about the other entry |
+| 28 | "Zero gap: check-out and the next check-in are at the same time, so there is no time for a turnover between these stays." shown as a warning, plus neutral gap wording such as "6 hours between check-out and check-in" (Stays & calendar, pending review) | `lib/calendar.ts` (`ZERO_GAP_WARNING`), `components/CalendarEntryList.tsx`; shown on the schedule and on both stays' pages | — none identified; states a timing fact only. The absence of a warning must not be read as Letnook confirming a turnover is possible or that the property will be ready |
 | 29 | Same-day turnover time messages: "Another guest stay checks out on this arrival date. Please add a check-in time." / "...checks in on this departure date. Please add a check-out time." / "...has no check-out time. Add a check-out time to that stay first." / "...has no check-in time. Add a check-in time to that stay first." / "On a same-day turnover, the check-out time must be no later than the next check-in time." and the hint "Times are optional, but needed when another stay checks out or in on the same day." (Stays & calendar, pending review) | `lib/calendar.ts`, guest stay form | — none identified; reveal no details of the other stay |
 | 30 | Reminder level labels: "Urgent" (date passed), "Due very soon" (0–7 days), "Due soon" (8–30 days), "Later" (more than 30 days), "Open issue" (undated maintenance issue); every open, dated reminder now appears (changed 30 Sep 2026, pending review) | `lib/attention.ts` (`attentionLevelLabel`), shown on the property overview, Actions & reminders page and property selector | — "Urgent" is a date-based organisational label only; it must not be read as a legal deadline or a safety judgement. Listing every dated reminder does not mean the list covers every requirement (see row 8) |
-| 31 | Delete-account warning ("This permanently deletes: your account and sign-in details / every property … / all records, actions, maintenance issues, calendar entries and property checks / every file and photo you have uploaded. This can’t be undone.") and the confirmation "Your account, properties, records and uploaded files have been removed from HostSafe." (added 30 Sep 2026, pending review) | `app/account/delete/page.tsx`, `app/account-deleted/page.tsx` | — "removed from HostSafe" is accurate for the live app; it does not claim removal from Supabase infrastructure backups, which the Privacy Notice must address (retention item 4) |
+| 31 | Delete-account warning ("This permanently deletes: your account and sign-in details / every property … / all records, actions, maintenance issues, calendar entries and property checks / every file and photo you have uploaded. This can’t be undone.") and the confirmation "Your account, properties, records and uploaded files have been removed from Letnook." (added 30 Sep 2026, pending review) | `app/account/delete/page.tsx`, `app/account-deleted/page.tsx` | — "removed from Letnook" is accurate for the live app; it does not claim removal from Supabase infrastructure backups, which the Privacy Notice must address (retention item 4) |
 | 32 | "Subscriptions and billing are not set up yet. There is nothing to manage here at the moment, and no payment details are held." (added 30 Sep 2026) | `app/account/billing/page.tsx` | — none identified; factual placeholder, must be replaced when billing is built |
 | 27 | "Don’t include names or contact details of guests, cleaners or contractors." (Stays & calendar, pending review) | `lib/calendar.ts` (`FREE_TEXT_HINT`), under the title and description fields for planned work and custom blocks | — none identified; a data-minimisation prompt |
 
@@ -52,7 +52,7 @@ shipped. **Strict full review: 30 September 2026, against commit
 A line-by-line pass of every user-facing sentence that touches safety,
 law, compliance, privacy, advice or readiness. Standard applied: each
 statement must be **true as an absolute**, must not imply a judgement
-HostSafe cannot make, and should be as short as the meaning allows.
+Letnook cannot make, and should be as short as the meaning allows.
 The rewrites were first proposed, then **applied the same day at the
 founder's instruction — see section D for the live wording.** B2 still
 needs legal confirmation before any legal statement is reintroduced.
@@ -63,9 +63,9 @@ needs legal confirmation before any legal statement is reintroduced.
 |---|---|---|
 | A1 | "It does not give legal advice, and it does not certify or approve any property." / "It cannot guarantee that a property is safe or meets any legal requirement." / "Everything it produces is based on information you provide, and you remain responsible for checking it." | `components/Disclaimer.tsx` (public homepage, alongside rows 1–2) |
 | A2 | Evidence category helpers, including "A written fire risk assessment is a legal requirement for the responsible person." and "… can be useful evidence where relevant to your property." (×8) | `lib/evidence-records.ts`, shown on the evidence form |
-| A3 | "The property check is HostSafe's short suitability check. It helps show whether HostSafe's simplified approach is designed for a property like this one. It is not a fire-risk assessment or a legal compliance result." | `app/properties/[id]/safety/page.tsx` |
+| A3 | "The property check is Letnook's short suitability check. It helps show whether Letnook's simplified approach is designed for a property like this one. It is not a fire-risk assessment or a legal compliance result." | `app/properties/[id]/safety/page.tsx` |
 | A4 | "Keep property check records together." | Safety & checks service card, `app/properties/[id]/page.tsx` |
-| A5 | "Six quick questions. This is not an assessment. It only helps you see whether HostSafe is designed for a property like yours." | `app/check/page.tsx`, `components/AddPropertyFlow.tsx`, `app/properties/[id]/check/page.tsx` (variant) |
+| A5 | "Six quick questions. This is not an assessment. It only helps you see whether Letnook is designed for a property like yours." | `app/check/page.tsx`, `components/AddPropertyFlow.tsx`, `app/properties/[id]/check/page.tsx` (variant) |
 | A6 | "Check if your property is suitable" (page title and heading) / "Check suitability" (header button) | `app/check/page.tsx`; `components/Header.tsx` (signed-out); `app/page.tsx` (frozen public homepage) |
 | A7 | "Images are stored privately and are only shown to you. Please avoid photos that show people or personal information." | `components/PropertyImageForm.tsx` |
 | A8 | "An organisational action, record, or submission tracker — not a legal requirement unless you've verified it yourself." | `app/properties/[id]/items/new/page.tsx` |
@@ -79,10 +79,10 @@ needs legal confirmation before any legal statement is reintroduced.
 Rows 17 and A7 say files are "only shown to you". The service operator
 can access stored files through the Supabase dashboard, and Supabase as
 processor has infrastructure access. The true, testable claim is narrower.
-*Proposed:* "Stored privately — other HostSafe users can't see it. Avoid
+*Proposed:* "Stored privately — other Letnook users can't see it. Avoid
 photos showing people or personal details."
 
-**B2 — HostSafe states the law (legal review required).**
+**B2 — Letnook states the law (legal review required).**
 A2: "A written fire risk assessment is a legal requirement for the
 responsible person." This is the only sentence in the app that asserts a
 legal obligation. Whether it is accurate and complete for self-catering
@@ -94,17 +94,17 @@ detector check] records here." (drop "useful evidence").
 
 **B3 — "Suitable" / "suitability" invites a safety reading.**
 A3, A6: "Check if your property is suitable" can be read as "suitable to
-let" or "safe". What the check actually answers is whether HostSafe's
+let" or "safe". What the check actually answers is whether Letnook's
 simplified approach fits the property. The public homepage already uses
-the better phrasing "See if HostSafe fits your property".
-*Proposed:* page title/heading "Does HostSafe fit your property?"; header
+the better phrasing "See if Letnook fits your property".
+*Proposed:* page title/heading "Does Letnook fit your property?"; header
 button "Check fit"; Safety page intro "The property check shows whether
-HostSafe's simplified approach fits this property. It is not a fire-risk
+Letnook's simplified approach fits this property. It is not a fire-risk
 assessment or a compliance result." **Note:** A6 also appears on the
 frozen public homepage, which cannot change without lifting the freeze.
 
-**B4 — "Urgent" is a judgement HostSafe can't make.**
-A11 / row 30: HostSafe only knows a date has passed, not how urgent the
+**B4 — "Urgent" is a judgement Letnook can't make.**
+A11 / row 30: Letnook only knows a date has passed, not how urgent the
 matter is. *Proposed:* rename the level "Date passed" (keeps red).
 
 **B5 — Positive result shown in reassuring teal.**
@@ -116,20 +116,20 @@ more tailored advice".
 **B6 — Confusing legal phrasing.**
 A8: "not a legal requirement unless you've verified it yourself" implies
 the user can make something a legal requirement by verifying it.
-*Proposed:* "Your own list of things to do, keep or send. HostSafe
+*Proposed:* "Your own list of things to do, keep or send. Letnook
 doesn't decide what the law requires."
 
 **B7 — Accurate but wordy (tighten; no meaning change).**
 - Row 8 → "Reminders come only from the dates you've entered. They won't
   cover every requirement or deadline that applies to you."
-- Rows 11 (two paragraphs) → "HostSafe doesn't check, certify or assess
+- Rows 11 (two paragraphs) → "Letnook doesn't check, certify or assess
   what you add, and isn't a substitute for professional advice."
 - Rows 12 / Documents page → "Files are stored privately to help you
-  organise records. HostSafe doesn't check, verify or approve them."
+  organise records. Letnook doesn't check, verify or approve them."
 - Row 7 `suitableMessage` → "Your answers suggest your property fits the
-  small, simple type HostSafe is designed for. This isn't a fire-risk
+  small, simple type Letnook is designed for. This isn't a fire-risk
   assessment and can't tell you whether any legal requirement is met."
-- Row 7 `unsuitableMessage` → "HostSafe is designed for small, simple
+- Row 7 `unsuitableMessage` → "Letnook is designed for small, simple
   properties. Your answers suggest you may need more tailored advice from
   a competent fire-risk assessor."
 - Row 23 (planned work) → "A calendar entry only. It doesn't show that
@@ -161,19 +161,19 @@ history; **the live wording is now:**
 
 | Item | Live wording |
 |---|---|
-| B1 photos (row 17) | "Stored privately — other HostSafe users can’t see them. Avoid photos showing people or personal details." |
-| B1 property image (A7) | "JPG, PNG or WebP, up to 5MB. Stored privately — other HostSafe users can’t see it. Avoid photos showing people or personal details." |
+| B1 photos (row 17) | "Stored privately — other Letnook users can’t see them. Avoid photos showing people or personal details." |
+| B1 property image (A7) | "JPG, PNG or WebP, up to 5MB. Stored privately — other Letnook users can’t see it. Avoid photos showing people or personal details." |
 | B2 category helpers (A2) | "Keep your fire risk assessment here." / "Keep records of alarm and detector checks here." (and equivalents); no legal assertion, no "useful evidence" |
-| B3 check page (A6) | Title and heading "Does HostSafe fit your property?"; header button "Check if HostSafe fits"; homepage buttons "Check if HostSafe fits your property" and "Start the check" |
-| B3 Safety page (A3) | "The property check shows whether HostSafe’s simplified approach fits this property. It is not a fire-risk assessment or a compliance result." |
+| B3 check page (A6) | Title and heading "Does Letnook fit your property?"; header button "Check if Letnook fits"; homepage buttons "Check if Letnook fits your property" and "Start the check" |
+| B3 Safety page (A3) | "The property check shows whether Letnook’s simplified approach fits this property. It is not a fire-risk assessment or a compliance result." |
 | B4 level label (A11) | "Date passed" (selector pill "N date passed") |
 | B5 result styling | Neutral grey box for the fit result; amber kept for "may need tailored advice" |
-| B6 new action (A8) | "Your own list of things to do, keep or send. HostSafe doesn’t decide what the law requires." |
+| B6 new action (A8) | "Your own list of things to do, keep or send. Letnook doesn’t decide what the law requires." |
 | B7 reminders (row 8) | "Reminders come only from the dates you’ve entered. They won’t cover every requirement or deadline that applies to you." |
-| B7 new record (row 11) | "HostSafe doesn’t check, certify or assess what you add, and isn’t a substitute for professional advice." |
-| B7 files (row 12) | "Files are stored privately to help you organise records. HostSafe doesn’t check, verify or approve them, or confirm they are valid, complete or up to date." |
-| B7 fit result (row 7) | "Your answers suggest HostSafe fits your property. This is not a fire-risk assessment and says nothing about whether your property is safe or meets any legal requirement." |
-| B7 advice result (row 7) | "HostSafe is designed for small, simple properties. Your answers suggest you may need tailored advice from a competent fire-risk assessor." |
+| B7 new record (row 11) | "Letnook doesn’t check, certify or assess what you add, and isn’t a substitute for professional advice." |
+| B7 files (row 12) | "Files are stored privately to help you organise records. Letnook doesn’t check, verify or approve them, or confirm they are valid, complete or up to date." |
+| B7 fit result (row 7) | "Your answers suggest Letnook fits your property. This is not a fire-risk assessment and says nothing about whether your property is safe or meets any legal requirement." |
+| B7 advice result (row 7) | "Letnook is designed for small, simple properties. Your answers suggest you may need tailored advice from a competent fire-risk assessor." |
 | B7 planned work (row 23) | "A calendar entry only, separate from Maintenance & repairs. It doesn’t show that any work was done, or that the property is safe, compliant or ready for guests." |
 | B7 turnover (row 25) | "Turnover dates come from departure dates only. They don’t mean the property is cleaned, ready or safe for guests." |
 | Responsibility (row 3, footer) | Added: "You remain responsible for your property’s fire safety and legal obligations." |
@@ -181,50 +181,50 @@ history; **the live wording is now:**
 
 **Limit of on-screen wording.** The founder asked for wording that
 "completely negates any legal responsibility". On-screen statements can
-describe what HostSafe is and place responsibility on the owner, as above,
+describe what Letnook is and place responsibility on the owner, as above,
 but under UK law (Consumer Rights Act 2015, Unfair Contract Terms Act
 1977) liability cannot be excluded entirely — for example for death or
 personal injury caused by negligence — and over-broad exclusion wording
-can be unenforceable or itself misleading. Any limitation of HostSafe's
+can be unenforceable or itself misleading. Any limitation of Letnook's
 liability belongs in the Terms of Service
 (`terms-of-service-draft.md`) and **must be drafted or approved by a
 qualified legal professional** before launch.
 
 ### E. Repositioning — 30 September 2026 (later the same day)
 
-At the founder's instruction HostSafe was repositioned from "fire-safety
+At the founder's instruction Letnook was repositioned from "fire-safety
 paperwork for small holiday lets in England" to **"the private organiser
 for holiday lets and short-term rentals"**, to minimise liability:
 
 - **The property check was removed entirely** (public `/check`, the
   add-property questions, and the Safety & checks page — old links now
-  redirect). It was the only place HostSafe gave an opinion about a
+  redirect). It was the only place Letnook gave an opinion about a
   property. Rows 6, 7, A3, A5, A6, A9, A10 and B3/B5 therefore no longer
   apply. Previously saved check answers remain in `eligibility_results`
   but are no longer shown or collected (retention decision pending).
 - **Public homepage rewritten** from the founder's own "best fit" and
   "what it helps with" lists (homepage freeze lifted in full). It names
-  Airbnb, Booking.com and Vrbo only to describe who it's for, with: "HostSafe
+  Airbnb, Booking.com and Vrbo only to describe who it's for, with: "Letnook
   isn’t affiliated with Airbnb, Booking.com or Vrbo, and doesn’t connect to
   them. You enter your own dates and details."
-- **"What HostSafe doesn’t do"** (homepage): "It doesn’t give legal,
+- **"What Letnook doesn’t do"** (homepage): "It doesn’t give legal,
   safety or compliance advice." / "It doesn’t inspect, check, certify or
   approve any property." / "It doesn’t connect to, or manage bookings on,
   Airbnb, Booking.com, Vrbo or any other platform." / "Reminders come only
   from the dates you enter, and won’t cover every requirement or
   deadline." / "You remain responsible for your property, your guests’
   safety and your legal obligations."
-- **Footer (row 3):** "HostSafe is an early-stage organisational tool. It
+- **Footer (row 3):** "Letnook is an early-stage organisational tool. It
   doesn’t give legal, safety or compliance advice, and doesn’t check or
   approve any property. You remain responsible for your property and your
   legal obligations."
-- **Property selector (rows 9–10):** "HostSafe is an organisational tool.
+- **Property selector (rows 9–10):** "Letnook is an organisational tool.
   It doesn’t give legal, safety or compliance advice, and doesn’t check or
   approve any property. Keeping records here doesn’t by itself show that
   any requirement is met." / "It isn’t an official records store. Keep
   your original documents and backups, and check the requirements and
   deadlines that apply to you." (The "simplified guidance" paragraph was
-  removed — HostSafe no longer offers guidance.)
+  removed — Letnook no longer offers guidance.)
 - **Page description (row 4):** "Keep maintenance, reminders, documents
   and guest dates for your holiday lets and short-term rentals in one
   private place. An organisational tool, not legal, safety or compliance
@@ -232,7 +232,7 @@ for holiday lets and short-term rentals"**, to minimise liability:
 - No wording refers to England any more. **Open founder decision:**
   England only or the whole UK — affects the Terms and Privacy Notice.
 - **Open founder decision (next session): the product name.** "Safe" in
-  "HostSafe" is now the strongest remaining implication of a safety
+  "Letnook" is now the strongest remaining implication of a safety
   promise; take to the solicitor with a trademark search.
 
 ## Overall finding

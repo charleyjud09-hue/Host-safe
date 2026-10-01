@@ -22,7 +22,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Stays & calendar | HostSafe",
+  title: "Stays & calendar | Letnook",
 };
 
 export default async function CalendarPage({

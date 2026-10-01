@@ -1,7 +1,7 @@
 # Database changes (reference copies)
 
 These files are **copies of SQL that has already been run** in the Supabase
-SQL editor for the HostSafe project. They are kept here so the database
+SQL editor for the Letnook project. They are kept here so the database
 setup can be understood, reviewed and rebuilt. **Do not run them again
 against the live project** — most would fail (objects already exist) or
 duplicate policies.

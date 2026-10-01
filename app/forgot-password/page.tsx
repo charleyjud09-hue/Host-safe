@@ -5,7 +5,7 @@ import ForgotPasswordForm from "@/components/ForgotPasswordForm";
 import Header from "@/components/Header";
 
 export const metadata: Metadata = {
-  title: "Reset your password | HostSafe",
+  title: "Reset your password | Letnook",
 };
 
 export default async function ForgotPasswordPage({
@@ -22,7 +22,7 @@ export default async function ForgotPasswordPage({
         <div className="mx-auto max-w-md px-5 py-12">
           <h1 className="text-3xl font-semibold text-navy">Reset your password</h1>
           <p className="mt-3 text-slate-700">
-            Enter the email address you use for HostSafe and we will send you a
+            Enter the email address you use for Letnook and we will send you a
             link to choose a new password.
           </p>
           {notice === "link-failed" && (

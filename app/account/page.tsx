@@ -10,7 +10,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Account settings | HostSafe",
+  title: "Account settings | Letnook",
 };
 
 function Chevron() {
@@ -88,7 +88,7 @@ export default async function AccountSettingsPage({
             Account settings
           </h1>
           <p className="mt-2 text-slate-700">
-            Manage how you sign in to HostSafe and your account.
+            Manage how you sign in to Letnook and your account.
           </p>
 
           {notice === "email-confirmed" && (
@@ -133,7 +133,7 @@ export default async function AccountSettingsPage({
                 <div className="min-w-0">
                   <p className="font-semibold text-navy">Sign out</p>
                   <p className="mt-1 text-sm text-slate-600">
-                    Sign out of HostSafe on this device.
+                    Sign out of Letnook on this device.
                   </p>
                 </div>
                 <button

@@ -17,7 +17,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Past & cancelled entries | HostSafe",
+  title: "Past & cancelled entries | Letnook",
 };
 
 export default async function PastCalendarPage({

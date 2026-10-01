@@ -7,7 +7,7 @@ const tones = {
   white: "bg-white ring-slate-200",
 } as const;
 
-/** One HostSafe property service. Only rendered for services with a working route. */
+/** One Letnook property service. Only rendered for services with a working route. */
 export default function ServiceCard({
   title,
   description,

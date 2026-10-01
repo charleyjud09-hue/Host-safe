@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 
 export const metadata: Metadata = {
-  title: "Create a free account | HostSafe",
+  title: "Create a free account | Letnook",
 };
 
 export default function SignUpPage() {

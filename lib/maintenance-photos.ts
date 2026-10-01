@@ -19,7 +19,7 @@ const EXTENSION_BY_TYPE: Record<MaintenancePhotoType, string> = {
 };
 
 export const MAINTENANCE_PHOTO_NOTE =
-  "Stored privately — other HostSafe users can’t see them. Avoid photos showing people or personal details.";
+  "Stored privately — other Letnook users can’t see them. Avoid photos showing people or personal details.";
 
 export type MaintenancePhoto = {
   id: string;

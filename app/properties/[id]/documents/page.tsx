@@ -14,7 +14,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Documents & renewals | HostSafe",
+  title: "Documents & renewals | Letnook",
 };
 
 export default async function DocumentsAndRenewalsPage({
@@ -95,7 +95,7 @@ export default async function DocumentsAndRenewalsPage({
             </Link>
           </div>
           <p className="mt-2 text-sm text-slate-600">
-            Files are stored privately to help you organise records. HostSafe
+            Files are stored privately to help you organise records. Letnook
             doesn&apos;t check, verify or approve them, or confirm they are
             valid, complete or up to date.
           </p>

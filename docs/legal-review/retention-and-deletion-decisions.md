@@ -38,7 +38,7 @@ infrastructure purges the file for good?
 
 ## 4. Backup-retention handling
 **Current state:** unknown — this depends on Supabase's own infrastructure
-backup policy, which HostSafe's code does not control.
+backup policy, which Letnook's code does not control.
 **Decision needed from founder:** obtain and document Supabase's backup
 retention policy (from Supabase's own documentation/support), so the
 Privacy Notice can state it accurately rather than guessing.

@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 
 export const metadata: Metadata = {
-  title: "Sign in | HostSafe",
+  title: "Sign in | Letnook",
 };
 
 export default async function SignInPage({

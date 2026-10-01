@@ -176,7 +176,7 @@ export default async function Home() {
           <PropertySelector properties={selectorProperties} />
           <div className="mx-auto max-w-5xl space-y-2 px-5 pb-12 text-sm text-slate-600">
             <p>
-              HostSafe is an organisational tool. It doesn&apos;t give legal,
+              Letnook is an organisational tool. It doesn&apos;t give legal,
               safety or compliance advice, and doesn&apos;t check or approve
               any property. Keeping records here doesn&apos;t by itself show
               that any requirement is met.
@@ -222,7 +222,7 @@ export default async function Home() {
                 href="#limitations"
                 className="text-slate-200 underline underline-offset-4 hover:text-white"
               >
-                What HostSafe doesn&apos;t do
+                What Letnook doesn&apos;t do
               </a>
             </div>
           </div>
@@ -234,7 +234,7 @@ export default async function Home() {
             What it helps with
           </h2>
           <p className="mt-4 max-w-2xl text-lg text-slate-700">
-            Everything is private to your account. Other HostSafe users
+            Everything is private to your account. Other Letnook users
             can&apos;t see your properties, records or schedule.
           </p>
           <div className="mt-10 grid gap-5 sm:grid-cols-2">
@@ -310,7 +310,7 @@ export default async function Home() {
               ))}
             </ul>
             <p className="mt-6 max-w-2xl text-sm text-slate-600">
-              HostSafe isn&apos;t affiliated with Airbnb, Booking.com or Vrbo,
+              Letnook isn&apos;t affiliated with Airbnb, Booking.com or Vrbo,
               and doesn&apos;t connect to them. You enter your own dates and
               details.
             </p>

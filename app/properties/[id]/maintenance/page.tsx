@@ -10,7 +10,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Maintenance & repairs | HostSafe",
+  title: "Maintenance & repairs | Letnook",
 };
 
 export default async function MaintenancePage({

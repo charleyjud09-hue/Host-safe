@@ -22,7 +22,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Property overview | HostSafe",
+  title: "Property overview | Letnook",
 };
 
 const iconProps = {

@@ -30,7 +30,7 @@ import { createClient } from "@/lib/supabase/server";
 
 // Static on purpose: never a guest name, title, dates or booking reference.
 export const metadata: Metadata = {
-  title: "Calendar entry | HostSafe",
+  title: "Calendar entry | Letnook",
 };
 
 export default async function CalendarEntryPage({

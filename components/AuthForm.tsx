@@ -90,7 +90,7 @@ export default function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
       </button>
 
       <p className="text-center text-sm text-slate-600">
-        {isSignUp ? "Already have an account? " : "New to HostSafe? "}
+        {isSignUp ? "Already have an account? " : "New to Letnook? "}
         <Link
           href={isSignUp ? "/sign-in" : "/sign-up"}
           className="font-medium text-navy underline underline-offset-4"

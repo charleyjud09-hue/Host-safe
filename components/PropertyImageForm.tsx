@@ -75,7 +75,7 @@ export default function PropertyImageForm({
             className="mt-1 block w-full text-sm text-slate-700 file:mr-3 file:rounded-lg file:border-0 file:bg-navy file:px-4 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-navy-light disabled:opacity-60"
           />
           <p className="mt-1 text-sm text-slate-600">
-            JPG, PNG or WebP, up to 5MB. Stored privately — other HostSafe
+            JPG, PNG or WebP, up to 5MB. Stored privately — other Letnook
             users can’t see it. Avoid photos showing people or personal
             details.
           </p>

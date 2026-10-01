@@ -9,7 +9,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Add an evidence record | HostSafe",
+  title: "Add an evidence record | Letnook",
 };
 
 export default async function NewEvidenceRecordPage({
@@ -44,7 +44,7 @@ export default async function NewEvidenceRecordPage({
           </h1>
           <p className="mt-3 text-slate-700">For {property.name}.</p>
           <p className="mt-2 mb-8 text-sm text-slate-600">
-            HostSafe doesn&apos;t check, certify or assess what you add, and
+            Letnook doesn&apos;t check, certify or assess what you add, and
             isn&apos;t a substitute for professional advice.
           </p>
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">

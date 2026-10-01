@@ -11,7 +11,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Report an issue | HostSafe",
+  title: "Report an issue | Letnook",
 };
 
 export default async function NewMaintenanceIssuePage({

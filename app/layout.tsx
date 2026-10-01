@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "HostSafe | The private organiser for holiday lets and short-term rentals",
+  title: "Letnook | The private organiser for holiday lets and short-term rentals",
   description:
     "Keep maintenance, reminders, documents and guest dates for your holiday lets and short-term rentals in one private place. An organisational tool, not legal, safety or compliance advice.",
 };

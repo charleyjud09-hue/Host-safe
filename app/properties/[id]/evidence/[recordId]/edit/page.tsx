@@ -16,7 +16,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Edit evidence record | HostSafe",
+  title: "Edit evidence record | Letnook",
 };
 
 export default async function EditEvidenceRecordPage({
@@ -80,7 +80,7 @@ export default async function EditEvidenceRecordPage({
             <h2 className="text-xl font-semibold text-navy">Attachments</h2>
             <p className="mt-1 text-sm text-slate-600">
               Files are stored privately to help you organise records.
-              HostSafe doesn&apos;t check, verify or approve them, or confirm
+              Letnook doesn&apos;t check, verify or approve them, or confirm
               they are valid, complete or up to date.
             </p>
             <div className="mt-4">

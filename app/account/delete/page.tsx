@@ -7,7 +7,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Delete your account | HostSafe",
+  title: "Delete your account | Letnook",
 };
 
 export default async function DeleteAccountPage() {

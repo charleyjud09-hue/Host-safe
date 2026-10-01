@@ -7,7 +7,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Change password | HostSafe",
+  title: "Change password | Letnook",
 };
 
 export default async function ChangePasswordPage() {

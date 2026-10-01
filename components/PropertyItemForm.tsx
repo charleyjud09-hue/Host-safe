@@ -259,7 +259,7 @@ export default function PropertyItemForm({
           </p>
           <p className="text-sm text-slate-600">
             Marking an item as submitted records what you entered in
-            HostSafe. It does not confirm that the document was received,
+            Letnook. It does not confirm that the document was received,
             accepted, valid, complete, or submitted by any deadline.
           </p>
           <div>

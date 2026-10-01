@@ -7,7 +7,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Change email | HostSafe",
+  title: "Change email | Letnook",
 };
 
 export default async function ChangeEmailPage({

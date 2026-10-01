@@ -9,7 +9,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Choose a new password | HostSafe",
+  title: "Choose a new password | Letnook",
 };
 
 /** Reached from the password-reset email, which signs the user in first. */

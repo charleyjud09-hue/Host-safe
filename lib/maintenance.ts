@@ -25,7 +25,7 @@ export const maintenancePriorities: { value: MaintenancePriority; label: string 
 export const OPEN_MAINTENANCE_STATUSES = new Set<string>(["open", "in_progress", "waiting"]);
 
 export const RESOLVED_NOTICE =
-  "Marking an issue resolved records what you entered in HostSafe. It does not confirm that a repair is complete, safe or compliant.";
+  "Marking an issue resolved records what you entered in Letnook. It does not confirm that a repair is complete, safe or compliant.";
 
 export function maintenanceStatusLabel(v: string): string {
   return maintenanceStatuses.find((s) => s.value === v)?.label ?? v;

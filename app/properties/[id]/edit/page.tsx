@@ -13,7 +13,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Edit property | HostSafe",
+  title: "Edit property | Letnook",
 };
 
 export default async function EditPropertyPage({

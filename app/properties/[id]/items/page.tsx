@@ -17,7 +17,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Actions & reminders | HostSafe",
+  title: "Actions & reminders | Letnook",
 };
 
 export default async function PropertyItemsPage({
@@ -83,7 +83,7 @@ export default async function PropertyItemsPage({
           </div>
           <p className="mt-3 text-slate-700">
             Organisational actions, records, and submission tracking for this
-            property. HostSafe does not decide what is legally required — you
+            property. Letnook does not decide what is legally required — you
             add and manage these items yourself.
           </p>
 

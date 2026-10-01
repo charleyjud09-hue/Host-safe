@@ -252,7 +252,7 @@ export function countByLevel(entries: AttentionEntry[]) {
 }
 
 export const attentionLevelLabel: Record<AttentionLevel, string> = {
-  // "Date passed", not "Urgent": HostSafe only knows the date, not how urgent it is.
+  // "Date passed", not "Urgent": Letnook only knows the date, not how urgent it is.
   urgent: "Date passed",
   very_soon: "Due very soon",
   due_soon: "Due soon",

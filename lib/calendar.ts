@@ -180,10 +180,10 @@ export const PLANNED_WORK_NOTICE =
   "A calendar entry only, separate from Maintenance & repairs. It doesn’t show that any work was done, or that the property is safe, compliant or ready for guests.";
 
 export const PLANNED_CLEANUP_NOTICE =
-  "A planned cleanup is a date you have chosen. HostSafe does not record or confirm that the property has been cleaned or is ready for guests.";
+  "A planned cleanup is a date you have chosen. Letnook does not record or confirm that the property has been cleaned or is ready for guests.";
 
 export const BLOCKING_HINT =
-  "If yes, HostSafe will not let you record a planned guest stay on any of these dates, including the first and last day.";
+  "If yes, Letnook will not let you record a planned guest stay on any of these dates, including the first and last day.";
 
 export const TURNOVER_NOTICE =
   "Turnover dates come from departure dates only. They don’t mean the property is cleaned, ready or safe for guests.";

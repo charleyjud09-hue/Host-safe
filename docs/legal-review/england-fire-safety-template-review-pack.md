@@ -1,12 +1,12 @@
 # England Fire-Safety Requirements Library — Template Review Pack
 
-> **NOT APPLICABLE since 30 September 2026.** HostSafe was repositioned as a
+> **NOT APPLICABLE since 30 September 2026.** Letnook was repositioned as a
 > private property organiser that gives no legal, safety or compliance
 > guidance. A fire-safety "Requirements Library" would contradict that
 > positioning and must not be built. This pack is kept for history only.
 
 **DRAFT — NOT FOR PUBLICATION.** These five templates must **not** be shown
-in the HostSafe product, seeded into any database table, or labelled as
+in the Letnook product, seeded into any database table, or labelled as
 applying to any user's property until reviewed and approved by a qualified
 England fire-safety/legal professional. No `guidance_templates` table or
 related feature exists in the app at the time of writing.

@@ -6,7 +6,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Subscription & billing | HostSafe",
+  title: "Subscription & billing | Letnook",
 };
 
 /** Placeholder until subscriptions are built. */

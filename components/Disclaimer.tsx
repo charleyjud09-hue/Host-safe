@@ -3,10 +3,10 @@ export default function Disclaimer() {
     <section id="limitations" className="bg-slate-100">
       <div className="mx-auto max-w-5xl px-5 py-16">
         <h2 className="text-3xl font-semibold text-navy">
-          What HostSafe doesn&apos;t do
+          What Letnook doesn&apos;t do
         </h2>
         <p className="mt-3 max-w-2xl text-slate-700">
-          HostSafe is an organisational tool. To be clear about its limits:
+          Letnook is an organisational tool. To be clear about its limits:
         </p>
         <ul className="mt-8 grid gap-4 sm:grid-cols-2">
           {[

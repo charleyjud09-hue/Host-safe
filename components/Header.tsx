@@ -20,18 +20,18 @@ export default async function Header() {
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 px-4 py-3 sm:px-5 sm:py-4">
           <Link
             href="/"
-            aria-label="HostSafe home"
+            aria-label="Letnook home"
             className="flex items-center gap-2 text-lg font-semibold text-navy"
           >
             <span
               aria-hidden
               className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-action text-sm text-white"
             >
-              H
+              L
             </span>
             {/* Just the mark on very narrow phones, so the menu keeps its margin. */}
             <span aria-hidden className="hidden min-[420px]:inline">
-              HostSafe
+              Letnook
             </span>
           </Link>
           <nav className="flex shrink-0 items-center gap-0.5 sm:gap-2" aria-label="Main">
@@ -67,9 +67,9 @@ export default async function Header() {
             aria-hidden
             className="grid h-7 w-7 place-items-center rounded-lg bg-navy text-sm text-white"
           >
-            H
+            L
           </span>
-          HostSafe
+          Letnook
         </Link>
         <nav className="flex items-center gap-1 sm:gap-2" aria-label="Main">
           {isSupabaseConfigured && (

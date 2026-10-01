@@ -16,7 +16,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Edit item | HostSafe",
+  title: "Edit item | Letnook",
 };
 
 export default async function EditPropertyItemPage({

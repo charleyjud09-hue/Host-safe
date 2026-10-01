@@ -6,14 +6,14 @@ Placeholders marked `[[...]]` must be decided by the founder or the
 solicitor before this can become a real document.
 
 ## 1. Who this covers
-HostSafe (the service, operated by `[[legal entity name / sole trader
+Letnook (the service, operated by `[[legal entity name / sole trader
 name]]`) and the signed-in user ("you", "the host").
 
-## 2. What HostSafe is
+## 2. What Letnook is
 An organisational and educational tool that helps hosts record property
 details, fire-safety evidence, actions, and reminders.
 
-## 3. What HostSafe is not
+## 3. What Letnook is not
 - Not a fire-risk assessor.
 - Not a provider of legal advice.
 - Not a certification or regulatory body.
@@ -35,8 +35,8 @@ security, one account per user, minimum age, etc.]]`
 
 ## 6. Content you provide
 You own what you upload; you confirm you have the right to store/upload
-it; HostSafe does not review, verify, or endorse it.
-`[[Solicitor to confirm wording and any licence HostSafe needs from the
+it; Letnook does not review, verify, or endorse it.
+`[[Solicitor to confirm wording and any licence Letnook needs from the
 user to store/display their own content back to them.]]`
 
 ## 7. Acceptable use
@@ -66,7 +66,7 @@ what counts as a "material change."
 
 ## 11. Account closure / termination — ⚑ FLAGGED FOR SOLICITOR REVIEW
 What happens to the user's data and account on their request, or on
-HostSafe's own initiative (e.g. for a breach of these Terms).
+Letnook's own initiative (e.g. for a breach of these Terms).
 
 ## 12. Governing law and enforceability — ⚑ FLAGGED FOR SOLICITOR REVIEW
 Proposed: England and Wales. `[[Solicitor to confirm and add jurisdiction/

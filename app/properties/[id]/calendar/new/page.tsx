@@ -16,7 +16,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Add calendar entry | HostSafe",
+  title: "Add calendar entry | Letnook",
 };
 
 export default async function NewCalendarEntryPage({

@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 
 // Legal wording: keep identical in both versions (disclaimer audit row 3).
 const disclaimer =
-  "HostSafe is an early-stage organisational tool. It doesn’t give legal, safety or compliance advice, and doesn’t check or approve any property. You remain responsible for your property and your legal obligations.";
+  "Letnook is an early-stage organisational tool. It doesn’t give legal, safety or compliance advice, and doesn’t check or approve any property. You remain responsible for your property and your legal obligations.";
 
 export default async function Footer() {
   let signedIn = false;
@@ -21,7 +21,7 @@ export default async function Footer() {
       <footer className="border-t border-paper-line bg-paper-deep">
         <div className="mx-auto max-w-5xl px-5 py-8 text-sm text-slate-700">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="font-semibold text-navy">HostSafe</p>
+            <p className="font-semibold text-navy">Letnook</p>
             <nav aria-label="Footer" className="flex gap-4">
               <Link href="/" className="text-navy underline-offset-4 hover:underline">
                 My properties
@@ -40,7 +40,7 @@ export default async function Footer() {
   return (
     <footer className="border-t border-slate-200 bg-white">
       <div className="mx-auto max-w-5xl px-5 py-8 text-sm text-slate-600">
-        <p className="font-medium text-navy">HostSafe</p>
+        <p className="font-medium text-navy">Letnook</p>
         <p className="mt-2 max-w-2xl">{disclaimer}</p>
       </div>
     </footer>

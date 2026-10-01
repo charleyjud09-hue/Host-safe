@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { signOut } from "@/app/auth/actions";
 import HeaderNavLink from "@/components/HeaderNavLink";
+import LogoMark from "@/components/LogoMark";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -23,12 +24,7 @@ export default async function Header() {
             aria-label="Letnook home"
             className="flex items-center gap-2 text-lg font-semibold text-navy"
           >
-            <span
-              aria-hidden
-              className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-action text-sm text-white"
-            >
-              L
-            </span>
+            <LogoMark />
             {/* Just the mark on very narrow phones, so the menu keeps its margin. */}
             <span aria-hidden className="hidden min-[420px]:inline">
               Letnook
@@ -63,12 +59,7 @@ export default async function Header() {
     <header className="border-b border-slate-200 bg-white/90 backdrop-blur">
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 px-5 py-4">
         <Link href="/" className="flex items-center gap-2 text-lg font-semibold text-navy">
-          <span
-            aria-hidden
-            className="grid h-7 w-7 place-items-center rounded-lg bg-navy text-sm text-white"
-          >
-            L
-          </span>
+          <LogoMark />
           Letnook
         </Link>
         <nav className="flex items-center gap-1 sm:gap-2" aria-label="Main">

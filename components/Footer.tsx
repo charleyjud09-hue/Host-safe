@@ -1,4 +1,5 @@
 import Link from "next/link";
+import LogoMark from "@/components/LogoMark";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -21,7 +22,10 @@ export default async function Footer() {
       <footer className="border-t border-paper-line bg-paper-deep">
         <div className="mx-auto max-w-5xl px-5 py-8 text-sm text-slate-700">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="font-semibold text-navy">Letnook</p>
+            <p className="flex items-center gap-2 font-semibold text-navy">
+              <LogoMark className="h-5 w-5" />
+              Letnook
+            </p>
             <nav aria-label="Footer" className="flex gap-4">
               <Link href="/" className="text-navy underline-offset-4 hover:underline">
                 My properties
@@ -40,7 +44,10 @@ export default async function Footer() {
   return (
     <footer className="border-t border-slate-200 bg-white">
       <div className="mx-auto max-w-5xl px-5 py-8 text-sm text-slate-600">
-        <p className="font-medium text-navy">Letnook</p>
+        <p className="flex items-center gap-2 font-medium text-navy">
+          <LogoMark className="h-5 w-5" />
+          Letnook
+        </p>
         <p className="mt-2 max-w-2xl">{disclaimer}</p>
       </div>
     </footer>

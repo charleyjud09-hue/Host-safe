@@ -1,17 +1,17 @@
-# DRAFT — NOT FOR PUBLICATION — REQUIRES PROFESSIONAL LEGAL AND FIRE-SAFETY REVIEW
+# Legal documents and review notes
 
-This folder (`docs/legal-review/`) contains **internal preparation material only**,
-written by the development assistant to help the founder brief a qualified
-solicitor and a qualified England fire-safety professional.
+This folder (`docs/legal-review/`) holds Letnook's legal documents and the
+internal notes behind them.
 
-**None of these documents are legal advice, a finished legal document, or an
-approved statement of Letnook's product position.** Nothing in this folder
-has been reviewed, approved, or verified by a qualified legal or fire-safety
-professional.
+**Approach (decided 2 October 2026):** a solicitor isn't affordable at this
+stage, and UK law doesn't require one. The founder is publishing
+self-written Terms of Service and a Privacy Notice, drafted in plain English
+from official guidance (the ICO for privacy; Business Companion / Trading
+Standards for consumer law). A professional review remains worthwhile later
+if money allows; reviewing existing documents is usually much cheaper than
+drafting them.
 
-**None of these documents should be published to Letnook users, linked from
-the Letnook website, shown in the app, or relied upon as if they were final**
-until a qualified professional has reviewed and approved them.
+Nothing here is legal advice. The founder decides what is published.
 
 **Name change:** the product was renamed from HostSafe to Letnook on
 1 October 2026. Older references to "HostSafe" (for example in git history)
@@ -19,13 +19,14 @@ mean the same product.
 
 ## Contents
 
-- `terms-of-service-draft.md` — a draft Terms of Service outline, with
-  sections flagged for solicitor review.
-- `privacy-notice-review-checklist.md` — the data categories Letnook
-  currently stores, and a checklist of information still needed before a
-  real Privacy Notice can be written.
-- `retention-and-deletion-decisions.md` — unresolved business decisions
-  about data retention and deletion, for the founder to decide.
+- `terms-of-service.md` — the Terms of Service to publish at `/terms`
+  (founder draft; `[[…]]` placeholders still to fill).
+- `privacy-notice.md` — the Privacy Notice to publish at `/privacy`
+  (founder draft; `[[…]]` placeholders still to fill).
+- `privacy-notice-review-checklist.md` — inventory of the data Letnook
+  stores, used to write the Privacy Notice.
+- `retention-and-deletion-decisions.md` — retention and deletion decisions;
+  the defaults chosen are written into the Privacy Notice.
 - `england-fire-safety-template-review-pack.md` — **no longer applicable**
   (see its header); kept for history.
 - `current-disclaimer-audit.md` — an internal content review of the
@@ -40,11 +41,13 @@ renewals, and a private stays & calendar schedule. It gives **no legal,
 safety or compliance advice** and does **not check, certify or approve any
 property**. The former fire-safety property check has been removed.
 
+Sales are to **UK customers only** (decided 2 October 2026), which avoids
+EU VAT obligations on digital services.
+
 ## Status
 
-No Terms of Service page, Privacy Notice page, or sign-up consent checkbox
-exists yet. Self-service account deletion **has** been built (see
-`retention-and-deletion-decisions.md`, item 2). The founder still needs to
-decide: the product name, England-only or UK-wide scope, retention periods,
-and to commission a solicitor for the Terms (including a liability clause)
-and Privacy Notice.
+Terms and Privacy Notice drafted, not yet published. Still needed before
+taking real payments: the founder's business details in both documents and
+on checkout, the Supabase region and backup check in the Privacy Notice,
+the ICO data-protection fee (check the ICO's self-assessment), and the
+`/terms` and `/privacy` pages with the sign-up and checkout links.

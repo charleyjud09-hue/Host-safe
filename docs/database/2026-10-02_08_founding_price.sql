@@ -1,4 +1,4 @@
--- DRAFT — NOT YET APPLIED. For review before it is run in the Supabase SQL editor.
+-- ALREADY APPLIED in Supabase on 2026-10-02. Reference copy only — do not re-run.
 --
 -- Founding-member price: the first 50 members pay £12 (Membership) or
 -- £29 (Premium) a month for as long as their membership continues.

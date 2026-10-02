@@ -17,7 +17,7 @@ Files are named in the order they were applied.
 | `2026-09-30_05_delete_my_account.sql` | 30 Sep 2026 | `delete_my_account()` function used by Account settings → Delete your account (verified: exists, refuses anonymous callers) |
 | `2026-09-30_06_property_items_service.sql` | 30 Sep 2026 | Optional `service` tag on actions (verified: column exists) |
 | `2026-10-01_07_memberships.sql` | 1 Oct 2026 | Memberships table (server-written), access checks, read-only and property-limit enforcement, upload rule, complimentary Premium for existing accounts |
-| `2026-10-02_08_founding_price.sql` | **Draft, not yet applied** | Founding-member price: columns on `memberships`, ends it when a membership ends, places-left count, server-only claim function (max 50 holders) |
+| `2026-10-02_08_founding_price.sql` | 2 Oct 2026 | Founding-member price: columns on `memberships`, ends it when a membership ends, places-left count, server-only claim function (max 50 holders) |
 
 ## Not yet recorded here
 

@@ -50,6 +50,16 @@ function StatusSummary({ m, today }: { m: Membership; today: string }) {
   const price = m.plan && m.interval ? priceLabel(m.plan, m.interval) : "";
   const date = m.periodEnd ? formatLongDate(m.periodEnd) : "";
 
+  if (m.complimentary) {
+    return (
+      <>
+        <p className="text-lg font-semibold text-navy">{plan?.name} · complimentary</p>
+        <p className="mt-1 text-slate-700">
+          You have full access free of charge. There are no payments to manage.
+        </p>
+      </>
+    );
+  }
   if (m.status === "none") {
     return (
       <>
@@ -121,6 +131,8 @@ export default async function BillingPage({
   const membership = await getMembership();
   const today = ukToday();
   const active = canEdit(membership);
+  // Complimentary access has no plan to change, nothing to pay and nothing to cancel.
+  const paying = active && !membership.complimentary;
   const otherPlan = membership.plan === "premium" ? "membership" : "premium";
 
   const { count } = await supabase
@@ -159,7 +171,7 @@ export default async function BillingPage({
           </div>
         )}
 
-        {active && (
+        {paying && (
           <div className={section}>
             <h2 className="font-semibold text-navy">Change plan</h2>
             <p className="mt-1 text-slate-700">
@@ -191,21 +203,25 @@ export default async function BillingPage({
           </div>
         )}
 
-        <div className={section}>
-          <h2 className="font-semibold text-navy">Payment method</h2>
-          <div className="mt-3">
-            <PaymentPlaceholder title="Your card will appear here" />
-          </div>
-        </div>
+        {!membership.complimentary && (
+          <>
+            <div className={section}>
+              <h2 className="font-semibold text-navy">Payment method</h2>
+              <div className="mt-3">
+                <PaymentPlaceholder title="Your card will appear here" />
+              </div>
+            </div>
 
-        <div className={section}>
-          <h2 className="font-semibold text-navy">Invoices</h2>
-          <p className="mt-1 text-slate-600">
-            Your receipts will be listed here once payments are switched on.
-          </p>
-        </div>
+            <div className={section}>
+              <h2 className="font-semibold text-navy">Invoices</h2>
+              <p className="mt-1 text-slate-600">
+                Your receipts will be listed here once payments are switched on.
+              </p>
+            </div>
+          </>
+        )}
 
-        {active && !membership.cancelAtPeriodEnd && (
+        {paying && !membership.cancelAtPeriodEnd && (
           <div className={section}>
             <h2 className="font-semibold text-navy">Cancel membership</h2>
             <p className="mt-1 text-slate-700">
@@ -227,8 +243,9 @@ export default async function BillingPage({
             <h2 className="font-semibold text-violet-950">Developer preview</h2>
             <p className="mt-1 text-sm text-violet-950">
               Only on your local dev server, never on the live site. Switch your
-              membership state to try each screen. Nothing is charged and no
-              data changes.
+              membership state to try each screen. Nothing is charged and the
+              database isn’t changed, so it still enforces your real membership
+              when you save.
             </p>
             <form action={choosePreviewState} className="mt-4 flex flex-wrap gap-3">
               <label htmlFor="preview-state" className="sr-only">
@@ -257,7 +274,7 @@ export default async function BillingPage({
               <form action={choosePreviewState} className="mt-2">
                 <input type="hidden" name="state" value="reset" />
                 <button type="submit" className="text-sm font-medium text-violet-900 underline">
-                  Reset to default (active Membership)
+                  Stop previewing (back to your real membership)
                 </button>
               </form>
             )}

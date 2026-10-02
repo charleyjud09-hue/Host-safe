@@ -36,6 +36,7 @@ function membershipSummary(m: Membership): string {
   if (m.status === "none") return "No membership yet";
   if (m.status === "ended") return "Membership ended (read-only)";
   const name = m.plan ? PLANS[m.plan].name : "";
+  if (m.complimentary) return `${name}, complimentary`;
   if (m.cancelAtPeriodEnd) return `${name}, cancelled`;
   return m.status === "trialing" ? `${name}, free trial` : name;
 }

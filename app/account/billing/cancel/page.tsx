@@ -22,7 +22,9 @@ export default async function CancelMembershipPage() {
   if (!data.user) redirect("/sign-in");
 
   const membership = await getMembership();
-  if (!canEdit(membership) || membership.cancelAtPeriodEnd) redirect("/account/billing");
+  if (!canEdit(membership) || membership.cancelAtPeriodEnd || membership.complimentary) {
+    redirect("/account/billing");
+  }
 
   const trial = membership.status === "trialing";
   const date = membership.periodEnd ? formatLongDate(membership.periodEnd) : "the end of this period";

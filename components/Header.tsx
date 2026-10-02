@@ -94,7 +94,7 @@ export default async function Header() {
         </Link>
         <nav className="flex items-center gap-1 sm:gap-2" aria-label="Main">
           <Link href="/membership" className={linkClass}>
-            Pricing
+            Free trial
           </Link>
           {isSupabaseConfigured && (
             <Link href="/sign-in" className={linkClass}>

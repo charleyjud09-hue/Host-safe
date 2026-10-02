@@ -2,19 +2,24 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import { addDays, ukToday } from "@/lib/attention";
+import { errorCode } from "@/lib/log";
 import {
   canEdit,
   joinHref,
   READ_ONLY_ERROR,
   TRIAL_DAYS,
+  type BillingInterval,
   type Membership,
+  type PlanId,
 } from "@/lib/membership";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { createClient } from "@/lib/supabase/server";
 
 /**
- * Phase 1 has no membership table and no payments, so everyone is treated
- * as an active member. In development only, a preview cookie (set from
- * /membership/preview) swaps in other states so every screen can be tested.
- * Phase 2 replaces this with a lookup of the server-written membership row.
+ * Each account's membership comes from its server-written row in
+ * public.memberships (no row = never joined). In development only, the
+ * "Developer preview" on the billing page sets cookies that swap in other
+ * states so every screen can be tested without touching the database.
  */
 export const PREVIEW_COOKIE = "letnook_membership_preview";
 /** Optional overrides for the preview state's billing period and plan. */
@@ -40,6 +45,10 @@ export function isPreviewState(value: unknown): value is PreviewState {
 }
 
 function previewMembership(state: PreviewState, today: string): Membership {
+  return { ...previewBase(state, today), complimentary: false };
+}
+
+function previewBase(state: PreviewState, today: string): Omit<Membership, "complimentary"> {
   switch (state) {
     case "none":
       return { status: "none", plan: null, interval: null, periodEnd: null, cancelAtPeriodEnd: false };
@@ -92,8 +101,73 @@ export const getMembership = cache(async (): Promise<Membership> => {
       };
     }
   }
-  return previewMembership("active", today);
+  return readMembership();
 });
+
+const NONE: Membership = {
+  status: "none",
+  plan: null,
+  interval: null,
+  periodEnd: null,
+  cancelAtPeriodEnd: false,
+  complimentary: false,
+};
+
+/** Same grace period as public.has_edit_access() in the database. */
+const GRACE_MS = 3 * 86_400_000;
+
+type MembershipRow = {
+  plan: PlanId;
+  billing_interval: BillingInterval;
+  status: "trialing" | "active" | "past_due" | "ended" | "complimentary";
+  current_period_end: string | null;
+  cancel_at_period_end: boolean;
+};
+
+/**
+ * Reads the signed-in user's row. Mirrors the database's own access rule,
+ * so the app shows read-only exactly when the database would refuse a change.
+ */
+async function readMembership(): Promise<Membership> {
+  if (!isSupabaseConfigured) return NONE;
+  const supabase = await createClient();
+  const { data: userData } = await supabase.auth.getUser();
+  if (!userData.user) return NONE;
+
+  const { data, error } = await supabase
+    .from("memberships")
+    .select("plan, billing_interval, status, current_period_end, cancel_at_period_end")
+    .maybeSingle<MembershipRow>();
+
+  if (error) {
+    // The database still enforces access, so showing full access here can't
+    // let anyone change anything they shouldn't; it just avoids a broken page.
+    console.error("Read membership failed:", errorCode(error));
+    return { ...NONE, status: "active", plan: "membership", interval: "month" };
+  }
+  if (!data) return NONE;
+
+  const base = {
+    plan: data.plan,
+    interval: data.billing_interval,
+    cancelAtPeriodEnd: data.cancel_at_period_end,
+  };
+  if (data.status === "complimentary") {
+    return { ...base, status: "active", periodEnd: null, complimentary: true };
+  }
+
+  const periodEndMs = data.current_period_end ? Date.parse(data.current_period_end) : 0;
+  const lapsed = periodEndMs + GRACE_MS < Date.now();
+  if (data.status === "ended" || lapsed) {
+    return { ...base, status: "ended", periodEnd: null, complimentary: false };
+  }
+  return {
+    ...base,
+    status: data.status === "trialing" ? "trialing" : "active",
+    periodEnd: ukToday(new Date(periodEndMs)),
+    complimentary: false,
+  };
+}
 
 /** For server actions that add or change things: an error message, or null. */
 export async function editBlockedMessage(): Promise<string | null> {

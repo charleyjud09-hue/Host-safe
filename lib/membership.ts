@@ -63,6 +63,8 @@ export type Membership = {
   /** YYYY-MM-DD: trial end while trialing, next renewal while active. */
   periodEnd: string | null;
   cancelAtPeriodEnd: boolean;
+  /** Free full access granted by Letnook (e.g. accounts from before launch). */
+  complimentary: boolean;
 };
 
 /** Adding and changing things needs a trial or an active membership. */
@@ -137,6 +139,19 @@ export function propertyLimitMessage(m: Membership): string {
   return m.plan === "premium"
     ? `Premium covers up to ${limit} properties. If you need more, get in touch.`
     : `Membership covers up to ${limit} properties. Switch to Premium for up to ${PLANS.premium.propertyLimit}.`;
+}
+
+/**
+ * The database refuses read-only and over-limit writes itself (hints set in
+ * docs/database/2026-10-01_07_memberships.sql). Turns those refusals into
+ * friendly messages; returns null for any other error.
+ */
+export function membershipDbErrorMessage(error: { hint?: string | null } | null): string | null {
+  if (error?.hint === "read_only") return READ_ONLY_ERROR;
+  if (error?.hint === "property_limit") {
+    return "You’ve reached your plan’s property limit. Switch to Premium for up to 25 properties.";
+  }
+  return null;
 }
 
 export const READ_ONLY_ERROR =

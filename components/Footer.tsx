@@ -1,5 +1,6 @@
 import Link from "next/link";
 import LogoMark from "@/components/LogoMark";
+import { getMembership } from "@/lib/membership-server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -34,7 +35,8 @@ export default async function Footer() {
                 Account settings
               </Link>
               <Link href="/membership" className="text-navy underline-offset-4 hover:underline">
-                Pricing
+                {/* Only accounts that haven't had a trial can still take one. */}
+                {(await getMembership()).status === "none" ? "Free trial" : "Membership"}
               </Link>
             </nav>
           </div>
@@ -53,7 +55,7 @@ export default async function Footer() {
             Letnook
           </p>
           <Link href="/membership" className="text-navy underline-offset-4 hover:underline">
-            Pricing
+            Free trial
           </Link>
         </div>
         <p className="mt-2 max-w-2xl">{disclaimer}</p>

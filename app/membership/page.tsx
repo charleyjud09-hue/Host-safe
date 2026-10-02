@@ -77,8 +77,9 @@ export default async function PricingPage({
       return { href: "/sign-up", label: "Create an account to start" };
     }
     if (canEdit(membership)) {
-      return membership.plan === plan
-        ? { href: "/account/billing", label: MY_SUBSCRIPTION_CTA }
+      if (membership.plan === plan) return { href: "/account/billing", label: MY_SUBSCRIPTION_CTA };
+      return membership.complimentary
+        ? null
         : { href: "/account/billing", label: `Switch to ${PLANS[plan].name}` };
     }
     return membership.status === "none"

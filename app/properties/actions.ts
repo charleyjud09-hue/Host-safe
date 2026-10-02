@@ -2,7 +2,13 @@
 
 import { redirect } from "next/navigation";
 import { errorCode } from "@/lib/log";
-import { canEdit, propertyLimit, propertyLimitMessage, READ_ONLY_ERROR } from "@/lib/membership";
+import {
+  canEdit,
+  membershipDbErrorMessage,
+  propertyLimit,
+  propertyLimitMessage,
+  READ_ONLY_ERROR,
+} from "@/lib/membership";
 import { editBlockedMessage, getMembership } from "@/lib/membership-server";
 import {
   parsePropertyInput,
@@ -62,7 +68,7 @@ export async function createProperty(
   if (error || !created) {
     console.error("Create property failed:", errorCode(error));
     return {
-      error: "We could not save this property. Please try again.",
+      error: membershipDbErrorMessage(error) ?? "We could not save this property. Please try again.",
       values: currentValues(formData),
     };
   }
@@ -99,7 +105,7 @@ export async function updateProperty(
   if (error) {
     console.error("Update property failed:", errorCode(error));
     return {
-      error: "We could not save your changes. Please try again.",
+      error: membershipDbErrorMessage(error) ?? "We could not save your changes. Please try again.",
       values: currentValues(formData),
     };
   }

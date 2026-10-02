@@ -14,6 +14,7 @@ import {
   canEdit,
   daysBetween,
   formatLongDate,
+  FOUNDING_TERMS,
   JOIN_BACK_CTA,
   PLANS,
   priceLabel,
@@ -47,7 +48,7 @@ const notices: Record<string, string> = {
 
 function StatusSummary({ m, today }: { m: Membership; today: string }) {
   const plan = m.plan ? PLANS[m.plan] : null;
-  const price = m.plan && m.interval ? priceLabel(m.plan, m.interval) : "";
+  const price = m.plan && m.interval ? priceLabel(m.plan, m.interval, m.foundingPrice) : "";
   const date = m.periodEnd ? formatLongDate(m.periodEnd) : "";
 
   if (m.complimentary) {
@@ -106,6 +107,13 @@ function StatusSummary({ m, today }: { m: Membership; today: string }) {
         {plan?.name} · {price}
       </p>
       <p className="mt-1 text-slate-700">{detail}</p>
+      {m.foundingPrice && m.plan && m.interval && (
+        <p className="mt-3 rounded-lg bg-amber-50 p-3 text-sm text-amber-950 ring-1 ring-amber-200">
+          {m.cancelAtPeriodEnd
+            ? `You have the founding member price (normally ${priceLabel(m.plan, m.interval)}). If your membership ends on ${date}, you’ll lose it for good. Keep your membership going to keep it.`
+            : `Founding member price (normally ${priceLabel(m.plan, m.interval)}). ${FOUNDING_TERMS}`}
+        </p>
+      )}
       {m.cancelAtPeriodEnd && (
         <form action={resumeMembership} className="mt-4">
           <button type="submit" className={primaryButton}>
@@ -175,8 +183,9 @@ export default async function BillingPage({
           <div className={section}>
             <h2 className="font-semibold text-navy">Change plan</h2>
             <p className="mt-1 text-slate-700">
-              {PLANS[otherPlan].name}: {priceLabel(otherPlan, "month")} or{" "}
-              {priceLabel(otherPlan, "year")}, up to {PLANS[otherPlan].propertyLimit}{" "}
+              {PLANS[otherPlan].name}: {priceLabel(otherPlan, "month", membership.foundingPrice)}{" "}
+              or {priceLabel(otherPlan, "year", membership.foundingPrice)}, up to{" "}
+              {PLANS[otherPlan].propertyLimit}{" "}
               properties.{" "}
               <Link href="/membership" className="font-medium text-navy underline">
                 Compare plans

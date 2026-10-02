@@ -12,14 +12,18 @@ import {
 } from "@/components/MembershipParts";
 import {
   canEdit,
+  FOUNDING_PLACES,
+  FOUNDING_TERMS,
+  foundingOffered,
   JOIN_BACK_CTA,
+  priceLabel,
   MY_SUBSCRIPTION_CTA,
   parseInterval,
   PLANS,
   TRIAL_CTA,
   type Membership,
 } from "@/lib/membership";
-import { getMembership } from "@/lib/membership-server";
+import { getFoundingPlacesLeft, getMembership } from "@/lib/membership-server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -70,6 +74,8 @@ export default async function PricingPage({
     const { data } = await supabase.auth.getUser();
     if (data.user) membership = await getMembership();
   }
+  const placesLeft = await getFoundingPlacesLeft();
+  const founding = foundingOffered(membership, placesLeft);
 
   const cta = (plan: "membership" | "premium") => {
     const query = `plan=${plan}&billing=${interval}`;
@@ -100,6 +106,18 @@ export default async function PricingPage({
               One price for every feature, with a 30-day free trial. Cancel any
               time.
             </p>
+            {founding && placesLeft > 0 && !membership?.foundingPrice && (
+              <div className="mx-auto mt-6 max-w-xl rounded-2xl bg-amber-50 p-4 text-left text-amber-950 ring-1 ring-amber-200">
+                <p className="font-semibold">
+                  Founding member price for the first {FOUNDING_PLACES} members:{" "}
+                  {priceLabel("membership", "month", true)} instead of{" "}
+                  {priceLabel("membership", "month")}
+                </p>
+                <p className="mt-1 text-sm">
+                  {placesLeft} of {FOUNDING_PLACES} places left. {FOUNDING_TERMS}
+                </p>
+              </div>
+            )}
             <div className="mt-6">
               <IntervalToggle
                 interval={interval}
@@ -113,6 +131,7 @@ export default async function PricingPage({
               interval={interval}
               cta={cta}
               currentPlan={membership && canEdit(membership) ? membership.plan : null}
+              founding={founding}
             />
           </div>
           <p className="mt-4 text-center text-sm text-slate-600">
@@ -125,7 +144,12 @@ export default async function PricingPage({
               How the free trial works
             </h2>
             <div className="mt-5">
-              <TrialConditions plan="membership" interval={interval} trialEnds={null} />
+              <TrialConditions
+                plan="membership"
+                interval={interval}
+                trialEnds={null}
+                founding={founding}
+              />
             </div>
             <p className="mt-5 text-sm text-slate-600">
               Prices are for Membership; Premium works the same way at its own

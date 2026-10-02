@@ -34,7 +34,7 @@ export default async function MembershipBanner() {
     text = `Your ${m.status === "trialing" ? "trial" : "membership"} is cancelled and ends on ${date}. You won’t be charged.`;
   } else if (m.status === "trialing" && m.plan && m.interval && m.periodEnd) {
     const days = daysBetween(ukToday(), m.periodEnd);
-    text = `Free trial: ${days} ${days === 1 ? "day" : "days"} left. ${priceLabel(m.plan, m.interval)} will be charged on ${date} unless you cancel.`;
+    text = `Free trial: ${days} ${days === 1 ? "day" : "days"} left. ${priceLabel(m.plan, m.interval, m.foundingPrice)} will be charged on ${date} unless you cancel.`;
   } else {
     return null;
   }

@@ -10,6 +10,8 @@ import { addDays, ukToday } from "@/lib/attention";
 import {
   canEdit,
   formatLongDate,
+  FOUNDING_TERMS,
+  foundingOffered,
   parseInterval,
   parsePlan,
   PLANS,
@@ -17,7 +19,7 @@ import {
   priceLabel,
   TRIAL_DAYS,
 } from "@/lib/membership";
-import { getMembership } from "@/lib/membership-server";
+import { getFoundingPlacesLeft, getMembership } from "@/lib/membership-server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -44,7 +46,9 @@ export default async function JoinPage({
   const rejoining = membership.status === "ended";
   const today = ukToday();
   const firstCharge = rejoining ? today : addDays(today, TRIAL_DAYS);
-  const price = planPrice(plan, interval);
+  const founding = foundingOffered(membership, await getFoundingPlacesLeft());
+  const price = planPrice(plan, interval, founding);
+  const label = priceLabel(plan, interval, founding);
 
   const row = "flex items-baseline justify-between gap-4 py-3";
 
@@ -84,6 +88,7 @@ export default async function JoinPage({
                 plan={plan}
                 interval={interval}
                 hrefFor={(i) => `/membership/join?plan=${plan}&billing=${i}`}
+                founding={founding}
               />
             </div>
           </section>
@@ -102,7 +107,12 @@ export default async function JoinPage({
               <div className={row}>
                 <dt>Price</dt>
                 <dd className="text-right font-medium">
-                  {priceLabel(plan, interval)}, renews automatically
+                  {label}, renews automatically
+                  {founding && (
+                    <span className="block text-sm font-normal text-slate-600">
+                      Founding member price (normally {priceLabel(plan, interval)})
+                    </span>
+                  )}
                 </dd>
               </div>
               <div className={row}>
@@ -115,7 +125,7 @@ export default async function JoinPage({
                 <dt>{rejoining ? "Next payment" : "First payment"}</dt>
                 <dd className="text-right font-medium">
                   £{price} on{" "}
-                    {formatLongDate(
+                  {formatLongDate(
                     rejoining ? addDays(firstCharge, interval === "year" ? 365 : 30) : firstCharge,
                   )}
                   {!rejoining && ", unless you cancel before then"}
@@ -136,6 +146,11 @@ export default async function JoinPage({
                 won’t be charged anything.
               </p>
             )}
+            {founding && (
+              <p className="mt-3 rounded-lg bg-amber-50 p-3 text-sm text-amber-950 ring-1 ring-amber-200">
+                {FOUNDING_TERMS}
+              </p>
+            )}
           </section>
 
           <section aria-labelledby="pay-heading" className={`mt-6 ${card}`}>
@@ -149,8 +164,8 @@ export default async function JoinPage({
                 mode={rejoining ? "rejoin" : "trial"}
                 buttonLabel={
                   rejoining
-                    ? `Join Back and pay ${priceLabel(plan, interval)}`
-                    : `Start free trial, then pay ${priceLabel(plan, interval)}`
+                    ? `Join Back and pay ${label}`
+                    : `Start free trial, then pay ${label}`
                 }
               />
             </div>

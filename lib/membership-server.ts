@@ -5,6 +5,7 @@ import { addDays, ukToday } from "@/lib/attention";
 import { errorCode } from "@/lib/log";
 import {
   canEdit,
+  FOUNDING_PLACES,
   joinHref,
   READ_ONLY_ERROR,
   TRIAL_DAYS,
@@ -45,10 +46,19 @@ export function isPreviewState(value: unknown): value is PreviewState {
 }
 
 function previewMembership(state: PreviewState, today: string): Membership {
-  return { ...previewBase(state, today), complimentary: false };
+  // Previews show a founding member, except Premium yearly (standard price)
+  // and "ended" (founding price lost), so both kinds of pricing can be seen.
+  return {
+    ...previewBase(state, today),
+    complimentary: false,
+    foundingPrice: state !== "none" && state !== "ended" && state !== "active-premium-year",
+    foundingLost: state === "ended",
+  };
 }
 
-function previewBase(state: PreviewState, today: string): Omit<Membership, "complimentary"> {
+type PreviewBase = Omit<Membership, "complimentary" | "foundingPrice" | "foundingLost">;
+
+function previewBase(state: PreviewState, today: string): PreviewBase {
   switch (state) {
     case "none":
       return { status: "none", plan: null, interval: null, periodEnd: null, cancelAtPeriodEnd: false };
@@ -111,6 +121,8 @@ const NONE: Membership = {
   periodEnd: null,
   cancelAtPeriodEnd: false,
   complimentary: false,
+  foundingPrice: false,
+  foundingLost: false,
 };
 
 /** Same grace period as public.has_edit_access() in the database. */
@@ -122,6 +134,9 @@ type MembershipRow = {
   status: "trialing" | "active" | "past_due" | "ended" | "complimentary";
   current_period_end: string | null;
   cancel_at_period_end: boolean;
+  // Optional so this keeps working before the founding-price columns exist.
+  founding_price?: boolean;
+  founding_price_lost?: boolean;
 };
 
 /**
@@ -134,9 +149,11 @@ async function readMembership(): Promise<Membership> {
   const { data: userData } = await supabase.auth.getUser();
   if (!userData.user) return NONE;
 
+  // "*" rather than named columns, so this works whether or not the
+  // founding-price columns have been added yet.
   const { data, error } = await supabase
     .from("memberships")
-    .select("plan, billing_interval, status, current_period_end, cancel_at_period_end")
+    .select("*")
     .maybeSingle<MembershipRow>();
 
   if (error) {
@@ -147,27 +164,50 @@ async function readMembership(): Promise<Membership> {
   }
   if (!data) return NONE;
 
+  const founding = data.founding_price === true;
   const base = {
     plan: data.plan,
     interval: data.billing_interval,
     cancelAtPeriodEnd: data.cancel_at_period_end,
+    foundingLost: data.founding_price_lost === true,
   };
   if (data.status === "complimentary") {
-    return { ...base, status: "active", periodEnd: null, complimentary: true };
+    return { ...base, status: "active", periodEnd: null, complimentary: true, foundingPrice: false };
   }
 
   const periodEndMs = data.current_period_end ? Date.parse(data.current_period_end) : 0;
   const lapsed = periodEndMs + GRACE_MS < Date.now();
   if (data.status === "ended" || lapsed) {
-    return { ...base, status: "ended", periodEnd: null, complimentary: false };
+    // Ending a membership ends its founding price for good (as the database does).
+    return {
+      ...base,
+      status: "ended",
+      periodEnd: null,
+      complimentary: false,
+      foundingPrice: false,
+      foundingLost: base.foundingLost || founding,
+    };
   }
   return {
     ...base,
     status: data.status === "trialing" ? "trialing" : "active",
     periodEnd: ukToday(new Date(periodEndMs)),
     complimentary: false,
+    foundingPrice: founding,
   };
 }
+
+/**
+ * Founding places left, from the database (a count only). Before the
+ * founding-price SQL has been run, all places are shown as available.
+ */
+export const getFoundingPlacesLeft = cache(async (): Promise<number> => {
+  if (!isSupabaseConfigured) return FOUNDING_PLACES;
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("founding_places_left");
+  if (error || typeof data !== "number") return FOUNDING_PLACES;
+  return data;
+});
 
 /** For server actions that add or change things: an error message, or null. */
 export async function editBlockedMessage(): Promise<string | null> {

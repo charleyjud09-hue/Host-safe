@@ -13,6 +13,7 @@ import {
 import { addDays, ukToday } from "@/lib/attention";
 import {
   canEdit,
+  foundingOffered,
   parseInterval,
   parsePlan,
   PLAN_IDS,
@@ -20,7 +21,7 @@ import {
   priceLabel,
   TRIAL_DAYS,
 } from "@/lib/membership";
-import { getMembership } from "@/lib/membership-server";
+import { getFoundingPlacesLeft, getMembership } from "@/lib/membership-server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -53,6 +54,7 @@ export default async function TrialPage({
   }
 
   const trialEnds = addDays(ukToday(), TRIAL_DAYS);
+  const founding = foundingOffered(membership, await getFoundingPlacesLeft());
   const href = (p: string, i: string) => `/membership/trial?plan=${p}&billing=${i}`;
 
   return (
@@ -73,7 +75,12 @@ export default async function TrialPage({
               The trial conditions
             </h2>
             <div className="mt-5">
-              <TrialConditions plan={plan} interval={interval} trialEnds={trialEnds} />
+              <TrialConditions
+                plan={plan}
+                interval={interval}
+                trialEnds={trialEnds}
+                founding={founding}
+              />
             </div>
           </section>
 
@@ -109,7 +116,7 @@ export default async function TrialPage({
                         )}
                       </span>
                       <span className="mt-1 block text-sm text-slate-700">
-                        {priceLabel(id, interval)} after the trial · up to{" "}
+                        {priceLabel(id, interval, founding)} after the trial · up to{" "}
                         {PLANS[id].propertyLimit} properties
                       </span>
                     </Link>

@@ -1,5 +1,5 @@
 /**
- * Membership plans and status (phase 1: no payments, no database).
+ * Membership plans, prices and status.
  * Shared by server and client code, so nothing here reads cookies or the DB;
  * see lib/membership-server.ts for how the current membership is found.
  */
@@ -13,6 +13,8 @@ export type Plan = {
   /** Pounds, VAT position still to be confirmed (see pricing page). */
   monthly: number;
   yearly: number;
+  /** Founding-member prices for the first FOUNDING_PLACES members. */
+  founding: { monthly: number; yearly: number };
   propertyLimit: number;
   /** Fair-use file storage. Not enforced until phase 2. */
   storageGb: number;
@@ -27,6 +29,7 @@ export const PLANS: Record<PlanId, Plan> = {
     monthly: 16,
     // Yearly = one month free (11 × monthly).
     yearly: 176,
+    founding: { monthly: 12, yearly: 132 },
     propertyLimit: 5,
     storageGb: 10,
     extras: [],
@@ -36,6 +39,7 @@ export const PLANS: Record<PlanId, Plan> = {
     name: "Premium",
     monthly: 35,
     yearly: 385,
+    founding: { monthly: 29, yearly: 319 },
     propertyLimit: 25,
     storageGb: 50,
     extras: [
@@ -49,6 +53,13 @@ export const PLANS: Record<PlanId, Plan> = {
 
 export const PLAN_IDS: PlanId[] = ["membership", "premium"];
 export const TRIAL_DAYS = 30;
+
+/** Matches the 50 in docs/database/2026-10-02_08_founding_price.sql. */
+export const FOUNDING_PLACES = 50;
+
+/** What a founding member keeps, and how they'd lose it. Shown wherever the price is. */
+export const FOUNDING_TERMS =
+  "You keep the founding price for as long as your membership continues. It ends for good if your membership ends: if you cancel, if payments can’t be taken and your membership stops, or if you delete your account.";
 
 /**
  * "none": never started a trial. "trialing"/"active": full access.
@@ -65,6 +76,10 @@ export type Membership = {
   cancelAtPeriodEnd: boolean;
   /** Free full access granted by Letnook (e.g. accounts from before launch). */
   complimentary: boolean;
+  /** Holds a founding-member price. */
+  foundingPrice: boolean;
+  /** Held a founding price before and lost it when the membership ended. */
+  foundingLost: boolean;
 };
 
 /** Adding and changing things needs a trial or an active membership. */
@@ -84,18 +99,28 @@ export function parseInterval(value: unknown): BillingInterval {
   return value === "year" ? "year" : "month";
 }
 
-export function planPrice(plan: PlanId, interval: BillingInterval): number {
-  return interval === "year" ? PLANS[plan].yearly : PLANS[plan].monthly;
+export function planPrice(plan: PlanId, interval: BillingInterval, founding = false): number {
+  const prices = founding ? PLANS[plan].founding : PLANS[plan];
+  return interval === "year" ? prices.yearly : prices.monthly;
 }
 
 /** What paying yearly saves compared with 12 monthly payments (one month). */
-export function yearlySaving(plan: PlanId): number {
-  return PLANS[plan].monthly * 12 - PLANS[plan].yearly;
+export function yearlySaving(plan: PlanId, founding = false): number {
+  return planPrice(plan, "month", founding) * 12 - planPrice(plan, "year", founding);
 }
 
-/** "£16 a month" / "£176 a year". */
-export function priceLabel(plan: PlanId, interval: BillingInterval): string {
-  return `£${planPrice(plan, interval)} a ${interval}`;
+/** "£16 a month" / "£176 a year" (or the founding price). */
+export function priceLabel(plan: PlanId, interval: BillingInterval, founding = false): string {
+  return `£${planPrice(plan, interval, founding)} a ${interval}`;
+}
+
+/**
+ * Whether this account would get the founding price if it joined now:
+ * places must be left, and it can't have lost a founding price before.
+ */
+export function foundingOffered(m: Membership | null, placesLeft: number): boolean {
+  if (m?.foundingPrice) return true;
+  return placesLeft > 0 && !m?.foundingLost && !(m && canEdit(m));
 }
 
 /** "1 October 2026". */

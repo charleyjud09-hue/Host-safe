@@ -4,6 +4,8 @@ import {
   PLAN_IDS,
   PLANS,
   priceLabel,
+  FOUNDING_TERMS,
+  planPrice,
   TRIAL_DAYS,
   yearlySaving,
   type BillingInterval,
@@ -63,12 +65,15 @@ export function BillingChoice({
   plan,
   interval,
   hrefFor,
+  founding = false,
 }: {
   plan: PlanId;
   interval: BillingInterval;
   hrefFor: (interval: BillingInterval) => string;
+  /** Show the founding-member prices. */
+  founding?: boolean;
 }) {
-  const saving = yearlySaving(plan);
+  const saving = yearlySaving(plan, founding);
   const option = (value: BillingInterval) => {
     const selected = value === interval;
     const yearly = value === "year";
@@ -98,9 +103,14 @@ export function BillingChoice({
         </span>
         <span className="mt-3">
           <span className={`text-3xl font-semibold tracking-tight ${selected ? "text-white" : "text-slate-700"}`}>
-            £{yearly ? PLANS[plan].yearly : PLANS[plan].monthly}
+            £{planPrice(plan, value, founding)}
           </span>
           <span className={selected ? "text-teal-50" : ""}> a {value}</span>
+          {founding && (
+            <span className={`ml-1.5 text-sm line-through ${selected ? "text-teal-100" : ""}`}>
+              £{planPrice(plan, value)}
+            </span>
+          )}
         </span>
         <span className={`mt-2 text-sm ${selected ? "text-teal-50" : ""}`}>
           {yearly ? `£${saving} cheaper than paying monthly` : "Pay as you go, cancel any time"}
@@ -139,10 +149,13 @@ export function PlanCards({
   interval,
   cta,
   currentPlan,
+  founding = false,
 }: {
   interval: BillingInterval;
   cta: (plan: PlanId) => { href: string; label: string } | null;
   currentPlan?: PlanId | null;
+  /** Show the founding-member prices (with the standard price struck through). */
+  founding?: boolean;
 }) {
   return (
     <ul className="grid gap-6 md:grid-cols-2">
@@ -164,15 +177,27 @@ export function PlanCards({
                 </span>
               )}
             </div>
+            {founding && (
+              <p className="mt-3 inline-flex self-start rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-900 ring-1 ring-amber-200">
+                Founding member price
+              </p>
+            )}
             <p className="mt-3">
               <span className="text-4xl font-semibold tracking-tight text-navy">
-                £{interval === "year" ? plan.yearly : plan.monthly}
+                £{planPrice(id, interval, founding)}
               </span>
               <span className="text-slate-600"> a {interval}</span>
+              {founding && (
+                <span className="ml-2 text-slate-500">
+                  <span className="sr-only">instead of </span>
+                  <span className="line-through">£{planPrice(id, interval)}</span>
+                </span>
+              )}
             </p>
             {interval === "year" && (
               <p className="mt-1 text-sm text-slate-600">
-                One month free: save £{yearlySaving(id)} compared with paying monthly.
+                One month free: save £{yearlySaving(id, founding)} compared with paying
+                monthly.
               </p>
             )}
             <p className="mt-2 text-sm font-medium text-teal-800">
@@ -238,13 +263,16 @@ export function TrialConditions({
   plan,
   interval,
   trialEnds,
+  founding = false,
 }: {
   plan: PlanId;
   interval: BillingInterval;
   /** YYYY-MM-DD if known (trial starting today), otherwise "day 30". */
   trialEnds: string | null;
+  /** Quote the founding-member price, and say how it's kept and lost. */
+  founding?: boolean;
 }) {
-  const price = priceLabel(plan, interval);
+  const price = priceLabel(plan, interval, founding);
   const firstCharge = trialEnds ? formatLongDate(trialEnds) : `day ${TRIAL_DAYS}`;
   const conditions = [
     <>
@@ -262,9 +290,12 @@ export function TrialConditions({
     </>,
     <>
       If you don’t cancel, {PLANS[plan].name} costs{" "}
-      <strong className="font-semibold">{price}</strong>. The first payment is taken
-      on {firstCharge}, then every {interval} until you cancel.
+      <strong className="font-semibold">{price}</strong>
+      {founding && <> (founding member price, normally {priceLabel(plan, interval)})</>}.
+      The first payment is taken on {firstCharge}, then every {interval} until you
+      cancel.
     </>,
+    ...(founding ? [<>{FOUNDING_TERMS}</>] : []),
     <>If you cancel during the trial, you can keep using Letnook until it ends.</>,
     <>We’ll remind you a few days before your trial ends.</>,
     <>

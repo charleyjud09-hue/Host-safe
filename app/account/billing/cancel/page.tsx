@@ -44,7 +44,17 @@ export default async function CancelMembershipPage() {
             After that your account becomes read-only. You can still view,
             download and delete everything.
           </li>
-          <li>You can rejoin at any time.</li>
+          <li>
+            You can rejoin at any time
+            {membership.foundingPrice ? ", but at the standard price" : ""}.
+          </li>
+          {membership.foundingPrice && (
+            <li className="font-medium text-amber-900">
+              You’ll lose your founding member price for good when your
+              membership ends. If you change your mind before {date}, you can
+              keep it.
+            </li>
+          )}
         </ul>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
           <ConfirmAction

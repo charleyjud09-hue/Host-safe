@@ -1,6 +1,5 @@
 import { Fraunces } from "next/font/google";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import AppShell from "@/components/AppShell";
 import Disclaimer from "@/components/Disclaimer";
@@ -172,9 +171,9 @@ export default async function Home() {
   }
 
   if (signedIn) {
-    // New accounts start on the free-trial page, which leads with its conditions.
+    // New accounts see their (empty) dashboard; the banner and "Redeem 30-day
+    // trial FREE" buttons lead to the trial page and its conditions.
     const membership = await getMembership();
-    if (membership.status === "none") redirect("/membership/trial");
 
     return (
       <>

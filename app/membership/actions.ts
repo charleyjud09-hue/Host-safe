@@ -143,6 +143,20 @@ export async function startMembership(
           ...(rejoining ? {} : { trial_period_days: 30 }),
           metadata: { user_id: user.id },
         },
+        // Cards only: the UK-only check relies on the card's country, which
+        // wallets, bank payments and pay-later options don't give. (Also turn
+        // these off in the Stripe dashboard under Settings → Payment methods.)
+        excluded_payment_method_types: [
+          "klarna",
+          "revolut_pay",
+          "amazon_pay",
+          "paypal",
+          "bacs_debit",
+          "pay_by_bank",
+          "afterpay_clearpay",
+          "sepa_debit",
+          "samsung_pay",
+        ],
         payment_method_collection: "always",
         billing_address_collection: "required",
         metadata: { user_id: user.id },

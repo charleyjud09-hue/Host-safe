@@ -61,8 +61,9 @@ export async function syncSubscription(
   // UK customers only. Checked before anything is recorded or charged.
   const status = dbStatus(sub.status);
   if (status === "trialing" || status === "active") {
+    // A missing country (not a card) is refused too: only UK cards are accepted.
     const country = await cardCountry(sub);
-    if (country && country !== "GB") {
+    if (country !== "GB") {
       await stripe().subscriptions.cancel(sub.id);
       return "not_uk";
     }

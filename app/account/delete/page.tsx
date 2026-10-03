@@ -30,6 +30,10 @@ export default async function DeleteAccountPage() {
               property checks
             </li>
             <li>every file and photo you have uploaded</li>
+            <li>
+              your membership, which is cancelled straight away so you won’t be
+              charged again (any founding member price is lost)
+            </li>
           </ul>
           <p className="mt-3 text-sm">
             This can’t be undone. If you want to keep any documents, download

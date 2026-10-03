@@ -2,7 +2,12 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { changePlan, choosePreviewState, resumeMembership } from "@/app/membership/actions";
+import {
+  changePlan,
+  choosePreviewState,
+  openBillingPortal,
+  resumeMembership,
+} from "@/app/membership/actions";
 import AccountPage from "@/components/AccountPage";
 import {
   PaymentPlaceholder,
@@ -24,10 +29,14 @@ import {
 } from "@/lib/membership";
 import {
   getMembership,
+  isPreviewing,
   PREVIEW_COOKIE,
   PREVIEW_STATES,
   previewEnabled,
 } from "@/lib/membership-server";
+import { refreshFromStripe, stripeIds } from "@/lib/membership-sync";
+import { isStripeConfigured } from "@/lib/stripe";
+import { isAdminConfigured } from "@/lib/supabase/admin";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -36,8 +45,18 @@ export const metadata: Metadata = {
 };
 
 const notices: Record<string, string> = {
-  "trial-started": "Your free trial has started (preview only: nothing was charged).",
-  rejoined: "Welcome back. Your membership is active again (preview only: nothing was charged).",
+  "trial-started": "Your free trial has started. You won’t be charged until it ends.",
+  rejoined: "Welcome back. Your membership is active again.",
+  "not-uk":
+    "Letnook is only available to UK customers paying with a UK card, so your membership wasn’t started and you haven’t been charged.",
+  "founding-full":
+    "Your trial has started. The founding member places filled up while you were joining, so your price is the standard price. You won’t be charged until the trial ends.",
+  "checkout-unfinished": "Your payment details weren’t completed, so nothing has started.",
+  "checkout-problem":
+    "We couldn’t confirm your membership. If you completed the card form, please refresh this page in a minute.",
+  "portal-unavailable": "The card and receipts page isn’t available right now. Please try again later.",
+  "too-many-properties":
+    "You have more properties than Membership allows, so you’d need to remove some before switching.",
   cancelled: "Your membership has been cancelled. You won’t be charged again.",
   "trial-cancelled": "Your free trial has been cancelled. You won’t be charged anything.",
   resumed: "Your membership will carry on as normal.",
@@ -136,6 +155,14 @@ export default async function BillingPage({
   if (!userData.user) redirect("/sign-in");
 
   const { notice } = await searchParams;
+
+  // With real payments, refresh from Stripe first so this page is never out
+  // of date (e.g. a renewal or failed payment since the last visit).
+  const realPayments = isStripeConfigured && isAdminConfigured && !(await isPreviewing());
+  if (realPayments) await refreshFromStripe(userData.user.id);
+  const hasStripeCustomer =
+    realPayments && Boolean((await stripeIds(userData.user.id)).customer);
+
   const membership = await getMembership();
   const today = ukToday();
   const active = canEdit(membership);
@@ -212,7 +239,22 @@ export default async function BillingPage({
           </div>
         )}
 
-        {!membership.complimentary && (
+        {!membership.complimentary && hasStripeCustomer && (
+          <div className={section}>
+            <h2 className="font-semibold text-navy">Card and receipts</h2>
+            <p className="mt-1 text-slate-700">
+              Update your card or download receipts on Stripe’s secure page.
+              Letnook never sees your card details.
+            </p>
+            <form action={openBillingPortal} className="mt-4">
+              <button type="submit" className={secondaryButton}>
+                Update card or view receipts
+              </button>
+            </form>
+          </div>
+        )}
+
+        {!membership.complimentary && !hasStripeCustomer && (
           <>
             <div className={section}>
               <h2 className="font-semibold text-navy">Payment method</h2>

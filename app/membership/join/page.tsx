@@ -19,7 +19,9 @@ import {
   priceLabel,
   TRIAL_DAYS,
 } from "@/lib/membership";
-import { getFoundingPlacesLeft, getMembership } from "@/lib/membership-server";
+import { getFoundingPlacesLeft, getMembership, isPreviewing } from "@/lib/membership-server";
+import { isStripeConfigured } from "@/lib/stripe";
+import { isAdminConfigured } from "@/lib/supabase/admin";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -162,6 +164,7 @@ export default async function JoinPage({
                 plan={plan}
                 interval={interval}
                 mode={rejoining ? "rejoin" : "trial"}
+                stripeReady={isStripeConfigured && isAdminConfigured && !(await isPreviewing())}
                 buttonLabel={
                   rejoining
                     ? `Join Back and pay ${label}`

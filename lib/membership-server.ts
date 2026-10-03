@@ -94,6 +94,11 @@ function previewBase(state: PreviewState, today: string): PreviewBase {
   }
 }
 
+/** True while the dev-only preview is overriding the real membership. */
+export async function isPreviewing(): Promise<boolean> {
+  return previewEnabled && isPreviewState((await cookies()).get(PREVIEW_COOKIE)?.value);
+}
+
 /** The signed-in user's membership. Cached for the length of one request. */
 export const getMembership = cache(async (): Promise<Membership> => {
   const today = ukToday();

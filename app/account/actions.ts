@@ -3,8 +3,12 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { ATTACHMENTS_BUCKET } from "@/lib/evidence-attachments";
+import { errorCode } from "@/lib/log";
 import { MAINTENANCE_PHOTOS_BUCKET } from "@/lib/maintenance-photos";
+import { stripeIds } from "@/lib/membership-sync";
 import { PROPERTY_IMAGES_BUCKET } from "@/lib/property-images";
+import { isStripeConfigured, stripe } from "@/lib/stripe";
+import { isAdminConfigured } from "@/lib/supabase/admin";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -135,6 +139,29 @@ export async function deleteAccount(
 
   const { supabase, passwordOk } = await requireCurrentPassword(current);
   if (!passwordOk) return { error: "Your current password is not correct." };
+
+  // 0. Stop any Stripe subscription straight away, so nobody is ever
+  //    charged after deleting their account.
+  if (isStripeConfigured && isAdminConfigured) {
+    const { data: userData } = await supabase.auth.getUser();
+    const { subscription } = userData.user
+      ? await stripeIds(userData.user.id)
+      : { subscription: null };
+    if (subscription) {
+      try {
+        const sub = await stripe().subscriptions.retrieve(subscription);
+        if (sub.status !== "canceled" && sub.status !== "incomplete_expired") {
+          await stripe().subscriptions.cancel(subscription);
+        }
+      } catch (error) {
+        console.error("Account deletion subscription cancel failed:", errorCode(error));
+        return {
+          error:
+            "We couldn’t cancel your membership payments, so your account has not been deleted. Please try again.",
+        };
+      }
+    }
+  }
 
   // 1. Files. RLS returns only this user's rows.
   const [attachments, photos, properties] = await Promise.all([

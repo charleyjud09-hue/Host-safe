@@ -9,7 +9,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
  * writes memberships, using the server-only secret key.
  *
  * Also enforces two rules Stripe can't:
- *   - UK customers only: a non-UK card ends the subscription before any charge.
+ *   - UK customers only: a non-UK payer's subscription ends before any charge.
  *   - Founding places: a founding price is only kept if the database grants a
  *     place; otherwise the subscription moves to the standard price before
  *     the first payment.
@@ -42,11 +42,26 @@ function customerId(sub: Stripe.Subscription): string {
   return typeof sub.customer === "string" ? sub.customer : sub.customer.id;
 }
 
-/** The two-letter country of the card on the subscription, if known. */
-async function cardCountry(sub: Stripe.Subscription): Promise<string | null> {
+/**
+ * UK customers only. Every payment needs a UK billing address. Where Stripe
+ * also knows the payer's country (cards, including Apple Pay and Google Pay,
+ * and PayPal), that must be the UK too. Revolut Pay gives no country, so it
+ * relies on the billing address. Anything else is refused.
+ */
+async function isUkPayer(sub: Stripe.Subscription): Promise<boolean> {
   let pm = sub.default_payment_method;
   if (typeof pm === "string") pm = await stripe().paymentMethods.retrieve(pm);
-  return pm?.card?.country ?? null;
+  if (!pm || pm.billing_details.address?.country !== "GB") return false;
+  switch (pm.type) {
+    case "card":
+      return pm.card?.country === "GB";
+    case "paypal":
+      return pm.paypal?.country === "GB";
+    case "revolut_pay":
+      return true;
+    default:
+      return false;
+  }
 }
 
 export async function syncSubscription(
@@ -61,9 +76,7 @@ export async function syncSubscription(
   // UK customers only. Checked before anything is recorded or charged.
   const status = dbStatus(sub.status);
   if (status === "trialing" || status === "active") {
-    // A missing country (not a card) is refused too: only UK cards are accepted.
-    const country = await cardCountry(sub);
-    if (country !== "GB") {
+    if (!(await isUkPayer(sub))) {
       await stripe().subscriptions.cancel(sub.id);
       return "not_uk";
     }

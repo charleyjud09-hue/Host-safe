@@ -143,14 +143,13 @@ export async function startMembership(
           ...(rejoining ? {} : { trial_period_days: 30 }),
           metadata: { user_id: user.id },
         },
-        // Cards only: the UK-only check relies on the card's country, which
-        // wallets, bank payments and pay-later options don't give. (Also turn
-        // these off in the Stripe dashboard under Settings → Payment methods.)
+        // Allowed: cards (including Apple Pay, Google Pay and Link), PayPal and
+        // Revolut Pay. Excluded: pay-later credit (Klarna and similar) and
+        // methods that can't show the payer is in the UK. See ukCheck() in
+        // lib/membership-sync.ts.
         excluded_payment_method_types: [
           "klarna",
-          "revolut_pay",
           "amazon_pay",
-          "paypal",
           "bacs_debit",
           "pay_by_bank",
           "afterpay_clearpay",
